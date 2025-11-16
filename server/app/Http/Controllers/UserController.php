@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Services\UserService;
+use App\Services\EmailService;
+use App\Http\Resources\AdminResource;
 use App\Http\Requests\getAdminsRequest;
 use App\Http\Requests\storeAdminRequest;
-use App\Http\Resources\AdminResource;
-use App\Services\EmailService;
-use App\Services\UserService;
+use App\Http\Requests\updateAdminRequest;
 
 class UserController extends Controller
 {
@@ -43,5 +47,32 @@ class UserController extends Controller
         $mailjetService->sendEmailToCreatePassword($newAdmin);
 
         return response()->json(['message' => 'Correo enviado con éxito']);
+    }
+
+    public function updateAdmin(updateAdminRequest $request, $admin)
+    {
+
+        $admin = User::where('id', $admin)->first();
+
+        if (!isset($admin->id))
+            return response()->json(['message' => 'Usuarion no encontrado'], 404);
+
+
+        $this->userService->updateAdmin($request->validated(), $admin);
+
+        return response()->json(['message' => 'Actualizado con éxito']);
+    }
+
+    public function destroyAdmin($admin)
+    {
+
+        $admin = User::where('id', $admin)->first();
+
+        if (!isset($admin->id))
+            return response()->json(['message' => 'Usuarion no encontrado'], 404);
+
+        $this->userService->destroyAdmin($admin);
+
+        return response()->json(['message' => 'Eliminado con éxito']);
     }
 }

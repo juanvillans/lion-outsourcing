@@ -12,4 +12,6 @@ Route::prefix('admin')->group(function () {
 
     Route::get('admins', [UserController::class, 'indexAdmins']);
     Route::post('admins', [UserController::class, 'storeAdmin']);
+    Route::put('admins/{admin}', [UserController::class, 'updateAdmin']);
+    Route::delete('admins/{admin}', [UserController::class, 'destroyAdmin']);
 })->middleware('auth:sanctum');

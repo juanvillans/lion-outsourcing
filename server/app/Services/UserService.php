@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\PasswordGenerateToken;
 use App\Models\User;
+use App\Models\Permission;
+use App\Models\UserPermission;
+use Illuminate\Support\Facades\Log;
+use App\Models\PasswordGenerateToken;
 
 class UserService
 {
@@ -33,7 +36,31 @@ class UserService
     {
         $user = User::create($data);
 
+        $this->givePermissions($user->id, $data['permission_names']);
+
         return $user;
+    }
+
+    public function updateAdmin($data, $admin)
+    {
+        $admin->update($data);
+
+
+        if (array_key_exists('permission_names', $data)) {
+            $this->deletePermissions($admin->id);
+            $this->givePermissions($admin->id, $data['permission_names']);
+        }
+
+        return $admin;
+    }
+
+    public function destroyAdmin($admin)
+    {
+
+        $this->deletePermissions($admin->id);
+        $admin->delete();
+
+        return 0;
     }
 
     public function generateTokenForPassword($adminID)
@@ -47,5 +74,29 @@ class UserService
         ]);
 
         return $token;
+    }
+
+    private function givePermissions($userID, $permissions)
+    {
+        $permissions = Permission::whereIn('name', $permissions)->get()->pluck('id')->toArray();
+        $date = now();
+
+        $userPermissions = array_map(function ($permissionId) use ($userID, $date) {
+            return [
+                'user_id' => $userID,
+                'permission_id' => $permissionId,
+                'created_at' => $date,
+                'updated_at' => $date,
+            ];
+        }, $permissions);
+
+        UserPermission::insert($userPermissions);
+    }
+
+    private function deletePermissions($userID)
+    {
+        UserPermission::where('user_id', $userID)->delete();
+
+        return 0;
     }
 }
