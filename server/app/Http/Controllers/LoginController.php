@@ -31,6 +31,7 @@ class LoginController extends Controller
         return response()->json(array_merge([
             'message' => 'Autenticado con éxito',
             'token' => $token,
+            'token_expires_at' => now()->addDays(30),
             'fullname' => $user->fullname,
             'email' => $user->email,
             'type' => $user->type,

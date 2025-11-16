@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\checkSetPasswordTokenRequest;
 use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use App\Services\UserService;
 use App\Services\EmailService;
 use App\Http\Resources\AdminResource;
 use App\Http\Requests\getAdminsRequest;
+use App\Http\Requests\setPasswordRequest;
 use App\Http\Requests\storeAdminRequest;
 use App\Http\Requests\updateAdminRequest;
 
@@ -74,5 +76,24 @@ class UserController extends Controller
         $this->userService->destroyAdmin($admin);
 
         return response()->json(['message' => 'Eliminado con éxito']);
+    }
+
+    public function checkSetPasswordToken(checkSetPasswordTokenRequest $request)
+    {
+
+        $isValid = $this->userService->checkSetPasswordToken($request->token);
+
+        if ($isValid)
+            return response()->json(['message' => 'OK']);
+        else
+            return response()->json(['message' => 'Not valid'], 400);
+    }
+
+    public function setPassword(setPasswordRequest $request)
+    {
+
+        $this->userService->setPassword($request->validated());
+
+        return response()->json(['message' => 'Contraseña actualizada exitosamente']);
     }
 }

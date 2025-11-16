@@ -28,7 +28,7 @@
                                 haciendo clic en el siguiente botón:
                             </p>
                             <p style="text-align: center; margin: 30px 0;">
-                                <a href="{{ url('/set-password?token=' . $token . '&email=' . urlencode($newAdmin->email)) }}"
+                                <a href="{{ config('app.frontend_url') . '/set-password?token=' . $token }}"
                                     style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 6px; text-align: center;">
                                     Establecer mi contraseña
                                 </a>
@@ -36,9 +36,9 @@
                             <p style="font-size: 14px; color: #6b7280; margin: 20px 0;">
                                 Si el botón no funciona, copia y pega este enlace en tu navegador:
                                 <br>
-                                <a href="{{ url('/set-password?token=' . $token . '&email=' . urlencode($newAdmin->email)) }}"
+                                <a href="{{ config('app.frontend_url') . '/set-password?token=' . $token . '&email=' . urlencode($newAdmin->email) }}"
                                     style="color: #2563eb; text-decoration: underline; word-break: break-all;">
-                                    {{ url('/set-password?token=' . $token . '&email=' . urlencode($newAdmin->email)) }}
+                                    {{ config('app.frontend_url') . '/set-password?token=' . $token }}
                                 </a>
                             </p>
                             <p style="font-size: 14px; color: #6b7280; margin: 20px 0;">
@@ -54,9 +54,9 @@
                             </p>
                             <p style="margin: 10px 0 0;">
                                 ¿Tienes preguntas? Contáctanos en
-                                <a href="mailto:support@{{ config('app.url') }}"
+                                <a href="mailto:support@{{ parse_url(config('app.frontend_url'), PHP_URL_HOST) }}"
                                     style="color: #2563eb; text-decoration: underline;">
-                                    support{{ '@' . config('app.url') }}
+                                    support{{ '@' . parse_url(config('app.frontend_url'), PHP_URL_HOST) }}
                                 </a>
                             </p>
                         </td>

@@ -7,6 +7,8 @@ use App\Http\Controllers\LoginController;
 
 
 Route::post('login', [LoginController::class, 'login'])->name('login');
+Route::post('check-set-password-token', [UserController::class, 'checkSetPasswordToken']);
+Route::post('set-password', [UserController::class, 'setPassword']);
 
 Route::prefix('admin')->group(function () {
 

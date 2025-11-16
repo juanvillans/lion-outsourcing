@@ -7,6 +7,7 @@ use App\Models\Permission;
 use App\Models\UserPermission;
 use Illuminate\Support\Facades\Log;
 use App\Models\PasswordGenerateToken;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -74,6 +75,30 @@ class UserService
         ]);
 
         return $token;
+    }
+
+    public function checkSetPasswordToken($token)
+    {
+        $token = PasswordGenerateToken::where('token', $token)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        return isset($token->id);
+    }
+
+    public function setPassword($data)
+    {
+        $token = PasswordGenerateToken::where('token', $data['token'])
+            ->where('expires_at', '>', now())
+            ->first();
+
+        $user = User::where('id', $token->user_id)->first();
+
+        $user->update(['password' => Hash::make($data['password'])]);
+
+        $token->delete();
+
+        return 0;
     }
 
     private function givePermissions($userID, $permissions)
