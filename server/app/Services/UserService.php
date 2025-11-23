@@ -22,6 +22,7 @@ class UserService
     public function getAdmins($params = null)
     {
 
+
         $query = User::administrators()->with('permissions');
 
         $query->when($params, function ($query, $params) {

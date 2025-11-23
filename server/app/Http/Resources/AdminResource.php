@@ -12,21 +12,23 @@ class AdminResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request)
     {
+
+        $permissionsObject = [];
+        foreach ($this->permissions as $permission) {
+            $permissionsObject[$permission['name']] = true;
+        }
 
         $data = [
             'id' => $this->id,
             'fullname' => $this->fullname,
             'email' => $this->email,
             'role' => $this->role ?? null,
-            'type' => $this->type
+            'type' => $this->type,
+            'permissions' => (object) $permissionsObject
         ];
 
-        $permissions = $this->permissions->pluck('name')->toArray();
-
-        $formattedPermissions = array_fill_keys($permissions, true);
-
-        return array_merge($data, $formattedPermissions);
+        return $data;
     }
 }
