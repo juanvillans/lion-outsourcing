@@ -13,11 +13,11 @@ export default function Home() {
 
                 <a href="/">Lion Services</a>
 
-                <div className="flex gap-4 items-center">
+                <div className="flex gap-5 items-center">
                     <FuturisticButton>
-                    <a href="/hire">Contratar</a>
+                    <a href="/contratar">Contratar</a>
                     </FuturisticButton>
-                        <a href="/work">Trabajar</a>
+                        <a href="/aplicar">Busco trabajo</a>
                     <a href="/login">Iniciar Sesión</a>
                     {/* <a href="/register" className="flex gap-2 items-center">    <Icon icon="solar:user-circle-outline" width="24" height="24" />  <span> Mi perfil</span></a> */}
                  
@@ -35,7 +35,7 @@ export default function Home() {
                 <FuturisticButton>
                     Contratar
                 </FuturisticButton>
-                <a href="/work" className="bg-gray-100 rounded-xl px-10 py-3">Trabajar</a>
+                <a href="/aplicar" className="bg-gray-100 rounded-xl px-10 py-3">Busco trabajo</a>
 
             </div>
         </main>

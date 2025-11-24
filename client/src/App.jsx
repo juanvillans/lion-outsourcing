@@ -5,6 +5,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute'
 import PermissionGate from './components/auth/PermissionGate';
 import DashboardLayout from './components/dashboard/DashboardLayout';
 import LoginPage from './pages/LoginPage';
+import ApplyPage from './pages/ApplyPage';
 import { lazy, Suspense } from 'react';
 
 // Lazy load heavy components
@@ -30,6 +31,7 @@ function App() {
             {/* <Route path="/" element={<LoginPage />} /> */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/aplicar" element={<ApplyPage />} />
             <Route path="/crear-contrasena" element={<CrearContraseña />} />
             <Route path="/olvide-contrasena" element={<CrearContraseña />} />
 

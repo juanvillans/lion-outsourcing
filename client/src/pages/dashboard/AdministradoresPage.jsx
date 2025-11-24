@@ -21,8 +21,9 @@ export default function AdministradoresPage() {
     allow_talents: false,
     allow_bussinesses: false,
     allow_professions: false,
-    type: "administrador",
     allow_admins: false,
+
+    type: "administrador",
   };
   const [formData, setFormData] = useState(structuredClone(defaultFormData));
   const [submitString, setSubmitString] = useState("Crear");
@@ -91,14 +92,16 @@ export default function AdministradoresPage() {
     },
   };
 
-  const onSubmit = async (submittedFormData) => {
+  const onSubmit = async (submitData) => {
+      submitData.permission_names = Object.keys(submitData).filter((key) => key.startsWith("allow_") && submitData[key] === true );
+    console.log(submitData);
     try {
       if (submitString === "Actualizar") {
-        await adminAPI.updateAdmin(formData.id, submittedFormData);
+        await adminAPI.updateAdmin(submitData.id, submitData);
         setSubmitString("Crear");
         setFormData(structuredClone(defaultFormData));
       } else {
-        await adminAPI.createAdmin(submittedFormData);
+        await adminAPI.createAdmin(submitData);
       }
 
       // Reset form data after successful submission
@@ -157,7 +160,7 @@ export default function AdministradoresPage() {
           <button
             onClick={() => {
               setIsModalOpen(true);
-              setFormData({ ...row.original });
+              setFormData({ ...row.original, ...row.original.permissions });
               setSubmitString("Actualizar");
             }}
             className="mx-1 p-1 hover:p-2 duration-75 text-gray-500 hover:bg-blue-100 hover:text-color3 rounded-full"
@@ -265,19 +268,20 @@ export default function AdministradoresPage() {
           className="ag-theme-alpine ag-grid-no-border"
           style={{ height: 500 }}
         >
-          <MaterialReactTable
-            columns={columns}
-            data={rowData}
-            enableColumnFilters
-            enableSorting
-            enablePagination
-            initialState={{ pagination: { pageSize: 5 } }}
-            muiTablePaginationProps={{
-              rowsPerPageOptions: [5, 10, 20],
-              showFirstButton: true,
-              showLastButton: true,
-            }}
-          />
+            <MaterialReactTable
+              columns={columns}
+              data={rowData}
+              enableColumnFilters
+              enableSorting
+              enablePagination
+              initialState={{ pagination: { pageSize: 5 } }}
+              muiTablePaginationProps={{
+                rowsPerPageOptions: [5, 10, 20],
+                showFirstButton: true,
+                showLastButton: true,
+              }}
+            />
+       
         </div>
       </div>
     </>
