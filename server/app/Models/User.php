@@ -55,7 +55,7 @@ class User extends Authenticatable
 
     public function scopeAdministrators(Builder $query): Builder
     {
-        return $query->where('type', UserTypeEnum::Administrador)->whereNotNull('email_verified_at');
+        return $query->where('type', UserTypeEnum::Administrador);
     }
 
     public function permissions()
