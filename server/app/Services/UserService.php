@@ -82,9 +82,10 @@ class UserService
     {
         $token = PasswordGenerateToken::where('token', $token)
             ->where('expires_at', '>', now())
+            ->with('user')
             ->first();
 
-        return isset($token->id);
+        return ['status' => isset($token->id), 'name' => $token->user->name];
     }
 
     public function setPassword($data)
