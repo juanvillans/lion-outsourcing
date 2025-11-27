@@ -40,4 +40,13 @@ class LoginController extends Controller
 
         ], $formattedPermissions));
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Sesión cerrada exitosamente',
+        ]);
+    }
 }
