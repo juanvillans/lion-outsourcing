@@ -29,53 +29,10 @@ export default function AdministradoresPage() {
   const [submitString, setSubmitString] = useState("Crear");
 
   // Form configuration for ReusableForm
-  const userFormFields = [
-    {
-      name: "email",
-      label: "Correo Electrónico",
-      type: "email",
-      required: true,
-      placeholder: "usuario@hospital.com",
-      className: "col-span-2",
-    },
-    {
-      name: "fullname",
-      label: "Nombre y apellido",
-      type: "text",
-      required: true,
-      className: "col-span-1",
-    },
-    {
-      name: "role",
-      label: "Rol",
-      type: "text",
-      required: true,
-      className: "col-span-1",
-    },
-    {
-      name: "allow_talents",
-      label: "Puede responde solicitudes de talentos",
-      type: "checkbox",
-    },
-    {
-      name: "allow_bussinesses",
-      label: "Puede responder solicitudes de empresas",
-      type: "checkbox",
-    },
-     {
-      name: "allow_professions",
-      label: "Puede gestionar las profesiones",
-      type: "checkbox",
-      helperText: "Permite crear, editar y eliminar o desabilitar las profesiones ofrecidas, así como las habilidades especificas de cada profesión",
-
-    },
-    {
-      name: "allow_admins",
-      label: "Puede Gestionar administradores",
-      type: "checkbox",
-      helperText: "Permite crear, editar y eliminar administradores del sistema",
-    },
-  ];
+  const [userFormFields, setUserFormFields] =  useState([
+    
+   
+  ])
 
   const validationRules = {
     email: {
@@ -150,6 +107,17 @@ export default function AdministradoresPage() {
       size: 150,
     },
     {
+      accessorKey: "status",
+      header: "Estado",
+      size: 150,
+    },
+    {
+      accessorKey: "email_verified_at",
+      header: "Validado",
+      size: 150,
+      Cell: ({ cell }) => cell.getValue() ? <Icon className="text-color2" icon="iconamoon:check-fill" width={20} height={20} /> :  <Icon className="text-red-300" icon="line-md:close" width={18} height={17} />, 
+    },
+    {
       header: "Acciones",
       id: "actions", // ← obligatorio cuando no usas accessorKey
       size: 100,
@@ -191,6 +159,7 @@ export default function AdministradoresPage() {
 
   ]);
   const [rowData, setRowData] = useState([]);
+  const [permissions, setPermissions] = useState([]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -202,8 +171,48 @@ export default function AdministradoresPage() {
     }
   }, []);
 
+
+  const getPermissions = useCallback(async () => {
+    try {
+      const res = await adminAPI.getPermissions();
+      setUserFormFields((prev) => [
+        {
+      name: "email",
+      label: "Correo Electrónico",
+      type: "email",
+      required: true,
+      placeholder: "usuario@hospital.com",
+      className: "col-span-2",
+    },
+    {
+      name: "fullname",
+      label: "Nombre y apellido",
+      type: "text",
+      required: true,
+      className: "col-span-1",
+    },
+    {
+      name: "role",
+      label: "Rol",
+      type: "text",
+      required: true,
+      className: "col-span-1",
+    }, ...res.permissions.map((permission) => ({
+          name: permission.name,
+          label: permission.label,
+          type: "checkbox",
+          helperText: permission.helper_text,
+        }))]);
+      setPermissions(res.permissions);
+    
+    } catch (e) {
+      console.error("Failed to fetch data", e);
+    }
+  }, []);
+  
   useEffect(() => {
     fetchData();
+    getPermissions();
   }, [fetchData]);
 
   return (
@@ -216,6 +225,7 @@ export default function AdministradoresPage() {
             onClick={() => {
               if (submitString === "Actualizar") {
                 setSubmitString("Crear");
+                setFormData(structuredClone(defaultFormData));
               }
               setIsModalOpen(true);
             }}
@@ -264,10 +274,12 @@ export default function AdministradoresPage() {
             </p>
           </div>
         </Modal>
+       
         <div
           className="ag-theme-alpine ag-grid-no-border"
           style={{ height: 500 }}
         >
+
             <MaterialReactTable
               columns={columns}
               data={rowData}
@@ -281,8 +293,8 @@ export default function AdministradoresPage() {
                 showLastButton: true,
               }}
             />
-       
         </div>
+       
       </div>
     </>
   );

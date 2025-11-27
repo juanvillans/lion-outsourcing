@@ -85,8 +85,7 @@ class UserService
             ->with('user')
             ->first();
 
-
-        return ['status' => isset($token->id), 'fullname' => $token->user->fullname];
+        return ['status' => isset($token->id), 'fullname' => $token->user->fullname ?? null];
     }
 
     public function setPassword($data)

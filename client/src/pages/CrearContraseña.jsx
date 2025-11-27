@@ -17,6 +17,7 @@ export default function ActivateAccountPage() {
   const location = useLocation();
   const { showSuccess, showError } = useFeedback();
 
+  
   // Extract token from URL query parameters
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get("token");
@@ -36,14 +37,9 @@ export default function ActivateAccountPage() {
       }
 
       try {
-        let response;
-        if (pathname === "/activar-cuenta") {
-          response = await authAPI.verifyInvitationToken(token);
-        } else if (pathname === "/olvide-contrasena") {
-          console.log("no se hizo")
-          response = await authAPI.verifyResetToken(token);
-        } 
-        setUserData(response.data.user);
+        let response = await authAPI.checkSetPasswordToken(token);
+        console.log(response)
+        setUserData(response);
         setVerifying(false);
         setLoading(false);
       } catch (error) {
@@ -84,14 +80,13 @@ export default function ActivateAccountPage() {
     setLoading(true);
 
     try {
-      if (pathname === "/activar-cuenta") {
-        await authAPI.activateAccount(token, password);
+      await authAPI.setPassword(token, password, confirmPassword);
+      if (pathname === "/crear-contrasena") {
         showSuccess("Cuenta activada con éxito. Ahora puedes iniciar sesión.");
-      } else if (pathname === "/olvide-contrasena") {
-        await authAPI.resetPassword(token, password);
+      } else if (pathname === "/cambiar-contrasena") {
         showSuccess("Contraseña restablecida con éxito. Ahora puedes iniciar sesión.");
       }
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.error("Error activating account:", error);
       showError(error.message || pathname === "/activar-cuenta" ? "Error al activar la cuenta" : "Error al restablecer la contraseña");
@@ -162,7 +157,7 @@ export default function ActivateAccountPage() {
           alt=" secretariaLogo"
         />
       </div>
-      {pathname === "/activar-cuenta" ? (
+      {pathname == "/crear-contrasena" ? (
         <title>Activar Cuenta - LabFalcón</title>
       ) : (
         <title>Restablecer Contraseña - LabFalcón</title>
@@ -174,12 +169,12 @@ export default function ActivateAccountPage() {
               <Icon icon="heroicons:user" className="w-8 h-8 text-blue-500" />
             </div>
             <h1 className="text-lg md:text-2xl font-bold text-gray-800">
-              {pathname === "/activar-cuenta" ? "Activar Cuenta" : "Restablecer Contraseña"}
+              {pathname === "/crear-contrasena" ? "Activar Cuenta" : "Restablecer Contraseña"}
             </h1>
             <p className="text-gray-600 mt-2">
-              {pathname === "/activar-cuenta" ? (
+              {pathname === "/crear-contrasena" ? (
                 <span>
-                  !Hola {userData.name}!, establece tu contraseña para activar tu
+                  !Hola {userData.fullname}!, establece tu contraseña para activar tu
                   cuenta.
 
                 </span> ) : (
@@ -192,7 +187,7 @@ export default function ActivateAccountPage() {
 
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
-              <div>
+              {/* <div>
                 <label
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700 mb-1"
@@ -206,19 +201,20 @@ export default function ActivateAccountPage() {
                   disabled
                   className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
                 />
-              </div>
+              </div> */}
 
               <div>
                 <label
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Contraseña
+                  Contraseña nueva
                 </label>
                 <input
                   type="password"
                   id="password"
                   value={password}
+                  placeholder="mínimo 8 carácteres"
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   required
