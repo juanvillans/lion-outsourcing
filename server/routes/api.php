@@ -13,6 +13,8 @@ Route::post('set-password', [UserController::class, 'setPassword']);
 
 Route::prefix('admin')->group(function () {
 
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
     Route::get('get_permissions', [GeneralController::class, 'getPermissions']);
 
     Route::get('admins', [UserController::class, 'indexAdmins']);

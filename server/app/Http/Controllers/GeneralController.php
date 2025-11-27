@@ -11,13 +11,8 @@ class GeneralController extends Controller
     {
         $permissions = Permission::get();
 
-        $permissionsObject = [];
-        foreach ($permissions as $permission) {
-            $permissionsObject[$permission['name']] = true;
-        }
-
         return response()->json([
-            'permissions' => (object) $permissionsObject
+            'permissions' =>  $permissions
         ], 200);
     }
 }
