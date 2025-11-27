@@ -26,6 +26,7 @@ class AdminResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role ?? null,
             'type' => $this->type,
+            'email_verified_at' => $this->email_verified_at,
             'permissions' => (object) $permissionsObject
         ];
 
