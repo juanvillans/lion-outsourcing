@@ -72,7 +72,7 @@ class UserService
         PasswordGenerateToken::create([
             'user_id' => $adminID,
             'token' => $token,
-            'expires_at' => now()->addMinutes(15)
+            'expires_at' => now()->addMinutes(180)
         ]);
 
         return $token;
