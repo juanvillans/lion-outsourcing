@@ -43,7 +43,14 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+
+        $request->validate([
+            'admin_id' => 'required|exists:users,id'
+        ]);
+
+        $user = User::where('id', $request->admin_id)->first();
+
+        $user->currentAccessToken()->delete();
 
         return response()->json([
             'message' => 'Sesión cerrada exitosamente',

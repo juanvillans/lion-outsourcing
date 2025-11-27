@@ -135,7 +135,7 @@ class UserController extends Controller
         $isValid = $this->userService->checkSetPasswordToken($request->token);
 
         if ($isValid['status'])
-            return response()->json(['message' => 'OK', 'name' => $isValid['name']]);
+            return response()->json(['message' => 'OK', 'fullname' => $isValid['fullname']]);
         else
             return response()->json(['message' => 'Not valid'], 400);
     }
