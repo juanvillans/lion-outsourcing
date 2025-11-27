@@ -29,7 +29,7 @@ class storeAdminRequest extends FormRequest
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'role' => ['nullable', 'string', 'max:100'],
             'type' => ['required', new Enum(UserTypeEnum::class), Rule::in([UserTypeEnum::Administrador->value])],
-            'permission_names' => ['nullable', 'array'],
+            'permission_names' => ['required', 'array'],
             'permission_names.*' => ['string', 'exists:permissions,name'],
         ];
     }

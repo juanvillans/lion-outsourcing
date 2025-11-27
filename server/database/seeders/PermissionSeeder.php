@@ -17,8 +17,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'allow_talents'],
             ['name' => 'allow_bussinesses'],
             ['name' => 'allow_professions'],
-            ['name' => 'allow_handle_users'],
-            ['name' => 'allow_handle_exams'],
+            ['name' => 'allow_handle_admins'],
         ];
 
         Permission::insert($permissions);
