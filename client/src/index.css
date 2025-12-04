@@ -360,3 +360,9 @@ td.MuiTableCell-root {
   /* Necesitas que esté inicialmente invisible mientras espera */
   opacity: 0;
 }
+
+
+.geoapify-autocomplete-input {
+ width: 100% !important;
+ padding: 20px 15px !important;
+}
