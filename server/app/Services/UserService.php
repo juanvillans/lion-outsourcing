@@ -85,7 +85,6 @@ class UserService
             ->with('user')
             ->first();
 
-
         return ['status' => isset($token->id), 'fullname' => $token->user->fullname ?? null];
     }
 

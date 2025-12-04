@@ -55,16 +55,16 @@ api.interceptors.response.use(
 // Auth API endpoints
 export const authAPI = {
   login: (credentials) => api.post("/login", credentials),
-  logout: () => api.post("/sign-out"),
+  logout: () => api.post("/logout"),
   forgotPassword: (email) => api.post("/forgot-password", { email }),
   resetPassword: (token, password) =>
     api.post("/reset-password", { token, password }),
 
   // Nuevos métodos para activación de cuenta
-  verifyInvitationToken: (token) =>
-    api.get(`/verify-invitation?token=${token}`),
-  activateAccount: (token, password) =>
-    api.post("/activate-account", { token, password }),
+  checkSetPasswordToken: (token) =>
+    api.post(`/check-set-password-token`, { token }),
+  setPassword: (token, password, confirm_password) =>
+    api.post("/set-password", { token, password, confirm_password }),
   verifyResetToken: (token) => api.get(`/verify-reset-token?token=${token}`),
   resetPassword: (token, password) =>
     api.post("/reset-password", { token, password }),
@@ -76,6 +76,7 @@ export const adminAPI = {
   createAdmin: (userData) => api.post("/admin/admins", userData),
   updateAdmin: (id, userData) => api.put(`/admin/admins/${id}`, userData),
   deleteAdmin: (id) => api.delete(`/admin/admins/${id}`),
+  getPermissions: () => api.get("/admin/get_permissions"),
 };
 
 export const examinationTypesAPI = {
