@@ -107,6 +107,14 @@ export default function ApplyPage() {
     console.log(formData);
   };
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
+
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
+  };
+
+  console.log({ formData });
   return (
     <div>
       {/* City autocomplete selector */}
@@ -116,17 +124,15 @@ export default function ApplyPage() {
           label="Nombre legal completo"
           type="text"
           value={formData.legal_full_name}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              legal_full_name: e.target.value,
-            }))
-          }
+          onChange={handleChange}
           required
           className="col-span-2"
         />
-        <div style={{ marginBottom: "0.2rem" }} >
-          <label style={{ display: "block", marginBottom: "0.1rem" }} className="text-sm text-gray-600">
+        <div style={{ marginBottom: "0.2rem" }}>
+          <label
+            style={{ display: "block", marginBottom: "0.1rem" }}
+            className="text-sm text-gray-600"
+          >
             Localización de residencia
           </label>
           <div
@@ -140,9 +146,7 @@ export default function ApplyPage() {
           label="Correo Electrónico"
           type="email"
           value={formData.email}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, email: e.target.value }))
-          }
+          onChange={handleChange}
           required
           className="col-span-2"
         />
@@ -152,9 +156,7 @@ export default function ApplyPage() {
           label="Contraseña"
           type="password"
           value={formData.password}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, password: e.target.value }))
-          }
+          onChange={handleChange}
           required
           className="col-span-1"
         />
@@ -163,12 +165,7 @@ export default function ApplyPage() {
           label="Repetir Contraseña"
           type="password"
           value={formData.repeat_password}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              repeat_password: e.target.value,
-            }))
-          }
+          onChange={handleChange}
           required
           className="col-span-1"
         />
@@ -177,12 +174,7 @@ export default function ApplyPage() {
           type="select"
           name="years_of_experience"
           value={formData.years_of_experience}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              years_of_experience: e.target.value,
-            }))
-          }
+          onChange={handleChange}
           required
           className="col-span-1"
           options={[
@@ -196,14 +188,27 @@ export default function ApplyPage() {
         />
 
         <FormField
+          label="Nivél de Inglés"
+          type="radio"
+          name="english_level"
+          value={formData.english_level}
+          onChange={handleChange}
+          required
+          className="col-span-1"
+          options={[
+            { value: "begginner", label: "Básico" },
+            { value: "intermediate", label: "Intermedio" },
+            { value: "advanced", label: "Avanzado" },
+          ]}
+        />
+
+        <FormField
           label="Página web (opcional)"
           placeholder="tu pagina web personal"
           type="text"
           name="website"
           value={formData.website}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, website: e.target.value }))
-          }
+          onChange={handleChange}
           className="col-span-2"
         />
         <FormField
@@ -211,13 +216,10 @@ export default function ApplyPage() {
           type="text"
           name="linkedin"
           value={formData.linkedin}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, linkedin: e.target.value }))
-          }
+          onChange={handleChange}
           className="col-span-2"
           placeholder="La URL de tu perfíl de Linkedin"
         />
-
       </form>
 
       {/* Reusable form 
