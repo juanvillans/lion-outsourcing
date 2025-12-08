@@ -81,8 +81,43 @@ const FormField = React.memo(function FormField({
         </FormControl>
       </div>
     );
+  } else if (type === "radio") {
+    return (
+      <div className={className}>
+        <label className="text-sm font-medium text-gray-700 ">{label}</label>
+        <div className="flex flex-col gap-2">
+          {props.options.map((option) => (
+            <div key={option.value} className="flex items-center gap-2">
+              <input
+                type="radio"
+                name={name}
+                value={option.value}
+                checked={value === option.value}
+                onChange={onChange}
+                disabled={disabled}
+                required={required}
+                id={option.value}
+                {...props}
+              />
+              <label htmlFor={option.value} className="text-sm cursor-pointer hover:text-gray-900 font-medium text-gray-700 ">
+                {option.label || option.value}
+              </label>
+            </div>
+          ))}
+        </div>
+        {error && (
+          <FormHelperText error className="mt-0">
+            {error}
+          </FormHelperText>
+        )}
+        {helperText && !error && (
+          <FormHelperText className="mt-0 text-xs text-gray-500">
+            {helperText}
+          </FormHelperText>
+        )}
+        </div>
+    );
   }
-
   return (
     <div className={className}>
       <TextField
