@@ -1,6 +1,10 @@
+
 import { useState, useEffect, useRef } from "react";
+import { Box, TextField, Autocomplete } from "@mui/material";
 import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 import { GEOAPIFY_KEY } from "../config/env.js";
+import { Icon } from "@iconify/react";
+import { getIndustryIcon } from "../config/industryIcons";
 
 import "@geoapify/geocoder-autocomplete/styles/round-borders.css";
 
@@ -77,8 +81,11 @@ export default function ApplyPage() {
       // Listen for selection
       autocomplete.on("select", (location) => {
         if (location) {
-          console.log( location.properties.formatted)
-          setFormData((prev) => ({ ...prev, location: location.properties.formatted }));
+          console.log(location.properties.formatted);
+          setFormData((prev) => ({
+            ...prev,
+            location: location.properties.formatted,
+          }));
           console.log("Selected city:", location);
         } else {
           setFormData((prev) => ({ ...prev, city: "" }));
@@ -105,36 +112,102 @@ export default function ApplyPage() {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    console.log(formData);
   };
 
-<<<<<<< HEAD
-  // console.log(formData);
-
-
-=======
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === "checkbox" ? checked : value;
 
     setFormData((prev) => ({ ...prev, [name]: newValue }));
   };
-
-  console.log({ formData });
->>>>>>> 08278561ca44626dc13e2d027f64abaabd192c22
+  const industries = [
+    {id: 1, name: "Petróleo y gas" },
+   
+  ]
   return (
     <div>
       {/* City autocomplete selector */}
-      <form action="#" className="max-w-[600px] mx-auto w-[600px] space-y-3 p-5">
-        <FormField
-          name="legal_full_name"
-          label="Nombre legal completo"
-          type="text"
-          value={formData.legal_full_name}
-          onChange={handleChange}
-          required
-          className="col-span-2"
-        />
+      <form
+        action="#"
+        className="max-w-[600px] mx-auto w-[600px] space-y-3 p-5"
+      >
+        <div className="space-y-3">
+          <Autocomplete
+            id="industries-select-demo"
+            // sx={{ width: 300 }}
+            size="small"
+            options={industries}
+            autoHighlight
+            getOptionLabel={(option) => option.name}
+            renderOption={(props, option) => {
+              const { key, ...optionProps } = props;
+              return (
+                <Box
+                  key={key}
+                  component="li"
+                  sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                  {...optionProps}
+                >
+                  <Icon icon={getIndustryIcon(option.id)} width={24} style={{ marginRight: 8 }} />
+                  {option.name}
+                </Box>
+              );
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Industria"
+                slotProps={{
+                  htmlInput: {
+                    ...params.inputProps,
+                    autoComplete: "new-password", // disable autocomplete and autofill
+                  },
+                }}
+              />
+            )}
+          />
+
+          <FormField
+            name="legal_full_name"
+            label="Nombre legal completo"
+            type="text"
+            value={formData.legal_full_name}
+            onChange={handleChange}
+            required
+            className="col-span-2"
+          />
+
+          <FormField
+            name="email"
+            label="Correo Electrónico"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="col-span-2"
+          />
+
+          <FormField
+            name="password"
+            label="Contraseña"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            className="col-span-1"
+          />
+
+          <FormField
+            name="repeat_password"
+            label="Repetir Contraseña"
+            type="password"
+            value={formData.repeat_password}
+            onChange={handleChange}
+            required
+            className="col-span-1"
+          />
+        </div>
+
         <div style={{ marginBottom: "0.2rem" }}>
           <label
             style={{ display: "block", marginBottom: "0.1rem" }}
@@ -148,46 +221,6 @@ export default function ApplyPage() {
           ></div>
         </div>
 
-        <FormField
-          name="email"
-          label="Correo Electrónico"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="col-span-2"
-        />
-        
-        <FormField
-          name="password"
-          label="Contraseña"
-          type="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          className="col-span-1"
-        />
-        <FormField
-          name="repeat_password"
-          label="Repetir Contraseña"
-          type="password"
-          value={formData.repeat_password}
-          onChange={handleChange}
-          required
-          className="col-span-1"
-        />
-
-        <div style={{ marginBottom: "0.2rem" }} >
-          <label style={{ display: "block", marginBottom: "0.1rem" }} className="text-sm text-gray-600">
-            Localización de residencia
-          </label>
-          <div
-            ref={autocompleteContainerRef}
-            style={{ position: "relative" }}
-          ></div>
-        </div>
-
-        
         <FormField
           label="Años de experiencia"
           type="select"
@@ -215,6 +248,7 @@ export default function ApplyPage() {
           required
           className="col-span-1"
           options={[
+            { value: "none", label: "Ninguno" },
             { value: "begginner", label: "Básico" },
             { value: "intermediate", label: "Intermedio" },
             { value: "advanced", label: "Avanzado" },
@@ -225,7 +259,7 @@ export default function ApplyPage() {
           label="Página web (opcional)"
           placeholder="tu pagina web personal"
           type="text"
-          name="website"
+          name="website_url"
           value={formData.website}
           onChange={handleChange}
           className="col-span-2"
@@ -233,18 +267,21 @@ export default function ApplyPage() {
         <FormField
           label="LinkedIn (opcional)"
           type="text"
-          name="linkedin"
+          name="linkedin_url"
           value={formData.linkedin}
           onChange={handleChange}
           className="col-span-2"
           placeholder="La URL de tu perfíl de Linkedin"
         />
-<<<<<<< HEAD
-        
-     
 
-=======
->>>>>>> 08278561ca44626dc13e2d027f64abaabd192c22
+        <FormField
+          label="Ingresos mensuales deseados en USD ($)"
+          type="number"
+          name="desired_monthly_income"
+          value={formData.desired_monthly_income}
+          onChange={handleChange}
+          className="col-span-1"
+        />
       </form>
 
       {/* Reusable form 
