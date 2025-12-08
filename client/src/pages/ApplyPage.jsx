@@ -77,7 +77,8 @@ export default function ApplyPage() {
       // Listen for selection
       autocomplete.on("select", (location) => {
         if (location) {
-          setFormData((prev) => ({ ...prev, location: location.properties }));
+          console.log( location.properties.formatted)
+          setFormData((prev) => ({ ...prev, location: location.properties.formatted }));
           console.log("Selected city:", location);
         } else {
           setFormData((prev) => ({ ...prev, city: "" }));
@@ -107,10 +108,13 @@ export default function ApplyPage() {
     console.log(formData);
   };
 
+  // console.log(formData);
+
+
   return (
     <div>
       {/* City autocomplete selector */}
-      <form action="#" className="max-w-[600px] mx-auto w-[600px] space-y-3 ">
+      <form action="#" className="max-w-[600px] mx-auto w-[600px] space-y-3 p-5">
         <FormField
           name="legal_full_name"
           label="Nombre legal completo"
@@ -125,16 +129,7 @@ export default function ApplyPage() {
           required
           className="col-span-2"
         />
-        <div style={{ marginBottom: "0.2rem" }} >
-          <label style={{ display: "block", marginBottom: "0.1rem" }} className="text-sm text-gray-600">
-            Localización de residencia
-          </label>
-          <div
-            ref={autocompleteContainerRef}
-            style={{ position: "relative" }}
-          ></div>
-        </div>
-
+        
         <FormField
           name="email"
           label="Correo Electrónico"
@@ -146,7 +141,7 @@ export default function ApplyPage() {
           required
           className="col-span-2"
         />
-
+        
         <FormField
           name="password"
           label="Contraseña"
@@ -172,6 +167,18 @@ export default function ApplyPage() {
           required
           className="col-span-1"
         />
+
+        <div style={{ marginBottom: "0.2rem" }} >
+          <label style={{ display: "block", marginBottom: "0.1rem" }} className="text-sm text-gray-600">
+            Localización de residencia
+          </label>
+          <div
+            ref={autocompleteContainerRef}
+            style={{ position: "relative" }}
+          ></div>
+        </div>
+
+        
         <FormField
           label="Años de experiencia"
           type="select"
@@ -217,6 +224,8 @@ export default function ApplyPage() {
           className="col-span-2"
           placeholder="La URL de tu perfíl de Linkedin"
         />
+        
+     
 
       </form>
 
