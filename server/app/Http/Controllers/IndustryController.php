@@ -9,7 +9,7 @@ class IndustryController extends Controller
 {
     public function getIndustries()
     {
-        $industries = Industry::get();
+        $industries = Industry::with('areas')->get();
 
         return response()->json(['data' => $industries]);
     }
