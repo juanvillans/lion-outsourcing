@@ -19,21 +19,20 @@ export default function Home() {
             </span>
           </a>
 
-          <div className="flex gap-5 items-center">
+          <div className="flex gap-5 flex-nowrap  h-min items-center ">
             <FuturisticButton>
               <a href="/contratar">Contratar</a>
             </FuturisticButton>
-            <a href="/aplicar">Busco trabajo</a>
             <a href="/login">Iniciar Sesión</a>
             {/* <a href="/register" className="flex gap-2 items-center">    <Icon icon="solar:user-circle-outline" width="24" height="24" />  <span> Mi perfil</span></a> */}
           </div>
         </nav>
       </header>
-      <main className="mt-10 lg:mt-5 xl:pt-32 px-3 lg:px-32 overflow-hidden">
+      <main className="mt-10 lg:mt-5 xl:pt-20 px-3 lg:px-32 overflow-hidden">
         <h1 className="text-xl md:text-5xl max-w-[700px] font-semibold">
           Contrata a los expertos que necesitas para tu proyecto
         </h1>
-        <p className="max-w-[400px] mb-4 mt-1">
+        <p className="max-w-[440px] mb-4 mt-2">
           En Lion Outsourcing reunimos a los mejores talentos en el área de
           petróleo y gas [aquí va la lista de áreas] en Venezuela. ...
         </p>
@@ -46,9 +45,8 @@ export default function Home() {
         </div>
           {/* <img src={hero} alt="hero" className="absolute -right-24 bottom-0 " />
            */}
-           <div className="absolute -right-24 bottom-0 w-max pointer-events-none">
-            <HeroSVG />
-
+           <div className="absolute -bottom-14 -right-20 -max  pointer-events-none ">
+              <HeroSVG />
            </div>
       </main>
       <footer></footer>

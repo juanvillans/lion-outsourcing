@@ -158,9 +158,9 @@ export default function ActivateAccountPage() {
         />
       </div>
       {pathname == "/crear-contrasena" ? (
-        <title>Activar Cuenta - LabFalcón</title>
+        <title>Activar Cuenta - Lion PR Services</title>
       ) : (
-        <title>Restablecer Contraseña - LabFalcón</title>
+        <title>Restablecer Contraseña - Lion PR Services</title>
       )}
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">

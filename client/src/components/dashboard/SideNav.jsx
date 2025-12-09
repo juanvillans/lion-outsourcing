@@ -1,4 +1,4 @@
-import labFalconLogo from "../../assets/logo.webp";
+import logo from "../../assets/logo.png";
 import { useAuth } from "../../context/AuthContext";
 import { authAPI } from "../../services/api";
 import { useState } from "react";
@@ -53,13 +53,13 @@ export default function SideNav(props) {
       >
         <div className="w-32 relative duration-150 text-white md:w-40 flex flex-row justify-between items-end">
           <img
-            src={labFalconLogo}
+            src={logo}
             className={`${props.isSidebarOpen ? 'w-12 h-12' : 'w-10 h-8'} logo w-12 duration-150 `}
             alt="logo del sistema"
           />
           
             <p className={ props.isSidebarOpen ? "block duration-300  absolute -bottom-1 right-1 font-semibold self-end opacity-100" : "opacity-0 absolute"}>
-              LabFalcón
+              Lion PR Services
             </p>
         </div>
       </Link>

@@ -2,10 +2,11 @@ export default function HeroSVG() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="1421"
+      width="1200"
       height="676"
       viewBox="0 0 1421 676"
       fill="none"
+      className="max-w-[1200px]"
     >
       <script xmlns="" id="eppiocemhmnlbhjplcgkofciiegomcon" />
       <script xmlns="" />
@@ -1104,7 +1105,7 @@ export default function HeroSVG() {
         d="M1562 520.5C1562 668.788 1444.25 789 1299 789C1153.75 789 1036 668.788 1036 520.5C1036 372.212 1153.75 252 1299 252C1444.25 252 1562 372.212 1562 520.5Z"
         fill="url(#paint1_radial_1660_2)"
       />
-<g filter="url(#filter51_f_1660_2)">
+<g className="upAndDown2" filter="url(#filter51_f_1660_2)">
           <rect x="1067" y="313" width="5" height="513" fill="#27415A" />
         </g>
       <g className="rotate_harmer">

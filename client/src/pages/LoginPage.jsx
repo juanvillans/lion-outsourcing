@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useFeedback } from "../context/FeedbackContext";
 import { authAPI } from "../services/api";
-import labFalconLogo from "../assets/logo.webp";
+import logo from "../assets/logo.png";
 import oil from "../assets/oil.jpg";
 import secretariaLogo from "../assets/secretaria_logo.png";
 import { Icon } from "@iconify/react";
@@ -87,7 +87,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <title>Iniciar Sesión - LabFalcón</title>
+      <title>Iniciar Sesión - Lion PR Services</title>
       <div className="min-h-screen overflow-hidden relative  bg-gray-600 bg-cover bg-center">
         <img
           src={oil}
@@ -105,7 +105,7 @@ export default function LoginPage() {
         >
           <div className="mx-auto bg-color1 fadeInUp-delay-1 fadeInUp   backdrop-blur-none w-16 h-16 md:w-20 md:h-20 flex items-center justify-center aspect-square rounded-full p-2.5 md:p-4">
             <img
-              src={labFalconLogo}
+              src={logo}
               className="logo inline-block mx-auto  "
               alt="logo del sistema"
             />
@@ -198,7 +198,7 @@ export default function LoginPage() {
       </header>
       <footer className="flex gap-1 flex-col md:flex-row items-center px-10 justify-between text-dark text-sm z-40 w-full relative md:absolute bottom-0 text-center -100 py-1">
         <p className="text-xs">
-          &copy; {new Date().getFullYear()} LabFalcon. Todos los derechos
+          &copy; {new Date().getFullYear()} Lion PR Services. Todos los derechos
           reservados.
         </p>
         <a
