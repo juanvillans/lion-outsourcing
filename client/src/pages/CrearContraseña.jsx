@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { authAPI } from "../services/api";
 import { useFeedback } from "../context/FeedbackContext";
 import { Icon } from "@iconify/react";
-import logoBlue from "../assets/logoBlue.webp";
+import logo from "../assets/logo.webp";
 import secretariaLogo from "../assets/secretaria_logo.png";
 
 export default function ActivateAccountPage() {
@@ -148,7 +148,7 @@ export default function ActivateAccountPage() {
     <>
       <div className="flex gap-3 items-center justify-between py-3 md:absolute w-full px-10">
         <div className="flex gap-3 items-center">
-          <img src={logoBlue} className="w-10 md:w-16 h-max" alt=" logo" />
+          <img src={logo} className="w-10 md:w-16 h-max" alt=" logo" />
           <span className="text-2xl font-exo2 font-bold text-color1">LabFalcon</span>
         </div>
         <img

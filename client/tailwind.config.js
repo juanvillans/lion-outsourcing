@@ -14,6 +14,7 @@ export default {
       "color4": "#C9EBF2",
       "pink": "#ffa2a2",
       "black": "#000000",
+      "caribe": "#0E3F78",
       "dark": "#161616",
       "white": "#FFFFFF",
       "grayBlue": "#c7d2da",

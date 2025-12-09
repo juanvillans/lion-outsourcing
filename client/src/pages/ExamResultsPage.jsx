@@ -6,7 +6,7 @@ import { examinationTypesAPI } from "../services/api";
 import { useFeedback } from "../context/FeedbackContext";
 
 import SecretrariaLogo from "../assets/secretaria_logo.png";
-import logoBlue from "../assets/logoBlue.webp";
+import logo from "../assets/logo.webp";
 
 export default function ExamResultsPage() {
   const { token } = useParams();
@@ -20,7 +20,7 @@ export default function ExamResultsPage() {
     <div className="text-center mb-5">
       <div className="flex justify-center gap-4 items-center pt-4 py-4 mb-1">
         <img src={SecretrariaLogo} alt="" className="w-16" />
-        <img src={logoBlue} alt="" className="w-16 " />
+        <img src={logo} alt="" className="w-16 " />
       </div>
       <h1 className="text-lg md:text-2xl font-bold text-gray-800">Secretaria de Salud Falcón - Laboratorio</h1>
     </div>

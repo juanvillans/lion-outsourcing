@@ -366,3 +366,38 @@ td.MuiTableCell-root {
  width: 100% !important;
  padding: 20px 15px !important;
 }
+
+
+@keyframes pump {
+    0% {
+        /* Posición baja, rotado hacia abajo */
+        transform: rotate(-25deg); 
+    }
+    50% {
+        /* Posición alta, rotado hacia arriba */
+        transform: rotate(15deg); 
+    }
+    100% {
+        /* Regresa a la posición inicial para el ciclo */
+        transform: rotate(-25deg);
+    }
+}
+
+.rotate_harmer {
+    animation: pump 6s ease-in-out infinite alternate;
+    transform-origin: 67% 50%;
+}
+
+.upAndDown {
+  animation: upAndDown 3s ease-in-out infinite alternate;
+}
+@keyframes upAndDown {
+  0% {
+    transform: translateY(74px);
+  }
+
+
+  100% {
+    transform: translateY(-50px);
+  }
+}

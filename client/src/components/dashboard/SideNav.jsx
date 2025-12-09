@@ -1,4 +1,4 @@
-import labFalconLogo from "../../assets/logoBlue.webp";
+import labFalconLogo from "../../assets/logo.webp";
 import { useAuth } from "../../context/AuthContext";
 import { authAPI } from "../../services/api";
 import { useState } from "react";
