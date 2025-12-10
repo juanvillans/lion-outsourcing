@@ -46,8 +46,8 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: "LabFalcón - Sistema de Laboratorio",
-        short_name: "LabFalcón",
+        name: "Lion PR Services",
+        short_name: "Lion Services",
         description: "Sistema de gestión de laboratorio médico",
         theme_color: "#011140",
         background_color: "#ffffff",

@@ -99,7 +99,7 @@ const FormField = React.memo(function FormField({
                 id={option.value}
                 {...props}
               />
-              <label htmlFor={option.value} className="text-sm cursor-pointer hover:text-gray-900 font-medium text-gray-700 ">
+              <label htmlFor={option.value} className="text-sm cursor-pointer hover:text-gray-900  text-gray-700 ">
                 {option.label || option.value}
               </label>
             </div>

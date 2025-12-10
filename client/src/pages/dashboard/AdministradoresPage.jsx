@@ -84,7 +84,7 @@ export default function AdministradoresPage() {
       );  
     }
   };
-
+  
   const columns = useMemo( () => [
     {
       accessorKey: "id",
