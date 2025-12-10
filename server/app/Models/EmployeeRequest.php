@@ -10,12 +10,11 @@ class EmployeeRequest extends Model
         'email',
         'fullname',
         'password',
-        'confirm_password',
         'phone_number',
         'status',
         'industry_id',
         'area_id',
-        'profession',
+        'academic_title',
         'english_level',
         'linkedin_url',
         'website_url',
@@ -26,6 +25,8 @@ class EmployeeRequest extends Model
         'skills',
         'new_skills'
     ];
+
+    protected $hidden = ['password'];
 
     protected $casts = [
         'skills' => 'array',
