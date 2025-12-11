@@ -51,6 +51,16 @@ class EmployeeRequestService
         return $employeeRequest;
     }
 
+    public function updateStatus(EmployeeRequest $employeeRequest, array $data)
+    {
+
+        $employeeRequest->status = $data['status'];
+
+        $employeeRequest->save();
+
+        return $employeeRequest;
+    }
+
     private function applyFilters($query, array $params): void
     {
         if (!empty($params['search'])) {

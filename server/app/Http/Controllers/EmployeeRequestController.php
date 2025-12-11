@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
+use App\Services\EmailService;
+use App\Models\EmployeeRequest;
 use Illuminate\Support\Facades\Log;
 use App\Services\EmployeeRequestService;
 use App\Http\Requests\StoreEmployeeRequest;
@@ -66,7 +68,13 @@ class EmployeeRequestController extends Controller
     public function store(StoreEmployeeRequest $request)
     {
         try {
-            $this->employeeRequestService->store($request);
+
+            $employeeRequest = $this->employeeRequestService->store($request);
+
+            $employeeRequest->load(['industry', 'area']);
+
+            $mailjetService = new EmailService;
+            $mailjetService->sendEmailToNotifyAdminForNewEmployeeRequest($employeeRequest);
 
             return response()->json([
                 'success' => true,
@@ -82,5 +90,21 @@ class EmployeeRequestController extends Controller
                 'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
+    }
+
+    public function updateStatus(Request $request, EmployeeRequest $employeeRequest)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:pending,accepted,rejected',
+        ]);
+
+        $updated = $this->employeeRequestService->updateStatus($employeeRequest, $validated);
+
+
+        return response()->json([
+            'success' => true,
+            'data' => $updated,
+            'message' => 'Estado actualizado exitosamente'
+        ]);
     }
 }

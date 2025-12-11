@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('linkedin_url')->nullable();
             $table->string('website_url')->nullable();
             $table->string('localization');
+            $table->string('years_of_experience');
             $table->integer('desired_monthly_income');
             $table->string('cv');
             $table->string('photo')->nullable();
