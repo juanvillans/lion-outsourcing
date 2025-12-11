@@ -79,38 +79,45 @@ export const adminAPI = {
   getPermissions: () => api.get("/admin/get_permissions"),
 };
 
-export const examinationTypesAPI = {
-  getExaminationTypes: () => api.get("/examination-types"),
+export const industriesAPI = {
+  getIndustries: () => api.get("/get_industries"),
 };
 
-export const originsAPI = {
-  getOrigins: () => api.get("/origins"),
+export const skillsAPI = {
+  searchSkills: (params) => api.get("/search_skills?search", { params }),
 };
 
-export const examsAPI = {
-  createExam: (examData) => api.post("/exams", examData),
-  getExams: (params) => api.get("/exams", { params }),
-  getExamById: (id) => api.get(`/exams/${id}`),
-  updateExam: (id, examData) => api.put(`/exams/${id}`, examData),
-  deleteExam: (id) => api.delete(`/exams/${id}`),
-  validateExam: (id) => api.put("/exams/validate-exam", { id }),
-  getChartData: (period, params) => {
-    return api.get(`/exams/chart-data/${period}`, { params });
-  },
+export const applyAPI = {
+  submitApplication: (data) => api.post("/generate_request", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  }),
 };
+// export const examsAPI = {
+//   createExam: (examData) => api.post("/exams", examData),
+//   getExams: (params) => api.get("/exams", { params }),
+//   getExamById: (id) => api.get(`/exams/${id}`),
+//   updateExam: (id, examData) => api.put(`/exams/${id}`, examData),
+//   deleteExam: (id) => api.delete(`/exams/${id}`),
+//   validateExam: (id) => api.put("/exams/validate-exam", { id }),
+//   getChartData: (period, params) => {
+//     return api.get(`/exams/chart-data/${period}`, { params });
+//   },
+// };
 
 // Public API for exam results (no authentication required)
-export const examResultsAPI = {
-  getByToken: (token) => axios.get(`${API_BASE_URL}/results/${token}`),
-  downloadPDF: (token) =>
-    axios.get(`${API_BASE_URL}/results/${token}/pdf`, {
-      responseType: "blob",
-    }),
-  generateToken: (data) => api.post("/exams/generate-results-token", data),
-  sendExamResults: (data) => api.post("/exams/send-results", data),
-  updateMessageStatus: (id, status) =>
-    api.put(`/exams/update-message-status/${id}`, { status }),
-};
+// export const examResultsAPI = {
+//   getByToken: (token) => axios.get(`${API_BASE_URL}/results/${token}`),
+//   downloadPDF: (token) =>
+//     axios.get(`${API_BASE_URL}/results/${token}/pdf`, {
+//       responseType: "blob",
+//     }),
+//   generateToken: (data) => api.post("/exams/generate-results-token", data),
+//   sendExamResults: (data) => api.post("/exams/send-results", data),
+//   updateMessageStatus: (id, status) =>
+//     api.put(`/exams/update-message-status/${id}`, { status }),
+// };
 
 // Export the api instance for direct use if needed
 export default api;

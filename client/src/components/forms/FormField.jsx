@@ -62,7 +62,7 @@ const FormField = React.memo(function FormField({
     return (
       <div className={className}>
         <FormControl fullWidth size="small">
-          <InputLabel id="demo-simple-select-label ">{label}</InputLabel>
+          <InputLabel id="demo-simple-select-label ">{label} </InputLabel>
           <Select
             name={name}
             value={value || ""}
