@@ -23,7 +23,8 @@ class EmployeeRequest extends Model
         'cv',
         'photo',
         'skills',
-        'new_skills'
+        'new_skills',
+        'years_of_experience'
     ];
 
     protected $hidden = ['password'];

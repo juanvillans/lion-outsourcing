@@ -30,5 +30,6 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::delete('admins/{admin}', [UserController::class, 'destroyAdmin']);
 
     // Manejar solicitudes
-    Route::resource('employee_requests', EmployeeRequestController::class)->except(['store', 'create']);
+    Route::resource('employee_requests', EmployeeRequestController::class)->except(['store', 'create', 'update', 'edit']);
+    Route::put('employee_requests/{employeeRequest}/status', [EmployeeRequestController::class, 'updateStatus']);
 });
