@@ -1,7 +1,7 @@
 // Industry ID to Iconify icon name mapping
 export const INDUSTRY_ICONS = {
   1: "mdi:oil", // Petróleo y gas
-  2: "mdi:hospital-building", // Healthcare
+  2: "qlementine-icons:plus-16", // Servicios generales
   3: "mdi:factory", // Manufacturing
   4: "mdi:laptop", // Technology
   5: "mdi:bank", // Finance/Banking

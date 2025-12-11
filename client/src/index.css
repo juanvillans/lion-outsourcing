@@ -416,3 +416,32 @@ td.MuiTableCell-root {
     transform: translateY(38px);
   }
 }
+
+/* 🎨 1. Style the Track (The Background) */
+
+.custom-progress {
+  /* You can set overall dimensions here */
+  height: 7px; /* Example height */
+  background-color: #f0f0f0; /* Default background color for browsers that don't support custom track style */
+  border-radius: 10px;
+}
+
+/* 💻 For Google Chrome, Safari, and Edge (Webkit Browsers) */
+.custom-progress::-webkit-progress-bar {
+  background-color: #e0e0e0; /* Light gray track */
+  border-radius: 10px;
+}
+
+/* 🦊 2. Style the Bar/Value (The Filled Part) */
+
+/* 💻 For Google Chrome, Safari, and Edge (Webkit Browsers) */
+.custom-progress::-webkit-progress-value {
+  background-color: #145096; /* Your desired color, e.g., Blue */
+  border-radius: 10px;
+}
+
+/* 🦊 For Firefox (Mozilla Browsers) */
+.custom-progress::-moz-progress-bar {
+  background-color: #145096; /* Your desired color, e.g., Blue */
+  border-radius: 10px;
+}
