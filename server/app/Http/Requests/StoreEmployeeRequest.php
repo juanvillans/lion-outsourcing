@@ -39,7 +39,6 @@ class StoreEmployeeRequest extends FormRequest
             'cv' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
             'skills' => ['required', 'array'],
-            'skills.*' => ['exists:skills,id'],
             'new_skills' => ['nullable', 'array'],
             'new_skills.*' => ['string', 'max:100'],
             'years_of_experience' => ['string', 'required']
@@ -81,7 +80,6 @@ class StoreEmployeeRequest extends FormRequest
             'photo.max' => 'La foto no debe superar los 5MB.',
             'skills.required' => 'Debe seleccionar al menos una habilidad.',
             'skills.array' => 'Las habilidades deben ser un array.',
-            'skills.*.exists' => 'Una o más habilidades seleccionadas no son válidas.',
             'new_skills.array' => 'Las nuevas habilidades deben ser un array.',
             'new_skills.*.string' => 'Cada nueva habilidad debe ser texto.',
             'new_skills.*.max' => 'Cada nueva habilidad no debe superar los 100 caracteres.',
