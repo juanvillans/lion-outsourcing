@@ -29,8 +29,8 @@ return new class extends Migration
             $table->integer('desired_monthly_income');
             $table->string('cv');
             $table->string('photo')->nullable();
-            $table->json('skills');
-            $table->json('new_skills');
+            $table->json('skills')->nullable();
+            $table->json('new_skills')->nullable();
             $table->timestamps();
         });
     }
