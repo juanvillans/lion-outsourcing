@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\CreateAdminPasswordEmail;
 use App\Mail\NotifyAdminNewEmployeeRequestEmail;
 use App\Mail\NotifyEmployeeAcceptedEmail;
+use App\Mail\NotifyEmployeeRejectedEmail;
 
 class EmailService
 {
@@ -76,14 +77,34 @@ class EmailService
             return 0;
         } catch (Exception $e) {
 
-            Log::error('Error enviando email de notificacion de solicitud de empleado a usuarios admins', [
+            Log::error('Error enviando email de notificacion de solicitud aceptada', [
                 'employee_request' => $employeeRequest->id,
-                'email' => ['adminEmails' => $admins],
+                'email' => $employeeRequest->email,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            throw new Exception("Error enviando email de creación de contraseña: {$e->getMessage()}");
+            throw new Exception("Error enviando email de aceptacion de la solicitud: {$e->getMessage()}");
+        }
+    }
+
+    public function sendEmailToNotifyRequestDeleted($employeeRequest)
+    {
+        try {
+
+            Mail::to($employeeRequest->email)->send(new NotifyEmployeeRejectedEmail($employeeRequest));
+
+            return 0;
+        } catch (Exception $e) {
+
+            Log::error('Error enviando email de notificacion de solicitud de empleado a usuarios admins', [
+                'employee_request' => $employeeRequest->id,
+                'email' => $employeeRequest->email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            throw new Exception("Error enviando email de rechazo de solicitud: {$e->getMessage()}");
         }
     }
 }

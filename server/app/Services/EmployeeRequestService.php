@@ -63,7 +63,7 @@ class EmployeeRequestService
         if ($employeeRequest->status == EmployeeRequestStatusEnum::Accepted->value)
             $this->handleAcceptedEmployeeRequest($employeeRequest);
         else
-            $this->handleRejectedEmployeeRequest($employeeRequest);
+            $employeeRequest = $this->handleRejectedEmployeeRequest($employeeRequest);
 
         return $employeeRequest;
     }
@@ -84,7 +84,21 @@ class EmployeeRequestService
         $mailjetService->sendEmailToNotifyNewEmployee($employeeRequest);
     }
 
-    private function handleRejectedEmployeeRequest(EmployeeRequest $employeeRequest) {}
+    private function handleRejectedEmployeeRequest(EmployeeRequest $employeeRequest)
+    {
+
+        Storage::disk('private')->delete($employeeRequest->cv);
+
+        if (!is_null($employeeRequest->photo))
+            Storage::disk('public')->delete($employeeRequest->photo);
+
+        $mailjetService = new EmailService;
+        $mailjetService->sendEmailToNotifyRequestDeleted($employeeRequest);
+
+        $employeeRequest->delete();
+
+        return null;
+    }
 
     private function applyFilters($query, array $params): void
     {
