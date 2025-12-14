@@ -25,8 +25,6 @@ class StoreEmployeeRequest extends FormRequest
         return [
             'email' => ['required', 'email', 'max:255', 'unique:employee_requests,email'],
             'fullname' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'password_confirmation' => ['required', 'string', 'min:8'],
             'phone_number' => ['required', 'string', 'max:20'],
             'industry_id' => ['required', 'exists:industries,id'],
             'area_id' => ['required', 'exists:areas,id'],
@@ -57,9 +55,6 @@ class StoreEmployeeRequest extends FormRequest
             'email.email' => 'Debe ser un correo electrónico válido.',
             'email.unique' => 'Este correo electrónico ya está registrado.',
             'fullname.required' => 'El nombre completo es obligatorio.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
             'phone_number.required' => 'El número de teléfono es obligatorio.',
             'industry_id.required' => 'La industria es obligatoria.',
             'industry_id.exists' => 'La industria seleccionada no es válida.',
@@ -98,7 +93,6 @@ class StoreEmployeeRequest extends FormRequest
         return [
             'email' => 'correo electrónico',
             'fullname' => 'nombre completo',
-            'password' => 'contraseña',
             'phone_number' => 'número de teléfono',
             'industry_id' => 'industria',
             'area_id' => 'área',

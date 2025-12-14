@@ -16,7 +16,9 @@ Route::post('set-password', [UserController::class, 'setPassword']);
 
 Route::get('get_industries', [IndustryController::class, 'getIndustries']);
 Route::get('search_skills', [SkillController::class, 'searchSkills']);
+Route::post('check_email', [EmployeeRequestController::class, 'checkEmail'])->middleware('throttle:10,1');
 Route::post('generate_request', [EmployeeRequestController::class, 'store']);
+
 
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
@@ -31,5 +33,9 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
     // Manejar solicitudes
     Route::get('employee_requests', [EmployeeRequestController::class, 'index']);
+    Route::get('employee_request/detail/{employeeRequest}', [EmployeeRequestController::class, 'show']);
     Route::put('employee_requests/{employeeRequest}/status', [EmployeeRequestController::class, 'updateStatus']);
+
+    Route::get('employee_requests/{employeeRequest}/cv/view', [EmployeeRequestController::class, 'viewCv'])->name('employee_requests.cv.view');
+    Route::get('employee_requests/{employeeRequest}/cv/download', [EmployeeRequestController::class, 'downloadCv'])->name('employee_requests.cv.download');
 });

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employee_requests', function (Blueprint $table) {
+        Schema::create('employees', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('employee_request_id');
             $table->string('email');
             $table->string('fullname');
             $table->string('phone_number');
-            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->foreignId('industry_id');
             $table->foreignId('area_id');
             $table->string('academic_title')->nullable();
@@ -39,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('employee_requests');
+        Schema::dropIfExists('employees');
     }
 };

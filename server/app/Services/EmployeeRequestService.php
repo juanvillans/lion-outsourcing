@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
 use App\Models\EmployeeRequest;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;
+use App\Enums\EmployeeRequestStatusEnum;
+use Intervention\Image\Drivers\Gd\Driver;
 use App\Http\Requests\StoreEmployeeRequest;
 
 class EmployeeRequestService
@@ -44,8 +46,6 @@ class EmployeeRequestService
 
         $this->handleFiles($validated, $request);
 
-        $validated['password'] = Hash::make($validated['password']);
-
         $employeeRequest = EmployeeRequest::create($validated);
 
         return $employeeRequest;
@@ -58,8 +58,33 @@ class EmployeeRequestService
 
         $employeeRequest->save();
 
+        Log::info('que paso', [$employeeRequest]);
+
+        if ($employeeRequest->status == EmployeeRequestStatusEnum::Accepted->value)
+            $this->handleAcceptedEmployeeRequest($employeeRequest);
+        else
+            $this->handleRejectedEmployeeRequest($employeeRequest);
+
         return $employeeRequest;
     }
+
+    private function handleAcceptedEmployeeRequest(EmployeeRequest $employeeRequest)
+    {
+
+        $employeeService = new EmployeeService;
+
+        $employee = $employeeService->storeFromRequest($employeeRequest);
+
+        $employeeRequest->cv = $employee->cv;
+        $employeeRequest->photo = $employee->photo;
+
+        Log::info("Archivos trasladados exitosamente", ['EmployeeRequestID' => $employeeRequest->id]);
+
+        $mailjetService = new EmailService;
+        $mailjetService->sendEmailToNotifyNewEmployee($employeeRequest);
+    }
+
+    private function handleRejectedEmployeeRequest(EmployeeRequest $employeeRequest) {}
 
     private function applyFilters($query, array $params): void
     {
@@ -177,7 +202,7 @@ class EmployeeRequestService
 
         // Guardar PDF/DOC sin tocar
         if (in_array($originalExtension, ['pdf', 'doc', 'docx'])) {
-            $file->storeAs('employee_requests/cvs', $fileName, 'public');
+            $file->storeAs('employee_requests/cvs', $fileName, 'private');
             return $filePath;
         }
 
@@ -261,5 +286,21 @@ class EmployeeRequestService
         }
 
         return Storage::disk('public')->url($path);
+    }
+
+    public function getCvUrls(EmployeeRequest $employeeRequest)
+    {
+        if (!$employeeRequest->cv) {
+            return null;
+        }
+
+        if (!auth()->check()) {
+            return null;
+        }
+
+        return [
+            'view' => route('employee_requests.cv.view', $employeeRequest),
+            'download' => route('employee_requests.cv.download', $employeeRequest),
+        ];
     }
 }

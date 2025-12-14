@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CreateAdminPasswordEmail;
 use App\Mail\NotifyAdminNewEmployeeRequestEmail;
+use App\Mail\NotifyEmployeeAcceptedEmail;
 
 class EmailService
 {
@@ -51,6 +52,26 @@ class EmailService
             }
 
             Mail::to($admins)->send(new NotifyAdminNewEmployeeRequestEmail($employeeRequest));
+
+            return 0;
+        } catch (Exception $e) {
+
+            Log::error('Error enviando email de notificacion de solicitud de empleado a usuarios admins', [
+                'employee_request' => $employeeRequest->id,
+                'email' => ['adminEmails' => $admins],
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            throw new Exception("Error enviando email de creación de contraseña: {$e->getMessage()}");
+        }
+    }
+
+    public function sendEmailToNotifyNewEmployee($employeeRequest)
+    {
+        try {
+
+            Mail::to($employeeRequest->email)->send(new NotifyEmployeeAcceptedEmail($employeeRequest));
 
             return 0;
         } catch (Exception $e) {

@@ -4,13 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EmployeeRequest extends Model
+class Employee extends Model
 {
     protected $fillable = [
         'email',
         'fullname',
         'phone_number',
-        'status',
         'industry_id',
         'area_id',
         'academic_title',
@@ -23,7 +22,8 @@ class EmployeeRequest extends Model
         'photo',
         'skills',
         'new_skills',
-        'years_of_experience'
+        'years_of_experience',
+        'employee_request_id'
     ];
 
 
