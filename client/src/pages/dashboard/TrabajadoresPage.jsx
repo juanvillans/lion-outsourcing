@@ -71,16 +71,10 @@ export default function ExamenesPage() {
 
   // Form configuration for ReusableForm
   const patientFormFields = useMemo(() => [
-    {
-      name: "ci",
-      label: "Cédula de Identidad",
-      type: "text",
-      required: true,
-      className: "col-span-1",
-    },
+
     {
       name: "first_name",
-      label: "Nombre",
+      label: "Nombre completo",
       type: "text",
       required: true,
       className: "col-span-1",
@@ -231,43 +225,47 @@ export default function ExamenesPage() {
         enableSorting: true,
       },
       {
-        accessorKey: "patient.first_name",
-        header: "Nombre",
-        size: 110,
+        accessorKey: "fullname",
+        header: "Nombre completo",
+        size: 110, 
         filterFn: "includesString",
         enableColumnFilter: true,
         enableSorting: true,
       },
       {
-        accessorKey: "patient.last_name",
-        header: "Apellido",
+        accessorKey: "industtry_id",
+        header: "Industria",
         size: 120,
         filterFn: "includesString",
         enableColumnFilter: true,
         enableSorting: true,
       },
       {
-        accessorKey: "age",
-        header: "Edad",
+        accessorKey: "area_id",
+        header: "Especialidad",
         size: 83,
         enableColumnFilter: false,
         enableSorting: true,
       },
       {
-        accessorKey: "patient.sex",
-        header: "Sexo",
-        size: 100,
-        filterFn: "includesString",
-        enableColumnFilter: true,
-        enableSorting: true,
+        accessorKey: "email",
+        header: "Correo Electrónico",
+        size: 200,
       },
       {
-        accessorKey: "patient.ci",
-        header: "C.I",
+        accessorKey: "phone_number",
+        header: "Teléfono",
         size: 100,
-        filterFn: "includesString",
-        enableColumnFilter: true,
-        enableSorting: true,
+      },
+      {
+        accessorKey: "localization",
+        header: "Ubicación",
+        size: 100,
+      },
+      {
+        accessorKey: "academic_title",
+        header: "Título/Grado acádemico",
+        size: 100,
       },
 
       {
@@ -492,8 +490,8 @@ export default function ExamenesPage() {
           }, {})
         ),
       });
-      setData(res.data.exams);
-      setRowCount(res.data.totalCount);
+      setData(res.data);
+      setRowCount(res.meta.total);
     } catch (e) {
       console.error("Failed to fetch data", e);
     }
