@@ -39,7 +39,7 @@ export default function Home() {
 
         <div className="flex flex-col md:flex-row  items-center gap-3 md:gap-10">
           <FuturisticButton>Contratar</FuturisticButton>
-          <a href="/aplicar" className="bg-gray-100 rounded-xl px-10 py-3">
+          <a href="/aplicar" className="bg-gray-100 rounded-xl px-10 py-3 hover:bg-gray-200">
             Busco trabajo
           </a>
         </div>

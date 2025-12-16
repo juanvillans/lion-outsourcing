@@ -55,7 +55,7 @@ api.interceptors.response.use(
 // Auth API endpoints
 export const authAPI = {
   login: (credentials) => api.post("/login", credentials),
-  logout: () => api.post("/logout"),
+  logout: () => api.post("/admin/logout"),
   forgotPassword: (email) => api.post("/forgot-password", { email }),
   resetPassword: (token, password) =>
     api.post("/reset-password", { token, password }),
@@ -87,12 +87,14 @@ export const skillsAPI = {
   searchSkills: (params) => api.get("/search_skills?search", { params }),
 };
 
-export const applyAPI = {
+export const workesrAPI = {
   submitApplication: (data) => api.post("/generate_request", data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   }),
+  getEmployeeRequests: (params) => api.get("/admin/employee_requests", { params }),
+  getEmployeeRequestById: (id) => api.get(`/employee_request/detail/${id}`),
 };
 // export const examsAPI = {
 //   createExam: (examData) => api.post("/exams", examData),

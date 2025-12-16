@@ -11,6 +11,7 @@ import { lazy, Suspense } from 'react';
 // Lazy load heavy components
 import Home from './pages/Home';
 import AdministradoresPage from './pages/dashboard/AdministradoresPage';
+import TrabajadoresPage from './pages/dashboard/TrabajadoresPage';
 import CrearContraseña from './pages/CrearContraseña';
 
 const PageLoader = () => (
@@ -50,8 +51,16 @@ function App() {
               <Route 
                 path="administradores" 
                 element={
-                  <PermissionGate requiredPermission="allow_handle_users">
+                  <PermissionGate requiredPermission="allow_admins">
                     <AdministradoresPage />
+                  </PermissionGate>
+                } 
+              />
+              <Route 
+                path="trabajadores" 
+                element={
+                  <PermissionGate requiredPermission="allow_talents">
+                    <TrabajadoresPage />
                   </PermissionGate>
                 } 
               />

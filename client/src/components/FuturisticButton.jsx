@@ -1,6 +1,7 @@
-export default function FuturisticButton({ children, onClick }) {
+export default function FuturisticButton({ children, onClick, ...props }) {
+  console.log({props});
   return (
-    <button type="button" className="button" onClick={onClick}>
+    <button type={props.type || "button"} className="button" onClick={onClick}>
       {children}
     </button>
   );

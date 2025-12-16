@@ -103,19 +103,17 @@ export default function LoginPage() {
             WebkitBackdropFilter: "blur(10px)",
           }}
         >
-          <div className="mx-auto bg-color1 fadeInUp-delay-1 fadeInUp   backdrop-blur-none w-16 h-16 md:w-20 md:h-20 flex items-center justify-center aspect-square rounded-full p-2.5 md:p-4">
+          <div className="mx-auto bg-white fadeInUp-delay-1 fadeInUp   backdrop-blur-none w-16 h-16 md:w-20 md:h-20 flex items-center justify-center aspect-square rounded-full p-2.5 md:p-4">
             <img
               src={logo}
-              className="logo inline-block mx-auto  "
+              className="logo inline-block mx-auto rounded-full "
               alt="logo del sistema"
             />
           </div>
           <h1 className="fadeInUp  fadeInUp-delay-0-5 text-lg md:text-2xl  text-black font-bold  mt-4 text-center ">
-            BIENVENIDO A LION
+            BIENVENIDO A LION PR SERVICES
           </h1>
-          <p className="fadeInUp fadeInUp-delay-0-5  text-dark text-xs md:text-md text-center">
-            Sistema de Laboratorio de la Secretaria de Salud de Falcón
-          </p>
+      
 
           <form onSubmit={handleSubmit} className="fadeInUp ">
             <div className="mb-4 mt-4 md:mt-10 ">
@@ -184,16 +182,7 @@ export default function LoginPage() {
         </div>
       </div>
       <header className="flex gap-1 md:gap-4 flex-col md:flex-row items-center px-10 text-color1 text-sm z-40 w-full relative md:absolute  top-0 text-center -100 py-2 lg:py-5">
-        <img
-          src={secretariaLogo}
-          alt="secretariaLogo"
-          className="w-12 h-12  aspect-square  "
-        />
-        <img
-          src={cintilloCorto}
-          alt=""
-          className="max-w-[240px] h-min rounded-xl "
-        />
+       
 
       </header>
       <footer className="flex gap-1 flex-col md:flex-row items-center px-10 justify-between text-dark text-sm z-40 w-full relative md:absolute bottom-0 text-center -100 py-1">
