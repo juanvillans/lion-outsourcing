@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Services\EmployeeService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class EmployeeController extends Controller
@@ -64,21 +65,9 @@ class EmployeeController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+
+
 
     /**
      * Display the specified resource.
@@ -88,27 +77,25 @@ class EmployeeController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Employee $employee)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Employee $employee)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Employee $employee)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $this->employeeService->destroy($employee);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'data' => null,
+                'message' => 'Empleado eliminado exitosamente'
+            ]);
+        } catch (Exception $e) {
+        }
     }
 }

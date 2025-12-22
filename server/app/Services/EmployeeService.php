@@ -16,6 +16,38 @@ class EmployeeService
         return Employee::paginate();
     }
 
+    public function destroy(Employee $employee)
+    {
+
+        $this->deleteEmployeeFiles($employee);
+        $employee->delete(); // Se ejecuta un observer para eliminar la solicitud del empleado
+
+        return 0;
+    }
+
+
+
+    private function deleteEmployeeFiles(Employee $employee): void
+    {
+        try {
+            if ($employee->cv && Storage::disk('private')->exists($employee->cv)) {
+                Storage::disk('private')->delete($employee->cv);
+                Log::info('CV del empleado eliminado', ['path' => $employee->cv]);
+            }
+
+            if ($employee->photo && Storage::disk('public')->exists($employee->photo)) {
+                Storage::disk('public')->delete($employee->photo);
+                Log::info('Foto del empleado eliminada', ['path' => $employee->photo]);
+            }
+        } catch (\Exception $e) {
+            Log::warning('Error al eliminar archivos del empleado, continuando...', [
+                'employee_id' => $employee->id,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
     public function storeFromRequest(EmployeeRequest $employeeRequest)
     {
         try {
@@ -99,9 +131,6 @@ class EmployeeService
         return $newFullPath;
     }
 
-    /**
-     * Método para archivos privados (si los CVs están en private)
-     */
     private function movePrivateFileAndUpdatePath(string $oldFullPath, string $newBaseFolder): string
     {
         $oldFilename = basename($oldFullPath);
