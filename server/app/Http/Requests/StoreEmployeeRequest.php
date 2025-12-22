@@ -38,7 +38,6 @@ class StoreEmployeeRequest extends FormRequest
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
             'skills' => ['required', 'array'],
             'new_skills' => ['nullable', 'array'],
-            'new_skills.*' => ['string', 'max:100'],
             'years_of_experience' => ['string', 'required']
         ];
     }
@@ -76,7 +75,6 @@ class StoreEmployeeRequest extends FormRequest
             'skills.required' => 'Debe seleccionar al menos una habilidad.',
             'skills.array' => 'Las habilidades deben ser un array.',
             'new_skills.array' => 'Las nuevas habilidades deben ser un array.',
-            'new_skills.*.string' => 'Cada nueva habilidad debe ser texto.',
             'new_skills.*.max' => 'Cada nueva habilidad no debe superar los 100 caracteres.',
             'years_of_experience.required' => 'Debe seleccionar al menos un intervalo de experiencia.',
 
