@@ -28,6 +28,8 @@ class EmployeeRequestService
 
         $query = EmployeeRequest::query();
 
+        $query->whereNot('status', EmployeeRequestStatusEnum::Accepted->value);
+
         $this->applyFilters($query, $params);
 
         $this->applySorting($query, $params);

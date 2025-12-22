@@ -30,7 +30,7 @@ class EmployeeRequestController extends Controller
                 'page' => 'nullable|integer|min:1',
                 'per_page' => 'nullable|integer|min:1|max:100',
                 'search' => 'nullable|string|max:255',
-                'status' => 'nullable|in:pending,accepted,rejected',
+                'status' => 'nullable|in:pending,rejected',
                 'industry_id' => 'nullable|exists:industries,id',
                 'area_id' => 'nullable|exists:areas,id',
                 'english_level' => 'nullable|in:none,beginner,intermediate,advanced',
