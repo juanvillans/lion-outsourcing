@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeRequestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,4 +39,6 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
     Route::get('employee_requests/{employeeRequest}/cv/view', [EmployeeRequestController::class, 'viewCv'])->name('employee_requests.cv.view');
     Route::get('employee_requests/{employeeRequest}/cv/download', [EmployeeRequestController::class, 'downloadCv'])->name('employee_requests.cv.download');
+
+    Route::resource('employees', EmployeeController::class)->except(['create', 'store', 'edit']);
 });

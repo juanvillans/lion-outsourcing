@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Storage;
 class EmployeeService
 {
 
+    public function getAll()
+    {
+        return Employee::paginate();
+    }
+
     public function storeFromRequest(EmployeeRequest $employeeRequest)
     {
         try {
