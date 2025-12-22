@@ -14,16 +14,16 @@ const links = [
     icon: "hugeicons:home-09",
   },
   {
-    permission: "allow_handle_exams",
-    name: "Exámenes",
-    href: "/dashboard/examenes",
-    icon: "hugeicons:labs",
+    permission: true,
+    name: "Trabajadores",
+    href: "/dashboard/trabajadores",
+    icon: "mdi:worker",
   },
   {
-    permission: "allow_handle_users",
+    permission: "allow_admins",
     name: "Administradores",
     href: "/dashboard/administradores",
-    icon: "solar:user-circle-outline",
+    icon: "clarity:administrator-line",
   },
 ];
 
@@ -36,31 +36,44 @@ export default function SideNav(props) {
     } catch (error) {
       console.error("Failed to logout", error);
     }
-  }
+  };
 
   const { user } = useAuth();
-
+  console.log(user)
   return (
     <nav
       className="flex w-full bg-color1 h-full flex-col px-3 pr-1 py-1 md:py-4 md:px-4"
       onMouseEnter={() => props.handleSidebarToggle()}
       onMouseLeave={() => props.handleSidebarToggle()}
     >
-
       <Link
-        className={`duration-150 hidden  mb-4 font-exo2 md:flex h-20 items-end justify-end rounded-md bg-white bg-opacity-5   md:h-28 ${props.isSidebarOpen ? 'p-4' : 'p-1'}`}
+        className={`duration-150 hidden  mb-4 font-exo2 md:flex h-20 items-end justify-end rounded-md bg-white bg-opacity-5   md:h-28 ${
+          props.isSidebarOpen ? "p-4" : "p-1"
+        }`}
         href="/"
       >
         <div className="w-32 relative duration-150 text-white md:w-40 flex flex-row justify-between items-end">
           <img
             src={logo}
-            className={`${props.isSidebarOpen ? 'w-12 h-12' : 'w-10 h-8'} logo w-12 duration-150 `}
+            className={`${
+              props.isSidebarOpen ? "w-12 h-12" : "w-10 h-8"
+            } rounded-full logo w-12 duration-150 `}
             alt="logo del sistema"
           />
-          
-            <p className={ props.isSidebarOpen ? "block duration-300  absolute -bottom-1 right-1 font-semibold self-end opacity-100" : "opacity-0 absolute"}>
-              Lion PR Services
-            </p>
+
+          <p
+            className={
+              props.isSidebarOpen
+                ? "block duration-300  absolute -bottom-1 right-1 font-semibold self-end opacity-100"
+                : "opacity-0 absolute"
+            }
+          >
+            <span className="font-semibold text-xl text-al leading-4 text-center">
+              LION <span className="text-color3">PR</span>
+              <br />
+              services
+            </span>
+          </p>
         </div>
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
@@ -80,11 +93,21 @@ export default function SideNav(props) {
                 }
               >
                 <div className="grid grid-cols-12  items-center">
-                    <Icon className={` col-span-3 z-10`} icon={eachLink.icon} width={24} height={24} />
-                    <span className={props.isSidebarOpen ? "hidden md:block opacity-100" : "hidden md:block  opacity-0" + " duration-200 z-0"}>
-                      {eachLink.name}
-                    </span>
-
+                  <Icon
+                    className={` col-span-3 z-10`}
+                    icon={eachLink.icon}
+                    width={24}
+                    height={24}
+                  />
+                  <span
+                    className={
+                      props.isSidebarOpen
+                        ? "hidden md:block opacity-100"
+                        : "hidden md:block  opacity-0" + " duration-200 z-0"
+                    }
+                  >
+                    {eachLink.name}
+                  </span>
                 </div>
               </NavLink>
             );
@@ -92,7 +115,6 @@ export default function SideNav(props) {
         })}
         <div className="hidden h-auto w-full grow rounded-md md:block"></div>
         <div className="flex gap-2 justify-start items-center">
-        
           <button
             onClick={handleLogout}
             title="Cerrar sesión"

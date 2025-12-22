@@ -4,7 +4,8 @@ import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 import { GEOAPIFY_KEY } from "../config/env.js";
 import { Icon } from "@iconify/react";
 import { getIndustryIcon } from "../config/industryIcons";
-import { industriesAPI, skillsAPI, applyAPI } from "../services/api";
+import { industriesAPI, skillsAPI, workesrAPI } from "../services/api";
+import { useFeedback } from "../context/FeedbackContext";
 
 import "@geoapify/geocoder-autocomplete/styles/round-borders.css";
 
@@ -16,16 +17,16 @@ const defaultFormData = {
   // Paso 1: Datos de Cuenta
   fullname: "",
   email: "",
-  password: "",
-  password_confirmation: "",
   photo: null,
   // Paso 2: Perfil Profesional
   industry_id: null,
   area_id: null,
+  area: null,
   academic_title: "",
   years_of_experience: "",
   english_level: "",
   skills: [],
+  new_skills: [{name: "none"}],
   // Paso 3: Info Adicional y Documentos
   localization: "",
   desired_monthly_income: "",
@@ -47,6 +48,7 @@ export default function ApplyPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const autocompleteContainerRef = useRef(null);
   const autocompleteInstanceRef = useRef(null);
+  const { showSuccess, showError } = useFeedback();
 
   // Initialize Geocoder Autocomplete (solo cuando estamos en el paso 3)
   useEffect(() => {
@@ -65,7 +67,7 @@ export default function ApplyPage() {
         GEOAPIFY_KEY,
         {
           type: "city",
-          placeholder: "Buscar ciudad...",
+          placeholder: "Buscar ciudad, estado..",
           lang: "es",
           limit: 5,
         }
@@ -97,6 +99,8 @@ export default function ApplyPage() {
 
   const [industries, setIndustries] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [showForm, setShowForm] = useState(true);
+
   const fetchInitialData = useCallback(async () => {
     try {
       const response = await industriesAPI.getIndustries();
@@ -126,6 +130,10 @@ export default function ApplyPage() {
   };
 
   const handleNext = () => {
+    const form = document.querySelector("form");
+
+    // dispara validaciones HTML5
+    if (!form.reportValidity()) return;
     if (currentStep < 3) setCurrentStep((prev) => prev + 1);
   };
 
@@ -149,25 +157,30 @@ export default function ApplyPage() {
           submitData.append(key, value);
         } else if (Array.isArray(value)) {
           // Arrays se envían como JSON o individualmente
-          value.forEach((item) => submitData.append(`${key}[]`, item));
+          if (value.length > 0) {
+            value.forEach((item) => submitData.append(`${key}[]`, item));
+        } else {
+            submitData.append(key, '[]'); // Envía la clave con una string JSON vacía
+        }
         } else if (value !== null && value !== undefined && value !== "") {
           submitData.append(key, value);
         }
       });
-
-      await applyAPI.submitApplication(submitData);
-      console.log("Formulario enviado exitosamente");
+      await workesrAPI.submitApplication(submitData);
+      showSuccess("Formulario enviado exitosamente");
+      setShowForm(false);
     } catch (e) {
       console.error("Failed to submit application", e);
+      showError(e.message);
     }
   };
 
   // Datos de ejemplo (luego vendrán del backend)
 
-  console.log({formData});
+  console.log({ formData });
 
   return (
-    <div className="min-h-screen bg-gray-50 mt-2">
+    <div className="min-h-screen bg-gray-50 mt-2 mb-10">
       <header className="flex items-center flex-col justify-center">
         <a href="/" className="flex  items-center  gap-2 ">
           <img src={logo} alt="logo" className="w-20" />
@@ -185,7 +198,12 @@ export default function ApplyPage() {
       {/* Stepper Visual */}
       <div className="max-w-[600px] mx-auto px-5 mb-8">
         <div className="flex items-center justify-between relative">
-          <progress id="file" max="100"  value={currentStep === 1 ? 10 : currentStep === 2 ? 50 : 100} className="custom-progress rounded-full duration-200 text-c absolute w-full z-0 h-1 top-5 pt-0.5 bg-caribe"></progress>
+          <progress
+            id="file"
+            max="100"
+            value={currentStep === 1 ? 10 : currentStep === 2 ? 50 : 100}
+            className="custom-progress rounded-full duration-200 text-c absolute w-full z-0 h-1 top-5 pt-0.5 bg-caribe"
+          ></progress>
           {STEPS.map((step, index) => (
             <div
               key={step.number}
@@ -261,12 +279,13 @@ export default function ApplyPage() {
               placeholder="tu@email.com"
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            {/* <div className="grid grid-cols-2 gap-4">
               <FormField
                 name="password"
                 label="Contraseña"
                 type="password"
                 value={formData.password}
+                minLength={"8"}
                 onChange={handleChange}
                 required
               />
@@ -275,18 +294,27 @@ export default function ApplyPage() {
                 name="password_confirmation"
                 label="Repetir Contraseña"
                 type="password"
+                minLength={"8"}
                 value={formData.password_confirmation}
                 onChange={handleChange}
                 required
               />
-                {formData.password_confirmation !== formData.password && formData.password_confirmation ? <small className="col-span-2 text-right flex justify-end -mt-3 text-red-700">Las contraseñas no coinciden</small> : null}
-                {formData.password.length < 8 && formData.password ? <small className="col-span-2 -mt-3 text-red-700">Mínimo 8 carácteres</small> : null}
-                
-            </div>
+              {formData.password_confirmation !== formData.password &&
+              formData.password_confirmation ? (
+                <small className="col-span-2 text-right flex justify-end -mt-3 text-red-700">
+                  Las contraseñas no coinciden
+                </small>
+              ) : null}
+              {formData.password.length < 8 && formData.password ? (
+                <small className="col-span-2 -mt-3 text-red-700">
+                  Mínimo 8 carácteres
+                </small>
+              ) : null}
+            </div> */}
             <div className="flex gap-8">
               <div>
                 <label htmlFor="photo" className="text-gray-600 text-sm">
-                  Foto de perfil (opcional)
+                  Foto de perfil 
                   <div className="bg-gray-200 mt-1 rounded-md w-36 h-44 flex items-center justify-center cursor-pointer hover:bg-gray-400 duration-150">
                     {formData.photo ? null : (
                       <Icon
@@ -309,7 +337,9 @@ export default function ApplyPage() {
                   id="photo"
                   className="hidden"
                   accept="image/*"
-                  onChange={(e) => setFormData({ ...formData, photo: e.target.files[0] })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, photo: e.target.files[0] })
+                  }
                 />
               </div>
 
@@ -326,8 +356,8 @@ export default function ApplyPage() {
                     Claridad: Nítida, sin sombras, y la cara completamente
                     visible.
                   </span>
-                   <span>
-                    Debe ser JPG, PNG, JPEG o GIF  y no superar los 5MB.
+                  <span>
+                    Debe ser JPG, PNG, JPEG o GIF y no superar los 5MB.
                   </span>
                 </span>
               </FormHelperText>
@@ -342,7 +372,7 @@ export default function ApplyPage() {
               <Icon icon="mdi:briefcase" className="inline mr-2" />
               Perfil Profesional
             </h2>
-            
+
             <Autocomplete
               id="industries-select"
               size="small"
@@ -356,6 +386,7 @@ export default function ApplyPage() {
                   industry: value || null,
                 }))
               }
+              value={formData.industry}
               renderOption={(props, option) => {
                 const { key, ...optionProps } = props;
                 return (
@@ -385,9 +416,11 @@ export default function ApplyPage() {
               onChange={(_, value) => {
                 setFormData((prev) => ({
                   ...prev,
-                  area_id: value?.id || null, 
+                  area_id: value?.id || null,
+                  area: value || null,
                 }));
               }}
+              value={formData.area}
               // Opcional: Para mostrar las selecciones actuales si el componente es controlado
               // value={
               //   formData.area_ids // Suponiendo que 'area_ids' es un array de IDs seleccionados
@@ -422,9 +455,10 @@ export default function ApplyPage() {
               onChange={(_, value) =>
                 setFormData((prev) => ({
                   ...prev,
-                  skills: value.map((v) => v.id),
+                  skills: value,
                 }))
               }
+              value={formData.skills}
               onInputChange={(_, value) => searchSkills(value)}
               renderInput={(params) => (
                 <TextField
@@ -434,16 +468,6 @@ export default function ApplyPage() {
                 />
               )}
             />
-
-            <FormField
-              label="Título/Grado académico"
-              name="academic_title"
-              value={formData.academic_title}
-              onChange={handleChange}
-              required
-              placeholder="Ej: Ingeniero petroquímico, TSU en Informática"
-            />
-
             <FormField
               label="Años de experiencia *"
               type="select"
@@ -459,6 +483,14 @@ export default function ApplyPage() {
                 { value: "5-10", label: "5-10 años" },
                 { value: "10+", label: "10+ años" },
               ]}
+            />
+            <FormField
+              label="Título/Grado académico"
+              name="academic_title"
+              value={formData.academic_title}
+              onChange={handleChange}
+              required
+              placeholder="Ej: Ingeniero petroquímico, TSU en Informática"
             />
 
             <FormField
@@ -503,9 +535,9 @@ export default function ApplyPage() {
               value={formData.desired_monthly_income}
               onChange={handleChange}
               required
-              placeholder="Ej: 1500"
+              max={1000000}
             />
-            
+
             <FormField
               label="Número de teléfono"
               type="text"
@@ -515,7 +547,6 @@ export default function ApplyPage() {
               required
               placeholder="Ej: +52 123 456 7890"
             />
-
 
             <FormField
               label="LinkedIn (opcional)"
@@ -543,20 +574,21 @@ export default function ApplyPage() {
                 <p className="text-sm text-gray-500">
                   Archivo seleccionado: {formData.cv.name}
                 </p>
-              ) : 
-              
-              <div className="flex justify-center items-center w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-600 hover:border-blue-500 hover:text-blue-500 transition duration-300">
-                <Icon icon="mdi:upload" className="w-5 h-5 mr-2" />
-                <span>Seleccionar archivo PDF (Máx. 10 MB)</span>
-              </div>
-              }
+              ) : (
+                <div className="flex justify-center items-center w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-600 hover:border-blue-500 hover:text-blue-500 transition duration-300">
+                  <Icon icon="mdi:upload" className="w-5 h-5 mr-2" />
+                  <span>Seleccionar archivo PDF (Máx. 10 MB)</span>
+                </div>
+              )}
               <input
                 type="file"
                 name="cv"
                 id="cv"
                 accept=".pdf"
                 className="sr-only"
-                onChange={(e) => setFormData({ ...formData, cv: e.target.files[0] })}
+                onChange={(e) =>
+                  setFormData({ ...formData, cv: e.target.files[0] })
+                }
               />
             </label>
           </div>
@@ -588,14 +620,25 @@ export default function ApplyPage() {
               <Icon icon="mdi:arrow-right" />
             </button>
           ) : (
-            <FuturisticButton>
-              <div className="flex gap-2 " onClick={handleSubmit}>
-                Enviar Solicitud <Icon icon="mdi:check" />
-              </div>
-            </FuturisticButton>
+            <div onClick={handleSubmit}>
+              <FuturisticButton type={"submit"}>
+                <div className="flex gap-2 ">
+                  Enviar Solicitud <Icon icon="mdi:check" />
+                </div>
+              </FuturisticButton>
+            </div>
           )}
         </div>
       </form>
+
+          {!showForm && (
+        <div className="text-center mx-auto w-max">
+          <h1>¡Su solicitud ha sido enviada exitosamente!</h1>
+          <p>Gracias por aplicar a Lion PR Services.</p>
+          <p>Nuestro equipo revisará tu solicitud y te contactará pronto.</p>
+        </div>
+      )}
+     
     </div>
   );
 }
