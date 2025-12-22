@@ -190,7 +190,6 @@ class EmployeeRequestController extends Controller
 
     private function serveFile(EmployeeRequest $employeeRequest, bool $forceDownload = false)
     {
-        // Validación y autorización...
         if (!auth()->check()) {
             return response()->json(['error' => 'No autorizado'], 401);
         }

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\EmployeeService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class EmployeeController extends Controller
 {
@@ -65,22 +66,45 @@ class EmployeeController extends Controller
         }
     }
 
-
-
-
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Employee $employee)
     {
-        //
+        try {
+
+            $employee->load(['industry', 'area']);
+
+            $employee->photo_url = $this->employeeService->getFileUrl($employee->photo);
+
+            $cvUrls = $this->employeeService->getCvUrls($employee);
+
+            if ($cvUrls) {
+                $employee->cv_view_url = $cvUrls['view'];
+                $employee->cv_download_url = $cvUrls['download'];
+            } else {
+                $employee->cv_view_url = null;
+                $employee->cv_download_url = null;
+            }
+
+
+
+            return response()->json([
+                'success' => true,
+                'data' => $employee,
+            ]);
+        } catch (Exception $e) {
+
+            Log::error("Error al obtener empleado: ", [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener el empleado',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Employee $employee)
     {
         try {
@@ -97,5 +121,39 @@ class EmployeeController extends Controller
             ]);
         } catch (Exception $e) {
         }
+    }
+
+    public function viewCv(Employee $employee)
+    {
+        return $this->serveFile($employee, false); // is just for preview
+    }
+
+    public function downloadCv(Employee $employee)
+    {
+        return $this->serveFile($employee, true); // is for download
+    }
+
+    private function serveFile(Employee $employee, bool $forceDownload = false)
+    {
+        if (!auth()->check()) {
+            return response()->json(['error' => 'No autorizado'], 401);
+        }
+
+
+        if (!$employee->cv || !Storage::disk('private')->exists($employee->cv)) {
+            return response()->json(['error' => 'CV no disponible'], 404);
+        }
+
+        $disposition = $forceDownload ? 'attachment' : 'inline';
+
+        $fileName = 'CV_' . $employee->name . '_' . $employee->id .
+            '.' . pathinfo($employee->cv, PATHINFO_EXTENSION);
+
+        $headers = [
+            'Content-Type' => Storage::disk('private')->mimeType($employee->cv),
+            'Content-Disposition' => $disposition . '; filename="' . $fileName . '"',
+        ];
+
+        return Storage::disk('private')->response($employee->cv, $fileName, $headers);
     }
 }

@@ -40,5 +40,10 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::get('employee_requests/{employeeRequest}/cv/view', [EmployeeRequestController::class, 'viewCv'])->name('employee_requests.cv.view');
     Route::get('employee_requests/{employeeRequest}/cv/download', [EmployeeRequestController::class, 'downloadCv'])->name('employee_requests.cv.download');
 
-    Route::resource('employees', EmployeeController::class)->except(['create', 'store', 'edit', 'update']);
+    Route::get('employees', [EmployeeController::class, 'index']);
+    Route::get('employees/detail/{employee}', [EmployeeController::class, 'show']);
+    Route::delete('employees/{employee}', [EmployeeController::class, 'destroy']);
+
+    Route::get('employee/{employee}/cv/view', [EmployeeController::class, 'viewCv'])->name('employee.cv.view');
+    Route::get('employee/{employee}/cv/download', [EmployeeController::class, 'downloadCv'])->name('employee.cv.download');
 });

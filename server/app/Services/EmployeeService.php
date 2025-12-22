@@ -154,4 +154,29 @@ class EmployeeService
 
         return $newFullPath;
     }
+
+    public function getFileUrl(?string $path): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($path);
+    }
+
+    public function getCvUrls(Employee $employee)
+    {
+        if (!$employee->cv) {
+            return null;
+        }
+
+        if (!auth()->check()) {
+            return null;
+        }
+
+        return [
+            'view' => route('employee.cv.view', $employee),
+            'download' => route('employee.cv.download', $employee),
+        ];
+    }
 }
