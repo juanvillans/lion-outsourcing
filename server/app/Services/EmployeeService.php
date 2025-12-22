@@ -11,9 +11,215 @@ use Illuminate\Support\Facades\Storage;
 class EmployeeService
 {
 
-    public function getAll()
+    public function getAll(array $params = [])
     {
-        return Employee::paginate();
+        $query = Employee::with(['industry', 'area']);
+
+        $this->applyAllFilters($query, $params);
+
+        if (!empty($params['search'])) {
+            $this->applySearch($query, $params['search']);
+        }
+
+        $this->applySorting($query, $params);
+
+        return $this->applyPagination($query, $params);
+    }
+
+    private function applyAllFilters($query, $params): void
+    {
+        // Filtros básicos
+        $filters = [
+            'industry_id' => 'industry_id',
+            'area_id' => 'area_id',
+            'english_level' => 'english_level',
+        ];
+
+        foreach ($filters as $param => $column) {
+            if (!empty($params[$param])) {
+                $query->where($column, $params[$param]);
+            }
+        }
+
+        // Filtros por rango de fecha
+        if (!empty($params['date_from'])) {
+            $query->whereDate('created_at', '>=', $params['date_from']);
+        }
+
+        if (!empty($params['date_to'])) {
+            $query->whereDate('created_at', '<=', $params['date_to']);
+        }
+
+        // Filtro por rango de salario
+        if (!empty($params['salary_min'])) {
+            $query->where('desired_monthly_income', '>=', $params['salary_min']);
+        }
+
+        if (!empty($params['salary_max'])) {
+            $query->where('desired_monthly_income', '<=', $params['salary_max']);
+        }
+
+        // Filtro por años de experiencia
+        if (!empty($params['experience_min'])) {
+            $query->where('years_of_experience', '>=', $params['experience_min']);
+        }
+
+        if (!empty($params['experience_max'])) {
+            $query->where('years_of_experience', '<=', $params['experience_max']);
+        }
+
+        // Filtros específicos de skills (JSON fields)
+        $this->applyJsonFilters($query, $params);
+    }
+
+    private function applyJsonFilters($query, $params): void
+    {
+        // Filtro por skills (array/coma separado)
+        if (!empty($params['skills'])) {
+            $skills = is_array($params['skills'])
+                ? $params['skills']
+                : array_filter(explode(',', $params['skills']));
+
+            if (!empty($skills)) {
+                $query->where(function ($q) use ($skills) {
+                    foreach ($skills as $skill) {
+                        $skill = trim($skill);
+                        if (!empty($skill)) {
+                            // Búsqueda en campo JSON para MySQL
+                            $q->orWhere('skills', 'LIKE', '%"' . $skill . '"%');
+                        }
+                    }
+                });
+            }
+        }
+
+        // Filtro por new_skills (array/coma separado)
+        if (!empty($params['new_skills'])) {
+            $newSkills = is_array($params['new_skills'])
+                ? $params['new_skills']
+                : array_filter(explode(',', $params['new_skills']));
+
+            if (!empty($newSkills)) {
+                $query->where(function ($q) use ($newSkills) {
+                    foreach ($newSkills as $skill) {
+                        $skill = trim($skill);
+                        if (!empty($skill)) {
+                            // Búsqueda en campo JSON para MySQL
+                            $q->orWhere('new_skills', 'LIKE', '%"' . $skill . '"%');
+                        }
+                    }
+                });
+            }
+        }
+
+        // Filtro que requiera que tenga TODAS las skills especificadas
+        if (!empty($params['required_skills'])) {
+            $requiredSkills = is_array($params['required_skills'])
+                ? $params['required_skills']
+                : array_filter(explode(',', $params['required_skills']));
+
+            if (!empty($requiredSkills)) {
+                foreach ($requiredSkills as $skill) {
+                    $skill = trim($skill);
+                    if (!empty($skill)) {
+                        $query->where('skills', 'LIKE', '%"' . $skill . '"%');
+                    }
+                }
+            }
+        }
+    }
+
+    private function applySearch($query, string $searchTerm): void
+    {
+        $searchTerm = trim($searchTerm);
+        $searchTerms = array_filter(explode(' ', $searchTerm));
+
+        if (empty($searchTerms)) {
+            return;
+        }
+
+        $query->where(function ($q) use ($searchTerms) {
+            foreach ($searchTerms as $term) {
+                $term = trim($term);
+                if (strlen($term) < 2) continue;
+
+                // Búsqueda en campos de texto normales
+                $this->searchInTextFields($q, $term);
+
+                // Búsqueda en campos JSON (skills y new_skills)
+                $this->searchInJsonFields($q, $term);
+            }
+        });
+    }
+
+    private function searchInTextFields($query, string $term): void
+    {
+        $textFields = [
+            'fullname',
+            'email',
+            'phone_number',
+            'academic_title',
+            'localization',
+            'linkedin_url',
+            'website_url',
+        ];
+
+        foreach ($textFields as $field) {
+            $query->orWhere($field, 'LIKE', "%{$term}%");
+        }
+    }
+
+    private function searchInJsonFields($query, string $term): void
+    {
+        // Para MySQL/MariaDB
+        $query->orWhere(function ($q) use ($term) {
+            // Búsqueda en skills (JSON array)
+            $q->where('skills', 'LIKE', '%"' . $term . '"%')
+                ->orWhere('skills', 'LIKE', '%' . $term . '%');
+
+            // Búsqueda en new_skills (JSON array)
+            $q->orWhere('new_skills', 'LIKE', '%"' . $term . '"%')
+                ->orWhere('new_skills', 'LIKE', '%' . $term . '%');
+        });
+    }
+
+    private function applySorting($query, $params): void
+    {
+        $sortBy = $params['sort_by'] ?? 'created_at';
+        $sortDirection = $params['sort_direction'] ?? 'desc';
+
+        // Si es búsqueda, ordenar por relevancia primero
+        if (!empty($params['search'])) {
+            // Para MySQL podemos usar orden por relevancia simple
+            // Buscando coincidencias exactas primero
+            $searchTerm = trim($params['search']);
+            $query->orderByRaw(
+                "CASE
+                    WHEN fullname LIKE ? THEN 1
+                    WHEN email LIKE ? THEN 2
+                    WHEN skills LIKE ? THEN 3
+                    WHEN new_skills LIKE ? THEN 4
+                    ELSE 5
+                END",
+                [
+                    "%{$searchTerm}%",
+                    "%{$searchTerm}%",
+                    "%\"{$searchTerm}\"%",
+                    "%\"{$searchTerm}\"%"
+                ]
+            );
+        }
+
+        // Luego aplicar el orden específico
+        $query->orderBy($sortBy, $sortDirection);
+    }
+
+    private function applyPagination($query, $params)
+    {
+        $perPage = $params['per_page'] ?? 15;
+        $page = $params['page'] ?? 1;
+
+        return $query->paginate($perPage, ['*'], 'page', $page);
     }
 
     public function destroy(Employee $employee)
@@ -24,8 +230,6 @@ class EmployeeService
 
         return 0;
     }
-
-
 
     private function deleteEmployeeFiles(Employee $employee): void
     {

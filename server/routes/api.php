@@ -40,7 +40,8 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::get('employee_requests/{employeeRequest}/cv/view', [EmployeeRequestController::class, 'viewCv'])->name('employee_requests.cv.view');
     Route::get('employee_requests/{employeeRequest}/cv/download', [EmployeeRequestController::class, 'downloadCv'])->name('employee_requests.cv.download');
 
-    Route::get('employees', [EmployeeController::class, 'index']);
+    Route::get('/employees', [EmployeeController::class, 'index']);
+    // Route::get('/employees/stats', [EmployeeController::class, 'getStats']);
     Route::get('employees/detail/{employee}', [EmployeeController::class, 'show']);
     Route::delete('employees/{employee}', [EmployeeController::class, 'destroy']);
 

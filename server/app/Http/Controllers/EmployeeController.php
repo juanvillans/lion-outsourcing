@@ -23,12 +23,10 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         try {
-
             $validated = $request->validate([
                 'page' => 'nullable|integer|min:1',
                 'per_page' => 'nullable|integer|min:1|max:100',
                 'search' => 'nullable|string|max:255',
-                'status' => 'nullable|in:pending,accepted,rejected',
                 'industry_id' => 'nullable|exists:industries,id',
                 'area_id' => 'nullable|exists:areas,id',
                 'english_level' => 'nullable|in:none,beginner,intermediate,advanced',
@@ -36,6 +34,13 @@ class EmployeeController extends Controller
                 'sort_direction' => 'nullable|in:asc,desc',
                 'date_from' => 'nullable|date',
                 'date_to' => 'nullable|date|after_or_equal:date_from',
+                'salary_min' => 'nullable|integer|min:0',
+                'salary_max' => 'nullable|integer|min:0',
+                'experience_min' => 'nullable|integer|min:0',
+                'experience_max' => 'nullable|integer|min:0',
+                'skills' => 'nullable|string',
+                'new_skills' => 'nullable|string',
+                'required_skills' => 'nullable|string',
             ]);
 
             $employees = $this->employeeService->getAll($validated);
@@ -65,6 +70,45 @@ class EmployeeController extends Controller
             ], 500);
         }
     }
+
+    // public function getStats(Request $request)
+    // {
+    //     try {
+    //         $validated = $request->validate([
+    //             'search' => 'nullable|string|max:255',
+    //             'status' => 'nullable|in:pending,accepted,rejected',
+    //             'industry_id' => 'nullable|exists:industries,id',
+    //             'area_id' => 'nullable|exists:areas,id',
+    //             'english_level' => 'nullable|in:none,beginner,intermediate,advanced',
+    //             'date_from' => 'nullable|date',
+    //             'date_to' => 'nullable|date|after_or_equal:date_from',
+    //             'salary_min' => 'nullable|integer|min:0',
+    //             'salary_max' => 'nullable|integer|min:0',
+    //             'experience_min' => 'nullable|integer|min:0',
+    //             'experience_max' => 'nullable|integer|min:0',
+    //             'skills' => 'nullable|string',
+    //             'new_skills' => 'nullable|string',
+    //             'required_skills' => 'nullable|string',
+    //         ]);
+
+    //         $stats = $this->employeeService->getCountsByFilters($validated);
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $stats,
+    //         ]);
+    //     } catch (Exception $e) {
+    //         Log::error("Error al obtener estadísticas: ", [
+    //             'message' => $e->getMessage(),
+    //         ]);
+
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Error al obtener estadísticas',
+    //             'error' => config('app.debug') ? $e->getMessage() : null,
+    //         ], 500);
+    //     }
+    // }
 
     public function show(Employee $employee)
     {
