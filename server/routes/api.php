@@ -23,6 +23,7 @@ Route::post('generate_request', [EmployeeRequestController::class, 'store']);
 
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
+    Route::post('refresh_token', [LoginController::class, 'refreshToken'])->name('refresh_token');
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('get_permissions', [GeneralController::class, 'getPermissions']);
 
@@ -40,11 +41,13 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::get('employee_requests/{employeeRequest}/cv/view', [EmployeeRequestController::class, 'viewCv'])->name('employee_requests.cv.view');
     Route::get('employee_requests/{employeeRequest}/cv/download', [EmployeeRequestController::class, 'downloadCv'])->name('employee_requests.cv.download');
 
+
+
+    Route::get('employee/{employee}/cv/view', [EmployeeController::class, 'viewCv'])->name('employee.cv.view');
+    Route::get('employee/{employee}/cv/download', [EmployeeController::class, 'downloadCv'])->name('employee.cv.download');
+
     Route::get('/employees', [EmployeeController::class, 'index']);
     // Route::get('/employees/stats', [EmployeeController::class, 'getStats']);
     Route::get('employees/detail/{employee}', [EmployeeController::class, 'show']);
     Route::delete('employees/{employee}', [EmployeeController::class, 'destroy']);
-
-    Route::get('employee/{employee}/cv/view', [EmployeeController::class, 'viewCv'])->name('employee.cv.view');
-    Route::get('employee/{employee}/cv/download', [EmployeeController::class, 'downloadCv'])->name('employee.cv.download');
 });

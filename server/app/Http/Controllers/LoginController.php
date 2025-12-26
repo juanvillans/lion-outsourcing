@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\LoginRequest;
+use App\Services\UserService;
 use App\Models\UserPermission;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -39,6 +43,49 @@ class LoginController extends Controller
 
 
         ], $formattedPermissions));
+    }
+
+    public function refreshToken(Request $request)
+    {
+
+        try {
+
+            $request->validate([
+                'token' => 'required|string'
+            ]);
+
+            $userService = new UserService;
+
+            $data = $userService->refreshToken($request->token);
+
+            return response()->json(array_merge([
+
+                'success' => true,
+                'message' => 'Token actualizado con exito',
+
+            ], $data));
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        } catch (Exception $e) {
+
+            Log::info('Error al refrescar token: ', ['message' => $e->getMessage(), 'code' => $e->getCode()]);
+
+            if ($e->getCode() == 401) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]);
+            } else {
+
+                return response()->json([
+                    'valid' => false,
+                    'message' => 'No se ha podido refrescar el token'
+                ], 500);
+            }
+        }
     }
 
     public function logout(Request $request)

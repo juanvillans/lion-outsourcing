@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use Exception;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Permission;
 use App\Models\UserPermission;
 use Illuminate\Support\Facades\Log;
-use App\Models\PasswordGenerateToken;
 use Illuminate\Support\Facades\Hash;
+use App\Models\PasswordGenerateToken;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserService
 {
@@ -101,6 +104,56 @@ class UserService
         $token->delete();
 
         return 0;
+    }
+
+    public function refreshToken(string $token): array
+    {
+        $currentToken = PersonalAccessToken::findToken($token);
+
+        // Verificar si el token existe
+        if (!$currentToken) {
+            throw new Exception('Token inválido o no encontrado', 401);
+        }
+
+        $user = $currentToken->tokenable;
+
+        if (!$user instanceof User) {
+            throw new Exception('Usuario asociado al token no encontrado', 401);
+        }
+
+        $tokenCreatedAt = Carbon::parse($currentToken->created_at);
+        $tokenExpiresAt = $tokenCreatedAt->copy()->addDays(30);
+
+        if ($tokenExpiresAt->isPast()) {
+            $currentToken->delete();
+            throw new Exception('Token expirado. Por favor inicie sesión nuevamente.', 401);
+        }
+
+        // Revocar el token actual
+        $currentToken->delete();
+
+        // Crear nuevo token con sus permisos
+        $permissions = $user->permissions()->pluck('name')->toArray();
+
+        $newToken = $user->createToken('auth_token', $permissions, now()->addDays(30))->plainTextToken;
+
+        $formattedPermissions = array_fill_keys($permissions, true);
+
+
+        // Registrar el refresh para auditoría
+        Log::info('Token refrescado', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+        ]);
+
+        return array_merge([
+            'token' => $newToken,
+            'token_expires_at' => now()->addDays(30)->toISOString(),
+            'fullname' => $user->fullname,
+            'email' => $user->email,
+            'type' => $user->type,
+            'role' => $user->role,
+        ], $formattedPermissions);
     }
 
     private function givePermissions($userID, $permissions)
