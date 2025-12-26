@@ -27,6 +27,10 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('get_permissions', [GeneralController::class, 'getPermissions']);
 
+
+    // Manejar Industrias
+    Route::post('industries', [IndustryController::class, 'store'])->name('industry.store');
+
     // Manejar usuarios administradores
     Route::get('admins', [UserController::class, 'indexAdmins']);
     Route::post('admins', [UserController::class, 'storeAdmin']);
