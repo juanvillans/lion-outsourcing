@@ -30,6 +30,9 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
     // Manejar Industrias
     Route::post('industries', [IndustryController::class, 'store'])->name('industry.store');
+    Route::put('industries/{industry}', [IndustryController::class, 'update'])->name('industry.update');
+    Route::delete('industries/{industry}', [IndustryController::class, 'destroy'])->name('industry.destroy');
+
 
     // Manejar usuarios administradores
     Route::get('admins', [UserController::class, 'indexAdmins']);
