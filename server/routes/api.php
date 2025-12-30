@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeRequestController;
 use Illuminate\Http\Request;
@@ -33,6 +34,11 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::put('industries/{industry}', [IndustryController::class, 'update'])->name('industry.update');
     Route::delete('industries/{industry}', [IndustryController::class, 'destroy'])->name('industry.destroy');
 
+    // Manejar areas
+    Route::get('areas', [AreaController::class, 'index'])->name('area.index');
+    Route::post('areas', [AreaController::class, 'store'])->name('area.store');
+    Route::put('areas/{area}', [AreaController::class, 'update'])->name('area.update');
+    Route::delete('areas/{area}', [AreaController::class, 'destroy'])->name('area.destroy');
 
     // Manejar usuarios administradores
     Route::get('admins', [UserController::class, 'indexAdmins']);

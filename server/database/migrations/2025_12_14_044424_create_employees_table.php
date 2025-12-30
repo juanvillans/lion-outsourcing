@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('email');
             $table->string('fullname');
             $table->string('phone_number');
-            $table->foreignId('industry_id');
-            $table->foreignId('area_id');
+            $table->foreignId('industry_id')->nullable();
+            $table->foreignId('area_id')->nullable();
             $table->string('academic_title')->nullable();
             $table->enum('english_level', ['none', 'beginner', 'intermediate', 'advanced']);
             $table->string('linkedin_url')->nullable();
