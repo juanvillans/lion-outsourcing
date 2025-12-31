@@ -40,6 +40,12 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::put('areas/{area}', [AreaController::class, 'update'])->name('area.update');
     Route::delete('areas/{area}', [AreaController::class, 'destroy'])->name('area.destroy');
 
+    // Manejar skills
+    Route::get('skills', [SkillController::class, 'index'])->name('skill.index');
+    Route::post('skills', [SkillController::class, 'store'])->name('skill.store');
+    Route::put('skills/{skill}', [SkillController::class, 'update'])->name('skill.update');
+    Route::delete('skills/{skill}', [SkillController::class, 'destroy'])->name('skill.destroy');
+
     // Manejar usuarios administradores
     Route::get('admins', [UserController::class, 'indexAdmins']);
     Route::post('admins', [UserController::class, 'storeAdmin']);

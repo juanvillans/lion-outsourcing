@@ -8,6 +8,30 @@ use Illuminate\Support\Facades\DB;
 
 class SkillService
 {
+
+    public function get($params = [])
+    {
+
+        $defaultParams = [
+            'page' => 1,
+            'per_page' => 15,
+        ];
+
+        $params = array_merge($defaultParams, $params);
+
+
+        if (
+            empty($params['search']) &&
+            empty($params['starts_with']) &&
+            empty($params['ends_with'])
+        ) {
+
+            return Skill::orderBy('id', 'desc')->paginate($params['per_page'], ['*'], 'page', $params['page']);
+        } else {
+            return $this->searchSkills($params);
+        }
+    }
+
     public function searchSkills($params = [])
     {
         $defaultParams = [
