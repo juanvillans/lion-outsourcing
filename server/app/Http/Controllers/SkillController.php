@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Skill;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Services\SkillService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\EmployeeRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SkillController extends Controller
 {
@@ -90,6 +92,18 @@ class SkillController extends Controller
                 'message' => 'Error en la búsqueda'
             ], 500);
         }
+    }
+
+    public function getNewSkills()
+    {
+        $newSkillsFromEmployeeRequests = EmployeeRequest::select('new_skills')->get()->pluck('new_skills')->toArray();
+        $newSkillsFromEmployees = Employee::select('new_skills')->get()->pluck('new_skills')->toArray();
+
+        $result = array_merge($newSkillsFromEmployeeRequests, $newSkillsFromEmployees);
+
+        $result = array_merge(...$result);
+
+        return $result;
     }
 
     public function store(Request $request)
