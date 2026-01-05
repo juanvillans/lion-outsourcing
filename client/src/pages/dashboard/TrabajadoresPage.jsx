@@ -332,67 +332,7 @@ export default function TrabajadoresPage() {
         },
         enableSorting: false,
       },
-      //   {
-      //     header: "Acciones",
-      //     id: "actions",
-      //     size: 220,
-      //     enableColumnFilter: false,
-      //     enableSorting: false,
-      //     Cell: ({ row }) => {
-      //       const data = row.original;
-      //       return (
-      //         <div className="flex gap-2 justify-center items-center">
-      //           <button
-      //             className="mx-1 p-1 hover:p-2 duration-75 text-gray-500 hover:bg-blue-100 hover:text-color3 rounded-full"
-      //             onClick={() => {
-      //               setIsModalOpen(true);
-      //               setFormData({
-      //                 patient: data.patient,
-      //                 id: data.id,
-      //                 all_validated: data.all_validated,
-      //                 tests: data.tests,
-      //               });
-      //               setSubmitString("Actualizar");
-      //             }}
-      //             title="Editar"
-      //           >
-      //             <Icon
-      //               icon="material-symbols:edit"
-      //               className=""
-      //               width={20}
-      //               height={20}
-      //             />
-      //           </button>
-
-      //           <button
-      //             title="Documento de resultados"
-      //             className="mx-1 p-1 hover:p-2 duration-75 text-gray-600  hover:bg-green-100 hover:text-green-600 rounded-full"
-      //             onClick={async () => {
-      //               setIsMessageModalOpen(true);
-      //               setMessageData(data);
-
-      //               if (!data.all_validated) {
-      //               } else {
-      //                 const token = await generateResultsToken(data.id);
-      //                 setResultsToken(token);
-      //               }
-      //               // Generate token for WhatsApp link
-      //             }}
-      //           >
-      //             <Icon icon="ep:document" className="" width={20} height={20} />
-      //           </button>
-
-      //           <button
-      //             onClick={() => handleDelete(data.id)}
-      //             title="Eliminar"
-      //             className="ml-auto hover:p-2 duration-75 text-gray-500 hover:bg-red-100 rounded-full p-1 hover:text-red-600"
-      //           >
-      //             <Icon icon="heroicons:trash" className="w-5 h-5" />
-      //           </button>
-      //         </div>
-      //       );
-      //     },
-      //   },
+     
     ],
     []
   );
@@ -539,6 +479,90 @@ export default function TrabajadoresPage() {
             </FuturisticButton> */}
           </div>
         </div>
+
+
+        <div className="flex  gap-4 mb-3">
+          <Autocomplete
+            id="areas-select-multiple" // Cambiado el ID para mayor claridad
+            size="small"
+            sx={{
+              width: "min-content",
+              minWidth: "400px", // Recomendado para que el label y el input no se colapsen
+            }}
+            options={areas || []}
+            autoHighlight
+            // disabled={!formData.industry_id}
+            getOptionLabel={(option) =>
+              option.name + " - " + option.industry.name
+            }
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            onChange={(_, value) => {
+              setCustomFilters((prev) => ({
+                ...prev,
+                area_id: value?.id || null,
+              }));
+              fetchData();
+            }}
+            value={customFilters.area}
+            renderOption={(props, option) => {
+              const { key, ...optionProps } = props;
+              return (
+                <Box
+                  key={key}
+                  component="li"
+                  {...optionProps}
+                  className="hover:text-black text-sm md:text-md  py-0.5 px-8 flex  gap-3 my-1 cursor-pointer"
+                >
+                  {option.name}
+
+                  <p className="flex gap-1 text-black/40 text-xs mt-1">
+                    <Icon
+                      icon={getIndustryIcon(option.industry_id)}
+                      width={16}
+                    />
+                    {option.industry.name}
+                  </p>
+                </Box>
+              );
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Área de especialización" // Etiqueta ajustada a plural
+                required
+              />
+            )}
+          />
+
+          <Autocomplete
+            id="skills-select"
+            multiple
+            size="small"
+            options={skills}
+            autoHighlight
+            getOptionLabel={(option) => option.name}
+            onChange={(_, value) =>
+              setCustomFilters((prev) => ({
+                ...prev,
+                skills: value,
+              }))
+            }
+            sx={{
+              width: "min-content",
+              minWidth: "400px", // Recomendado para que el label y el input no se colapsen
+            }}
+            value={customFilters.skills}
+            onInputChange={(_, value) => searchSkills(value)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Habilidades (selecciona 3 hasta 6)"
+                placeholder="Buscar habilidad..."
+              />
+            )}
+          />
+        </div>
+
         <Modal
           isOpen={isModalOpen}
           onClose={() => {
