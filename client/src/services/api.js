@@ -87,14 +87,29 @@ export const skillsAPI = {
   searchSkills: (params) => api.get("/search_skills?search", { params }),
 };
 
-export const workesrAPI = {
+export const employeesAPI = {
+  getEmployees: (params) => api.get("/admin/employees", { params }),
+  getEmployeeById: (id) => api.get(`/admin/employees/detail/${id}`),
+  updateEmployee: (id, userData) => api.put(`/admin/employees/${id}`, userData),
+  deleteEmployee: (id) => api.delete(`/admin/employee/${id}`),
+  getEmployeeCV: (id) => api.get(`/admin/employee_requests/${id}/cv/view`, { responseType: "blob" }),
+};
+
+export const areasAPI = {
+  getAreas: () => api.get("/admin/areas"),
+};
+
+export const applicantsAPI = {
   submitApplication: (data) => api.post("/generate_request", data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   }),
-  getEmployeeRequests: (params) => api.get("/admin/employee_requests", { params }),
-  getEmployeeRequestById: (id) => api.get(`/employee_request/detail/${id}`),
+  getApplicants: (params) => api.get("/admin/employee_requests", { params }),
+  getApplicant: (id) => api.get(`/admin/employee_request/detail/${id}`),
+  getApplicantCV: (id) => api.get(`/admin/employee_requests/${id}/cv/view`, { responseType: "blob" }),
+  acceptApplicant: (id) => api.put(`/admin/employee_requests/${id}/status`, { status: "accepted" }),
+  rejectApplicant: (id) => api.put(`/admin/employee_requests/${id}/status`, { status: "rejected" }),
 };
 // export const examsAPI = {
 //   createExam: (examData) => api.post("/exams", examData),

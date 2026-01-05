@@ -10,7 +10,7 @@ const links = [
   {
     permission: true,
     name: "Inicio",
-    href: "/dashboard",
+    href: "/dashboard",    
     icon: "hugeicons:home-09",
   },
   {
@@ -23,8 +23,14 @@ const links = [
     permission: "allow_admins",
     name: "Administradores",
     href: "/dashboard/administradores",
-    icon: "clarity:administrator-line",
+    icon: "dashicons:admin-network",
   },
+  {
+    permission: true,
+    name: "Aplicantes",
+    href: "/dashboard/aplicantes",
+    icon: "mdi:account-multiple",
+  }
 ];
 
 export default function SideNav(props) {
@@ -83,15 +89,16 @@ export default function SideNav(props) {
               <NavLink
                 to={eachLink.href}
                 end
-                key={eachLink.href}
+                key={eachLink.href} 
                 className={({ isActive }) =>
-                  `flex h-[48px] hover:text-color3 grow items-center relative justify-between gap-2  text-sm font-medium hover:bg-sky-100 md:flex-none md:justify-between pl-2 ${
+                  `flex h-[48px]  hover:text-color3 grow items-center relative justify-between gap-2  text-sm font-medium hover:bg-sky-100 md:flex-none md:justify-between pl-2 ${
                     isActive
                       ? "bg-gray-50 activeLink text-color1 rounded-2xl md:rounded-none  md:rounded-l-2xl"
-                      : "text-gray-50"
+                      : "text-gray-50 hover:bg-white/10 hover:text-color4 rounded-full"
                   }`
                 }
               >
+                
                 <div className="grid grid-cols-12  items-center">
                   <Icon
                     className={` col-span-3 z-10`}

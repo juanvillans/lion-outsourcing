@@ -13,6 +13,9 @@ import Home from './pages/Home';
 import AdministradoresPage from './pages/dashboard/AdministradoresPage';
 import TrabajadoresPage from './pages/dashboard/TrabajadoresPage';
 import CrearContraseña from './pages/CrearContraseña';
+import AplicantesPage from './pages/dashboard/AplicantesPage';
+import DetalleAplicantePage from './pages/dashboard/DetalleAplicantePage';
+import DetalleTrabajadorPage from './pages/dashboard/DetalleTrabajadorPage';
 
 const PageLoader = () => (
   <div className="flex justify-center items-center h-screen bg-white">
@@ -64,7 +67,14 @@ function App() {
                   </PermissionGate>
                 } 
               />
+              <Route path="trabajadores/:id" element={<DetalleTrabajadorPage />} />              
+              <Route path="aplicantes" element={<AplicantesPage />} />
+              <Route path="aplicantes/:id" element={<DetalleAplicantePage />} />
+
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
               {/* Fallback route */}
+              {/* <Route path="aplicantes" element={<AplicantesPage />} />
+              <Route path="aplicantes/:id" element={<DetalleAplicantePage />} />               */}
             </Route>
           </Routes>
         </BrowserRouter>

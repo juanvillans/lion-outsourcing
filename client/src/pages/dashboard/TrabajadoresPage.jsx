@@ -5,9 +5,7 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import {
-  workesrAPI,
-} from "../../services/api";
+import { employeesAPI } from "../../services/api";
 
 import { Icon } from "@iconify/react";
 import Modal from "../../components/Modal";
@@ -20,7 +18,8 @@ import { MaterialReactTable } from "material-react-table";
 import debounce from "lodash.debounce";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
-
+import { API_URL } from "../../config/env";
+import { useNavigate } from "react-router-dom";
 
 let isThereLocalStorageFormData = localStorage.getItem("formData")
   ? true
@@ -58,7 +57,7 @@ const MemoizedTestField = React.memo(
   }
 );
 
-export default function ExamenesPage() {
+export default function TrabajadoresPage() {
   const [loading, setLoading] = useState(false);
   const { showError, showSuccess, showInfo } = useFeedback();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,10 +67,10 @@ export default function ExamenesPage() {
   const [origins, setOrigins] = useState([]);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Form configuration for ReusableForm
   const patientFormFields = useMemo(() => [
-
     {
       name: "first_name",
       label: "Nombre completo",
@@ -225,15 +224,37 @@ export default function ExamenesPage() {
         enableSorting: true,
       },
       {
+        accessorKey: "photo",
+        header: "Foto",
+        size: 110,
+        filterFn: "includesString",
+        enableColumnFilter: true,
+        enableSorting: true,
+        Cell: ({ cell }) => (
+          <img
+            src={API_URL + "/storage/" + cell.getValue()}
+            alt="Profile"
+            style={{
+              width: "50px",
+              height: "50px",
+              borderRadius: "4px",
+              objectFit: "cover",
+            }}
+            // This ensures the image is loaded before the print dialog opens
+            loading="lazy"
+          />
+        ),
+      },
+      {
         accessorKey: "fullname",
         header: "Nombre completo",
-        size: 110, 
+        size: 110,
         filterFn: "includesString",
         enableColumnFilter: true,
         enableSorting: true,
       },
       {
-        accessorKey: "industtry_id",
+        accessorKey: "industry.name",
         header: "Industria",
         size: 120,
         filterFn: "includesString",
@@ -241,17 +262,17 @@ export default function ExamenesPage() {
         enableSorting: true,
       },
       {
-        accessorKey: "area_id",
+        accessorKey: "area.name",
         header: "Especialidad",
         size: 83,
         enableColumnFilter: false,
         enableSorting: true,
       },
-      {
-        accessorKey: "email",
-        header: "Correo Electrónico",
-        size: 200,
-      },
+      //   {
+      //     accessorKey: "email",
+      //     header: "Correo Electrónico",
+      //     size: 200,
+      //   },
       {
         accessorKey: "phone_number",
         header: "Teléfono",
@@ -269,180 +290,112 @@ export default function ExamenesPage() {
       },
 
       {
-        accessorKey: "created_date",
+        accessorKey: "created_at",
         header: "Fecha",
-        size: 125,
+        size: 155,
         filterFn: "equals",
+
         enableColumnFilter: true,
         enableSorting: true,
+        Cell: ({ cell }) => {
+          const dateString = cell.getValue();
+
+          // Safety check in case the value is null or undefined
+          if (!dateString) return "N/A";
+
+          return new Date(dateString).toLocaleString(navigator.language, {
+            dateStyle: "medium",
+            timeStyle: "short",
+          });
+        },
+        // Optional: make the column look nicer
+        muiTableBodyCellProps: {
+          sx: { whiteSpace: "nowrap" },
+        },
       },
       {
-        accessorKey: "created_time",
-        header: "Hora",
+        accessorKey: "skills",
+        header: "Habilidades",
         size: 100,
-        filterFn: "includesString",
-        enableColumnFilter: true,
-        enableSorting: true,
-      },
-      {
-        accessorKey: "all_validated",
-        header: "Validado",
-        size: 100,
-        filterFn: "equals",
-        enableColumnFilter: true,
-        enableSorting: true,
-        Cell: ({ cell }) =>
-          cell.getValue() ? (
-            <Icon
-              className="relative -left-1.5 text-color2 w-7 h-7"
-              icon="bitcoin-icons:verify-filled"
-            />
-          ) : (
-            <Icon
-              icon="octicon:unverifed-24"
-              className="text-gray-400 w-4 h-4"
-            />
-          ),
-        filterVariant: "select",
-        filterSelectOptions: [
-          { value: "true", label: "Validado" },
-          { value: "false", label: "No Validado" },
-        ],
-      },
-      // {
-      //   accessorKey: "tests",
-      //   header: "Examenes",
-      //   size: 100,
-      //   Cell: ({ cell }) => {
-      //     const value = cell.getValue();
-      //     return Object.entries(value).map(([key, value]) => {
-      //       return (
-      //         <Icon
-      //           icon={iconos_examenes[key].icon}
-      //           className="text-lg inline"
-      //           color={iconos_examenes[key].color}
-      //         />
-      //       );
-      //     });
-      //   },
-      //   enableSorting: false,
-      // },
-      {
-        accessorKey: "message_status",
-        header: "Envío",
-        size: 30, 
         Cell: ({ cell }) => {
           const value = cell.getValue();
-          if (value === "ENVIADO") {
+          return value.map((skill) => {
             return (
-              <div className="flex items-center">
-                <Icon
-                  className="text-gray-500"
-                  icon="iconamoon:check-fill"
-                  width={20}
-                  height={20}
-                />
-              </div>
+              <span
+                className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+                key={skill.id}
+              >
+                {skill.name}
+              </span>
             );
-          } else if (value === "LEIDO") {
-            return (
-              <div className="flex items-center">
-                <Icon
-                  className="text-color3"
-                  icon={"line-md:check-all"}
-                  width={20}
-                  height={20}
-                />
-              </div>
-            );
-          } else {
-            return (
-              <div className="flex items-center opacity-50">
-                <Icon
-                  className="text-gray-300"
-                  icon={"line-md:close"}
-                  width={20}
-                  height={20}
-                />
-              </div>
-            );
-          }
+          });
         },
-        enableColumnFilter: true,
-        filterVariant: "select",
-        filterSelectOptions: [
-          { value: "ENVIADO", label: "Enviado" },
-          { value: "LEIDO", label: "Leído" },
-          { value: "NO_ENVIADO", label: "No Enviado" },
-        ],
         enableSorting: false,
       },
-      {
-        header: "Acciones",
-        id: "actions",
-        size: 220,
-        enableColumnFilter: false,
-        enableSorting: false,
-        Cell: ({ row }) => {
-          const data = row.original;
-          return (
-            <div className="flex gap-2 justify-center items-center">
-              <button
-                className="mx-1 p-1 hover:p-2 duration-75 text-gray-500 hover:bg-blue-100 hover:text-color3 rounded-full"
-                onClick={() => {
-                  setIsModalOpen(true);
-                  setFormData({
-                    patient: data.patient,
-                    id: data.id,
-                    all_validated: data.all_validated,
-                    tests: data.tests,
-                  });
-                  setSubmitString("Actualizar");
-                }}
-                title="Editar"
-              >
-                <Icon
-                  icon="material-symbols:edit"
-                  className=""
-                  width={20}
-                  height={20}
-                />
-              </button>
+      //   {
+      //     header: "Acciones",
+      //     id: "actions",
+      //     size: 220,
+      //     enableColumnFilter: false,
+      //     enableSorting: false,
+      //     Cell: ({ row }) => {
+      //       const data = row.original;
+      //       return (
+      //         <div className="flex gap-2 justify-center items-center">
+      //           <button
+      //             className="mx-1 p-1 hover:p-2 duration-75 text-gray-500 hover:bg-blue-100 hover:text-color3 rounded-full"
+      //             onClick={() => {
+      //               setIsModalOpen(true);
+      //               setFormData({
+      //                 patient: data.patient,
+      //                 id: data.id,
+      //                 all_validated: data.all_validated,
+      //                 tests: data.tests,
+      //               });
+      //               setSubmitString("Actualizar");
+      //             }}
+      //             title="Editar"
+      //           >
+      //             <Icon
+      //               icon="material-symbols:edit"
+      //               className=""
+      //               width={20}
+      //               height={20}
+      //             />
+      //           </button>
 
-              <button
-                title="Documento de resultados"
-                className="mx-1 p-1 hover:p-2 duration-75 text-gray-600  hover:bg-green-100 hover:text-green-600 rounded-full"
-                onClick={async () => {
-                  setIsMessageModalOpen(true);
-                  setMessageData(data);
+      //           <button
+      //             title="Documento de resultados"
+      //             className="mx-1 p-1 hover:p-2 duration-75 text-gray-600  hover:bg-green-100 hover:text-green-600 rounded-full"
+      //             onClick={async () => {
+      //               setIsMessageModalOpen(true);
+      //               setMessageData(data);
 
-                  if (!data.all_validated) {
-                  } else {
-                    const token = await generateResultsToken(data.id);
-                    setResultsToken(token);
-                  }
-                  // Generate token for WhatsApp link
-                }}
-              >
-                <Icon icon="ep:document" className="" width={20} height={20} />
-              </button>
+      //               if (!data.all_validated) {
+      //               } else {
+      //                 const token = await generateResultsToken(data.id);
+      //                 setResultsToken(token);
+      //               }
+      //               // Generate token for WhatsApp link
+      //             }}
+      //           >
+      //             <Icon icon="ep:document" className="" width={20} height={20} />
+      //           </button>
 
-              <button
-                onClick={() => handleDelete(data.id)}
-                title="Eliminar"
-                className="ml-auto hover:p-2 duration-75 text-gray-500 hover:bg-red-100 rounded-full p-1 hover:text-red-600"
-              >
-                <Icon icon="heroicons:trash" className="w-5 h-5" />
-              </button>
-            </div>
-          );
-        },
-      },
+      //           <button
+      //             onClick={() => handleDelete(data.id)}
+      //             title="Eliminar"
+      //             className="ml-auto hover:p-2 duration-75 text-gray-500 hover:bg-red-100 rounded-full p-1 hover:text-red-600"
+      //           >
+      //             <Icon icon="heroicons:trash" className="w-5 h-5" />
+      //           </button>
+      //         </div>
+      //       );
+      //     },
+      //   },
     ],
     []
   );
-
-
 
   const handleDelete = async (id) => {
     try {
@@ -472,12 +425,10 @@ export default function ExamenesPage() {
   const [globalFilter, setGlobalFilter] = useState("");
   // Move useMemo outside the map - process all test sections at once
 
-
-
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await workesrAPI.getEmployeeRequests({
+      const res = await employeesAPI.getEmployees({
         page: pagination.pageIndex + 1,
         limit: pagination.pageSize,
         sortField: sorting[0]?.id || "id",
@@ -504,7 +455,6 @@ export default function ExamenesPage() {
       //   examinationTypesAPI.getExaminationTypes(),
       //   originsAPI.getOrigins(),
       // ]);
-
       // setExaminationTypes(examTypesRes.data.examinationTypes);
       // setOrigins(originsRes.data.origins);
     } catch (e) {
@@ -547,10 +497,6 @@ export default function ExamenesPage() {
     []
   );
 
- 
-
-
-
   return (
     <>
       <title>Trabajadores - Lion PR Services</title>
@@ -580,7 +526,7 @@ export default function ExamenesPage() {
               </button>
             )}
 
-            <FuturisticButton
+            {/* <FuturisticButton
               onClick={() => {
                 setIsModalOpen(true);
                 if (submitString === "Actualizar") {
@@ -589,8 +535,8 @@ export default function ExamenesPage() {
                 }
               }}
             >
-              Registrar exámen
-            </FuturisticButton>
+              Registrar Trabajador
+            </FuturisticButton> */}
           </div>
         </div>
         <Modal
@@ -932,6 +878,9 @@ export default function ExamenesPage() {
                 manualGlobalFilter
                 initialState={{
                   density: "compact",
+                  columnVisibility: {
+                    created_at: false,
+                  },
                 }}
                 state={{
                   pagination,
@@ -958,6 +907,12 @@ export default function ExamenesPage() {
                   sx: { minWidth: "300px" },
                   variant: "outlined",
                 }}
+                muiTableBodyRowProps={({ row }) => ({
+                  onClick: () => {
+                    navigate(`/dashboard/trabajadores/${row.original.id}`);
+                  },
+                  sx: { cursor: "pointer" },
+                })}
               />
             }
           </div>

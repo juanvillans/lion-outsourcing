@@ -1,11 +1,14 @@
+
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Box, TextField, Autocomplete, FormHelperText } from "@mui/material";
+import { Box, TextField, Autocomplete, FormHelperText, CircularProgress } from "@mui/material";
 import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 import { GEOAPIFY_KEY } from "../config/env.js";
 import { Icon } from "@iconify/react";
 import { getIndustryIcon } from "../config/industryIcons";
-import { industriesAPI, skillsAPI, workesrAPI } from "../services/api";
+import { industriesAPI, skillsAPI, applicantsAPI } from "../services/api";
 import { useFeedback } from "../context/FeedbackContext";
+import Footer from "../components/Footer";
+
 
 import "@geoapify/geocoder-autocomplete/styles/round-borders.css";
 
@@ -73,6 +76,11 @@ export default function ApplyPage() {
         }
       );
 
+      // Set the initial value from formData
+      if (formData.localization) {
+        autocomplete.setValue(formData.localization);
+      }
+
       autocomplete.on("select", (localization) => {
         if (localization) {
           setFormData((prev) => ({
@@ -100,6 +108,7 @@ export default function ApplyPage() {
   const [industries, setIndustries] = useState([]);
   const [skills, setSkills] = useState([]);
   const [showForm, setShowForm] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const fetchInitialData = useCallback(async () => {
     try {
@@ -129,20 +138,9 @@ export default function ApplyPage() {
     setFormData((prev) => ({ ...prev, [name]: newValue }));
   };
 
-  const handleNext = () => {
-    const form = document.querySelector("form");
-
-    // dispara validaciones HTML5
-    if (!form.reportValidity()) return;
-    if (currentStep < 3) setCurrentStep((prev) => prev + 1);
-  };
-
-  const handlePrev = () => {
-    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
-  };
-
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       // Crear FormData para enviar archivos
@@ -155,32 +153,49 @@ export default function ApplyPage() {
         if (value instanceof File) {
           // Archivos se agregan directamente
           submitData.append(key, value);
-        } else if (Array.isArray(value)) {
-          // Arrays se envían como JSON o individualmente
-          if (value.length > 0) {
-            value.forEach((item) => submitData.append(`${key}[]`, item));
-        } else {
-            submitData.append(key, '[]'); // Envía la clave con una string JSON vacía
-        }
+        } else if (Array.isArray(value) && value.length > 0) {
+          // Arrays de objetos se envían como JSON string
+          submitData.append(key, JSON.stringify(value));
+        } else if (typeof value === "object" && value !== null) {
+          // Objetos individuales también se envían como JSON string
+          submitData.append(key, JSON.stringify(value));
         } else if (value !== null && value !== undefined && value !== "") {
           submitData.append(key, value);
         }
       });
-      await workesrAPI.submitApplication(submitData);
+      await applicantsAPI.submitApplication(submitData);
       showSuccess("Formulario enviado exitosamente");
       setShowForm(false);
     } catch (e) {
       console.error("Failed to submit application", e);
       showError(e.message);
     }
+    finally {
+      setLoading(false);
+    }
   };
+
+  const handleNext = () => {
+    const form = document.querySelector("form");
+
+    // dispara validaciones HTML5
+    if (!form.reportValidity()) return;
+    if (currentStep < 3) setCurrentStep((prev) => prev + 1);
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
+  };
+
+
 
   // Datos de ejemplo (luego vendrán del backend)
 
   console.log({ formData });
 
+
   return (
-    <div className="min-h-screen bg-gray-50 mt-2 mb-10">
+    <div className=" bg-gray-50 mt-2  ">
       <header className="flex items-center flex-col justify-center">
         <a href="/" className="flex  items-center  gap-2 ">
           <img src={logo} alt="logo" className="w-20" />
@@ -247,6 +262,7 @@ export default function ApplyPage() {
         </div>
       </div>
 
+          {showForm && (
       <form
         onSubmit={handleSubmit}
         className="max-w-[600px] mx-auto bg-white rounded-lg shadow-md p-6 space-y-4"
@@ -410,12 +426,10 @@ export default function ApplyPage() {
               size="small"
               options={formData.industry?.areas || []}
               autoHighlight
-              disabled={!formData.industry_id}
               getOptionLabel={(option) => option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               onChange={(_, value) => {
                 setFormData((prev) => ({
-                  ...prev,
                   area_id: value?.id || null,
                   area: value || null,
                 }));
@@ -439,7 +453,7 @@ export default function ApplyPage() {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Áreas de especialización" // Etiqueta ajustada a plural
+                  label="Área de especialización" // Etiqueta ajustada a plural
                   required
                 />
               )}
@@ -621,24 +635,26 @@ export default function ApplyPage() {
             </button>
           ) : (
             <div onClick={handleSubmit}>
-              <FuturisticButton type={"submit"}>
+              <FuturisticButton type={"submit"} disabled={loading}>
                 <div className="flex gap-2 ">
-                  Enviar Solicitud <Icon icon="mdi:check" />
+                  {loading ? ( <CircularProgress size={20} className="mr-2" />) : null} 
+                  Enviar Solicitud <Icon icon="mdi:check" className="ml-2" />
                 </div>
               </FuturisticButton>
             </div>
           )}
         </div>
       </form>
-
+           )}
           {!showForm && (
-        <div className="text-center mx-auto w-max">
-          <h1>¡Su solicitud ha sido enviada exitosamente!</h1>
+        <div className="text-center mx-auto w-max mt-20">
+          <h1 className="text-2xl font-bold mb-4">¡Su solicitud ha sido enviada exitosamente!</h1>
           <p>Gracias por aplicar a Lion PR Services.</p>
           <p>Nuestro equipo revisará tu solicitud y te contactará pronto.</p>
         </div>
       )}
      
+     <Footer />
     </div>
   );
 }
