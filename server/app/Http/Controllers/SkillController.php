@@ -113,11 +113,12 @@ class SkillController extends Controller
                 ['name' => 'required|string|max:120']
             );
 
-            Skill::create($validated);
+            $skill = Skill::create($validated);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Skill creada exitosamente'
+                'message' => 'Skill creada exitosamente',
+                'data' => $skill
             ]);
         } catch (ValidationException $e) {
 
