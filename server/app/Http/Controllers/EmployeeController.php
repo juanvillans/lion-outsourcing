@@ -10,6 +10,7 @@ use App\Services\EmployeeService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use League\Config\Exception\ValidationException;
 
 class EmployeeController extends Controller
 {
@@ -124,6 +125,45 @@ class EmployeeController extends Controller
                 'data' => $employee,
 
             ]);
+        } catch (Exception $e) {
+
+            Log::error("Error al actualizar empleados ", [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar empleado',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+
+    public function updateSkill(Request $request, Employee $employee)
+    {
+
+        try {
+
+            $request->validate([
+                'skills' => 'array|required'
+            ]);
+
+            $employee->update(['skills' => $request->skills]);
+
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Empleado actualizado exitosamente',
+                'data' => $employee,
+
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar empleado',
+                'error' => $e->getMessage(),
+            ], 500);
         } catch (Exception $e) {
 
             Log::error("Error al actualizar empleados ", [

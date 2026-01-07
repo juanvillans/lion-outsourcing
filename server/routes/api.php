@@ -71,6 +71,7 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::get('/employees', [EmployeeController::class, 'index']);
     Route::put('/employees/{employee}', [EmployeeController::class, 'update']);
     // Route::get('/employees/stats', [EmployeeController::class, 'getStats']);
+    Route::put('/employees/{employee}/skill', [EmployeeController::class, 'updateSkill']);
     Route::get('employees/detail/{employee}', [EmployeeController::class, 'show']);
     Route::delete('employees/{employee}', [EmployeeController::class, 'destroy']);
 
