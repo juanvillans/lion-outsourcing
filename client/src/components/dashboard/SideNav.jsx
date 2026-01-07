@@ -19,18 +19,25 @@ const links = [
     href: "/dashboard/trabajadores",
     icon: "mdi:worker",
   },
+ 
   {
+    permission: true,
+    name: "Aplicantes",
+    href: "/dashboard/aplicantes",
+    icon: "clarity:form-line",
+  },
+  {
+    permission: true,
+    name: "Equipos",
+    href: "/dashboard/equipos",
+    icon: "fluent:people-team-20-filled",
+  },
+   {
     permission: "allow_admins",
     name: "Administradores",
     href: "/dashboard/administradores",
     icon: "dashicons:admin-network",
   },
-  {
-    permission: true,
-    name: "Aplicantes",
-    href: "/dashboard/aplicantes",
-    icon: "mdi:account-multiple",
-  }
 ];
 
 export default function SideNav(props) {
@@ -91,7 +98,7 @@ export default function SideNav(props) {
                 end
                 key={eachLink.href} 
                 className={({ isActive }) =>
-                  `flex h-[48px]  hover:text-color3 grow items-center relative justify-between gap-2  text-sm font-medium hover:bg-sky-100 md:flex-none md:justify-between pl-2 ${
+                  `flex h-[48px] duration-150 hover:text-color3 grow items-center relative justify-between gap-2  text-sm font-medium hover:bg-sky-100 md:flex-none md:justify-between pl-2 ${
                     isActive
                       ? "bg-gray-50 activeLink text-color1 rounded-2xl md:rounded-none  md:rounded-l-2xl"
                       : "text-gray-50 hover:bg-white/10 hover:text-color4 rounded-full"
@@ -111,7 +118,7 @@ export default function SideNav(props) {
                       props.isSidebarOpen
                         ? "hidden md:block opacity-100"
                         : "hidden md:block  opacity-0" + " duration-200 z-0"
-                    }
+                    } 
                   >
                     {eachLink.name}
                   </span>
@@ -132,9 +139,11 @@ export default function SideNav(props) {
               <span className="sr-only">Cerrar sesión</span>
             ) : null}
           </button>
-          <p className="text-xs text-left text-opacity-55  text-white ">
-            {props.isSidebarOpen ? user?.first_name : null}
-          </p>
+          {props.isSidebarOpen ? (
+            <p className="text-xs text-left text-opacity-55  text-white ">
+              {user?.first_name}
+            </p>
+          ) : null}
         </div>
       </div>
     </nav>

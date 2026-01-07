@@ -5,13 +5,17 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { employeesAPI } from "../../services/api";
-
+import {
+  employeesAPI,
+  areasAPI,
+  industriesAPI,
+  skillsAPI,
+} from "../../services/api";
 import { Icon } from "@iconify/react";
 import Modal from "../../components/Modal";
 import FuturisticButton from "../../components/FuturisticButton";
 import FormField from "../../components/forms/FormField";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Autocomplete, Box, TextField } from "@mui/material";
 import { useFeedback } from "../../context/FeedbackContext";
 import { MaterialReactTable } from "material-react-table";
 
@@ -20,6 +24,7 @@ import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { API_URL } from "../../config/env";
 import { useNavigate } from "react-router-dom";
+import { getIndustryIcon } from "../../config/industryIcons";
 
 let isThereLocalStorageFormData = localStorage.getItem("formData")
   ? true
@@ -67,6 +72,10 @@ export default function TrabajadoresPage() {
   const [origins, setOrigins] = useState([]);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const { user } = useAuth();
+  const [areas, setAreas] = useState([]);
+
+  const [industries, setIndustries] = useState([]);
+  const [skills, setSkills] = useState([]);
   const navigate = useNavigate();
 
   // Form configuration for ReusableForm
@@ -322,9 +331,17 @@ export default function TrabajadoresPage() {
           return value.map((skill) => {
             return (
               <span
-                className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+                title={`${
+                  skill.id == null ? "Crear nueva habilidad" : skill.name
+                }`}
+                className={`${
+                  skill.id == null ? "bg-red-200 hover:bg-red-300" : ""
+                } inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2`}
                 key={skill.id}
               >
+                {skill.id == null ? (
+                  <Icon icon="mdi:plus" className="inline mr-1" />
+                ) : null}
                 {skill.name}
               </span>
             );
@@ -332,7 +349,6 @@ export default function TrabajadoresPage() {
         },
         enableSorting: false,
       },
-     
     ],
     []
   );
@@ -363,6 +379,7 @@ export default function TrabajadoresPage() {
   const [sorting, setSorting] = useState([{ id: "id", desc: true }]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [customFilters, setCustomFilters] = useState({});
   // Move useMemo outside the map - process all test sections at once
 
   const fetchData = useCallback(async () => {
@@ -380,6 +397,7 @@ export default function TrabajadoresPage() {
             return acc;
           }, {})
         ),
+        ...customFilters,
       });
       setData(res.data);
       setRowCount(res.meta.total);
@@ -387,7 +405,7 @@ export default function TrabajadoresPage() {
       console.error("Failed to fetch data", e);
     }
     setIsLoading(false);
-  }, [pagination, sorting, columnFilters, globalFilter]);
+  }, [pagination, sorting, columnFilters, globalFilter, customFilters]);
 
   const fetchInitialData = useCallback(async () => {
     try {
@@ -479,7 +497,6 @@ export default function TrabajadoresPage() {
             </FuturisticButton> */}
           </div>
         </div>
-
 
         <div className="flex  gap-4 mb-3">
           <Autocomplete
