@@ -40,7 +40,6 @@ export default function AplicantesPage() {
   const [industries, setIndustries] = useState([]);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const { user } = useAuth();
-
   const navigate = useNavigate();
   // Form configuration for ReusableForm
 
@@ -166,9 +165,16 @@ export default function AplicantesPage() {
           return value.map((skill) => {
             return (
               <span
-                className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+               
+                className={`${
+                  skill.id == null ? "bg-red-200" : ""
+                } inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2`}
                 key={skill.id}
+               
               >
+                {skill.id == null ? (
+                  <Icon icon="mdi:plus" className="inline mr-1" />
+                ) : null}
                 {skill.name}
               </span>
             );
@@ -371,6 +377,7 @@ export default function AplicantesPage() {
             )}
           />
         </div>
+      
 
         {!isModalOpen && (
           <div
@@ -389,8 +396,8 @@ export default function AplicantesPage() {
                 initialState={{
                   density: "compact",
                   columnVisibility: {
-                    "email": false, // This matches the accessorKey
-                    "localization": false,
+                    email: false, // This matches the accessorKey
+                    localization: false,
                   },
                 }}
                 state={{

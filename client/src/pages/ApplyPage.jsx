@@ -5,6 +5,8 @@ import {
   Autocomplete,
   FormHelperText,
   CircularProgress,
+  createFilterOptions,
+  Chip,
 } from "@mui/material";
 import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 import { GEOAPIFY_KEY } from "../config/env.js";
@@ -33,14 +35,12 @@ const defaultFormData = {
   years_of_experience: "",
   english_level: "",
   skills: [],
-  new_skills: [{ name: "none" }],
   // Paso 3: Info Adicional y Documentos
   localization: "",
   desired_monthly_income: "",
   linkedin_url: "",
   website_url: "",
   cv: null,
-
   phone_number: "",
 };
 
@@ -113,6 +113,8 @@ export default function ApplyPage() {
   const [skills, setSkills] = useState([]);
   const [showForm, setShowForm] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const filter = createFilterOptions();
 
   const fetchInitialData = useCallback(async () => {
     try {
@@ -388,7 +390,6 @@ export default function ApplyPage() {
                 <Icon icon="mdi:briefcase" className="inline mr-2" />
                 Perfil Profesional
               </h2>
-
               <Autocomplete
                 id="industries-select"
                 size="small"
@@ -420,7 +421,6 @@ export default function ApplyPage() {
                   <TextField {...params} label="Industria a aplicar" required />
                 )}
               />
-
               <Autocomplete
                 id="areas-select-multiple" // Cambiado el ID para mayor claridad
                 size="small"
@@ -467,14 +467,48 @@ export default function ApplyPage() {
                 size="small"
                 options={skills}
                 autoHighlight
+                value={formData.skills}
                 getOptionLabel={(option) => option.name}
+                filterOptions={(options, params) => {
+                  const filtered = filter(options, params);
+                  const inputValue = params.inputValue.trim();
+
+                  const exists = options.some(
+                    (option) =>
+                      option.name.toLowerCase() === inputValue.toLowerCase()
+                  );
+
+                  if (inputValue !== "" && !exists) {
+                    filtered.push({
+                      id: null,
+                      name: inputValue,
+                      isNew: true,
+                    });
+                  }
+
+                  return filtered;
+                }}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    {option.isNew ? (
+                      <span className="flex items-center gap-2 text-blue-600">
+                        <Icon icon="mdi:plus" className="w-6 h-6" />
+                        agrega “{option.name}”
+                      </span>
+                    ) : (
+                      option.name
+                    )}
+                  </li>
+                )}
                 onChange={(_, value) =>
                   setFormData((prev) => ({
                     ...prev,
-                    skills: value,
+                    skills: value.map((item) => ({
+                      id: item.id ?? null,
+                      name: item.name,
+                    })),
                   }))
                 }
-                value={formData.skills}
                 onInputChange={(_, value) => searchSkills(value)}
                 renderInput={(params) => (
                   <TextField
@@ -508,7 +542,6 @@ export default function ApplyPage() {
                 required
                 placeholder="Ej: Ingeniero petroquímico, TSU en Informática"
               />
-
               <FormField
                 label="Nivel de Inglés *"
                 type="radio"
