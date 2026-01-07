@@ -222,6 +222,43 @@ class EmployeeService
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
 
+    public function update(array $data, Employee $employee)
+    {
+        try {
+            $filePaths = $this->handleUpdateFiles($data, $employee);
+
+            if (!empty($filePaths['cv'])) {
+                $data['cv'] = $filePaths['cv'];
+            }
+
+            if (!empty($filePaths['photo'])) {
+                $data['photo'] = $filePaths['photo'];
+            }
+
+            $employee->update($data);
+
+            Log::info('Employee actualizado exitosamente', [
+                'employee_id' => $employee->id,
+                'updated_fields' => array_keys($data)
+            ]);
+
+            return $employee->fresh();
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar Employee', [
+                'employee_id' => $employee->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            throw $e;
+        }
+    }
+
+
+
+
+
+
     public function destroy(Employee $employee)
     {
 
@@ -229,6 +266,100 @@ class EmployeeService
         $employee->delete(); // Se ejecuta un observer para eliminar la solicitud del empleado
 
         return 0;
+    }
+
+    private function handleUpdateFiles(array &$data, Employee $employee): array
+    {
+        $filePaths = [];
+
+        if (isset($data['cv']) && $data['cv'] instanceof \Illuminate\Http\UploadedFile) {
+            // Eliminar CV anterior si existe
+            $this->deleteOldFile($employee->cv, 'private');
+
+            $filePaths['cv'] = $this->storeCvFile($data['cv']);
+            unset($data['cv']); // Remover el archivo del array de datos
+        } elseif (array_key_exists('cv', $data) && $data['cv'] === null) {
+            $this->deleteOldFile($employee->cv, 'private');
+            $filePaths['cv'] = null;
+            unset($data['cv']);
+        } else {
+            $filePaths['cv'] = $employee->cv;
+        }
+
+        if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
+            // Eliminar foto anterior si existe
+            $this->deleteOldFile($employee->photo, 'public');
+
+            $filePaths['photo'] = $this->storePhotoFile($data['photo']);
+            unset($data['photo']); // Remover el archivo del array de datos
+        } elseif (isset($data['photo']) && $data['photo'] === null) {
+            $this->deleteOldFile($employee->photo, 'public');
+            $filePaths['photo'] = null;
+            unset($data['photo']);
+        } else {
+            $filePaths['photo'] = $employee->photo;
+        }
+
+        return $filePaths;
+    }
+
+    private function storeCvFile(\Illuminate\Http\UploadedFile $file): string
+    {
+        $extension = $file->getClientOriginalExtension();
+        $filename = 'cv_' . date('Ymd_His') . '_' . Str::random(8) . '.' . $extension;
+        $folder = 'employees/cvs';
+
+        // Crear directorio si no existe
+        if (!Storage::disk('private')->exists($folder)) {
+            Storage::disk('private')->makeDirectory($folder, 0755, true);
+        }
+
+        $path = $file->storeAs($folder, $filename, 'private');
+
+        Log::info('CV almacenado exitosamente', ['path' => $path]);
+
+        return $path;
+    }
+
+    private function storePhotoFile(\Illuminate\Http\UploadedFile $file): string
+    {
+        $extension = $file->getClientOriginalExtension();
+        $filename = 'photo_' . date('Ymd_His') . '_' . Str::random(8) . '.' . $extension;
+        $folder = 'employees/photos';
+
+        // Crear directorio si no existe
+        if (!Storage::disk('public')->exists($folder)) {
+            Storage::disk('public')->makeDirectory($folder, 0755, true);
+        }
+
+        $path = $file->storeAs($folder, $filename, 'public');
+
+        Log::info('Foto almacenada exitosamente', ['path' => $path]);
+
+        return $path;
+    }
+
+    private function deleteOldFile(?string $filePath, string $disk = 'private'): void
+    {
+        if (!$filePath) {
+            return;
+        }
+
+        try {
+            if (Storage::disk($disk)->exists($filePath)) {
+                Storage::disk($disk)->delete($filePath);
+                Log::info('Archivo eliminado', [
+                    'disk' => $disk,
+                    'path' => $filePath
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::warning('Error al eliminar archivo antiguo, continuando...', [
+                'disk' => $disk,
+                'path' => $filePath,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     private function deleteEmployeeFiles(Employee $employee): void

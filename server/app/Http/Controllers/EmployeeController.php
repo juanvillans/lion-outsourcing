@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateEmployeeRequest;
 use Exception;
 use App\Models\Employee;
 use Illuminate\Http\Request;
@@ -109,6 +110,34 @@ class EmployeeController extends Controller
     //         ], 500);
     //     }
     // }
+
+    public function update(UpdateEmployeeRequest $request, Employee $employee)
+    {
+
+        try {
+
+            $employee = $this->employeeService->update($request->validated(), $employee);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Empleado actualizado exitosamente',
+                'data' => $employee,
+
+            ]);
+        } catch (Exception $e) {
+
+            Log::error("Error al actualizar empleados ", [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar empleado',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
 
     public function show(Employee $employee)
     {
