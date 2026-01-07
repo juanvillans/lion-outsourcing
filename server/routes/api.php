@@ -10,6 +10,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\SkillController;
+use App\Http\Controllers\WorkTeamController;
+use App\Models\WorkTeam;
 
 Route::post('login', [LoginController::class, 'login'])->name('login');
 Route::post('check-set-password-token', [UserController::class, 'checkSetPasswordToken']);
@@ -71,4 +73,7 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     // Route::get('/employees/stats', [EmployeeController::class, 'getStats']);
     Route::get('employees/detail/{employee}', [EmployeeController::class, 'show']);
     Route::delete('employees/{employee}', [EmployeeController::class, 'destroy']);
+
+
+    Route::resource('work_teams', WorkTeamController::class)->except(['edit', 'create']);
 });

@@ -43,15 +43,15 @@ class IndustryController extends Controller
                 'status' => true,
                 'data' => $industry
             ]);
-        } catch (Exception $e) {
-
-            Log::info('Error al crear industria', ['name' => $request->name]);
+        } catch (ValidationException $e) {
 
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ]);
-        } catch (ValidationException $e) {
+        } catch (Exception $e) {
+
+            Log::info('Error al crear industria', ['name' => $request->name]);
 
             return response()->json([
                 'success' => false,

@@ -42,4 +42,9 @@ class Employee extends Model
     {
         return $this->belongsTo(Area::class);
     }
+
+    public function workteams()
+    {
+        return $this->belongsToMany(WorkTeam::class, 'employee_work_teams');
+    }
 }
