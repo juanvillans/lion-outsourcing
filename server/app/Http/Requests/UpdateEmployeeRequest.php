@@ -80,7 +80,6 @@ class UpdateEmployeeRequest extends FormRequest
             'photo.max' => 'La foto no debe superar los 5MB.',
             'skills.required' => 'Debe seleccionar al menos una habilidad.',
             'skills.array' => 'Las habilidades deben ser un array.',
-            'new_skills.array' => 'Las nuevas habilidades deben ser un array.',
         ];
     }
 
@@ -107,7 +106,6 @@ class UpdateEmployeeRequest extends FormRequest
             'cv' => 'CV',
             'photo' => 'foto',
             'skills' => 'habilidades',
-            'new_skills' => 'nuevas habilidades',
         ];
     }
 
@@ -116,11 +114,7 @@ class UpdateEmployeeRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->has('new_skills') && is_string($this->new_skills)) {
-            $this->merge([
-                'new_skills' => json_decode($this->new_skills, true) ?? [],
-            ]);
-        }
+
 
         // Si skills viene como string, convertir a array
         if ($this->has('skills') && is_string($this->skills)) {

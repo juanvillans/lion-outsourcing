@@ -22,14 +22,12 @@ class EmployeeRequest extends Model
         'cv',
         'photo',
         'skills',
-        'new_skills',
         'years_of_experience'
     ];
 
 
     protected $casts = [
         'skills' => 'array',
-        'new_skills' => 'array',
         'desired_monthly_income' => 'integer'
     ];
 

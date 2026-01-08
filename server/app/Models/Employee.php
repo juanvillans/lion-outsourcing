@@ -21,7 +21,6 @@ class Employee extends Model
         'cv',
         'photo',
         'skills',
-        'new_skills',
         'years_of_experience',
         'employee_request_id'
     ];
@@ -29,7 +28,6 @@ class Employee extends Model
 
     protected $casts = [
         'skills' => 'array',
-        'new_skills' => 'array',
         'desired_monthly_income' => 'integer'
     ];
 

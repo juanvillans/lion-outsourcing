@@ -93,24 +93,6 @@ class EmployeeService
             }
         }
 
-        // Filtro por new_skills (array/coma separado)
-        if (!empty($params['new_skills'])) {
-            $newSkills = is_array($params['new_skills'])
-                ? $params['new_skills']
-                : array_filter(explode(',', $params['new_skills']));
-
-            if (!empty($newSkills)) {
-                $query->where(function ($q) use ($newSkills) {
-                    foreach ($newSkills as $skill) {
-                        $skill = trim($skill);
-                        if (!empty($skill)) {
-                            // Búsqueda en campo JSON para MySQL
-                            $q->orWhere('new_skills', 'LIKE', '%"' . $skill . '"%');
-                        }
-                    }
-                });
-            }
-        }
 
         // Filtro que requiera que tenga TODAS las skills especificadas
         if (!empty($params['required_skills'])) {
@@ -146,7 +128,7 @@ class EmployeeService
                 // Búsqueda en campos de texto normales
                 $this->searchInTextFields($q, $term);
 
-                // Búsqueda en campos JSON (skills y new_skills)
+                // Búsqueda en campos JSON (skills)
                 $this->searchInJsonFields($q, $term);
             }
         });
@@ -176,10 +158,6 @@ class EmployeeService
             // Búsqueda en skills (JSON array)
             $q->where('skills', 'LIKE', '%"' . $term . '"%')
                 ->orWhere('skills', 'LIKE', '%' . $term . '%');
-
-            // Búsqueda en new_skills (JSON array)
-            $q->orWhere('new_skills', 'LIKE', '%"' . $term . '"%')
-                ->orWhere('new_skills', 'LIKE', '%' . $term . '%');
         });
     }
 
@@ -198,8 +176,7 @@ class EmployeeService
                     WHEN fullname LIKE ? THEN 1
                     WHEN email LIKE ? THEN 2
                     WHEN skills LIKE ? THEN 3
-                    WHEN new_skills LIKE ? THEN 4
-                    ELSE 5
+                    ELSE 4
                 END",
                 [
                     "%{$searchTerm}%",

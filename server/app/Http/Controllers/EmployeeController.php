@@ -41,7 +41,6 @@ class EmployeeController extends Controller
                 'experience_min' => 'nullable|integer|min:0',
                 'experience_max' => 'nullable|integer|min:0',
                 'skills' => 'nullable|string',
-                'new_skills' => 'nullable|string',
                 'required_skills' => 'nullable|string',
             ]);
 
@@ -89,7 +88,6 @@ class EmployeeController extends Controller
     //             'experience_min' => 'nullable|integer|min:0',
     //             'experience_max' => 'nullable|integer|min:0',
     //             'skills' => 'nullable|string',
-    //             'new_skills' => 'nullable|string',
     //             'required_skills' => 'nullable|string',
     //         ]);
 

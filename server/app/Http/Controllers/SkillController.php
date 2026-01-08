@@ -94,18 +94,6 @@ class SkillController extends Controller
         }
     }
 
-    public function getNewSkills()
-    {
-        $newSkillsFromEmployeeRequests = EmployeeRequest::select('new_skills')->get()->pluck('new_skills')->toArray();
-        $newSkillsFromEmployees = Employee::select('new_skills')->get()->pluck('new_skills')->toArray();
-
-        $result = array_merge($newSkillsFromEmployeeRequests, $newSkillsFromEmployees);
-
-        $result = array_merge(...$result);
-
-        return $result;
-    }
-
     public function store(Request $request)
     {
         try {
