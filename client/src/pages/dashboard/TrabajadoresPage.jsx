@@ -396,6 +396,25 @@ export default function TrabajadoresPage() {
     }
   }, []);
 
+
+    const getAreas = useCallback(async () => {
+      try {
+        const res = await areasAPI.getAreas();
+        setAreas(res.data);
+      } catch (e) {
+        console.error("Failed to fetch data", e);
+      }
+    }, []);
+  
+    const searchSkills = useCallback(async (searchTerm) => {
+      try {
+        const response = await skillsAPI.searchSkills({ search: searchTerm });
+        setSkills(response.data);
+      } catch (e) {
+        console.error("Failed to fetch data", e);
+      }
+    }, []);
+
   useEffect(() => {
     fetchInitialData();
   }, [fetchInitialData]);

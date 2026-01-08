@@ -81,38 +81,64 @@ export const adminAPI = {
 
 export const industriesAPI = {
   getIndustries: () => api.get("/get_industries"),
+  createIndustry: (industryData) => api.post("/admin/industries", industryData),
+  updateIndustry: (id, industryData) =>
+    api.put(`/admin/industries/${id}`, industryData),
+  deleteIndustry: (id) => api.delete(`/admin/industries/${id}`),
 };
 
 export const skillsAPI = {
   searchSkills: (params) => api.get("/search_skills?search", { params }),
   getNewSkills: () => api.get("/skills/newskills"),
   createSkill: (skillData) => api.post("/admin/skills", skillData),
+  updateSkill: (id, skillData) => api.put(`/admin/skills/${id}`, skillData),
+  deleteSkill: (id) => api.delete(`/admin/skills/${id}`),
 };
 
 export const employeesAPI = {
   getEmployees: (params) => api.get("/admin/employees", { params }),
   getEmployeeById: (id) => api.get(`/admin/employees/detail/${id}`),
-  updateEmployee: (id, userData) => api.put(`/admin/employees/${id}`, userData),
-  updateEmployeeSkill: (id, skillData) => api.put(`/admin/employees/${id}/skill`, {skills: skillData}),
+  updateEmployee: (id, userData) =>
+    api.put(`/admin/employees/${id}`, userData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
+  updateEmployeePhoto: (id, photoData) =>
+    api.put(`/admin/employees/${id}`, photoData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
+  updateEmployeeCV: (id, cvData) =>
+    api.put(`/admin/employees/${id}`, cvData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
+  updateEmployeeSkill: (id, skillData) =>
+    api.put(`/admin/employees/${id}/skill`, { skills: skillData }),
   deleteEmployee: (id) => api.delete(`/admin/employee/${id}`),
-  getEmployeeCV: (id) => api.get(`/admin/employee_requests/${id}/cv/view`, { responseType: "blob" }),
+  getEmployeeCV: (id) =>
+    api.get(`/admin/employee_requests/${id}/cv/view`, { responseType: "blob" }),
 };
 
 export const areasAPI = {
   getAreas: () => api.get("/admin/areas"),
+  createArea: (areaData) => api.post("/admin/areas", areaData),
+  updateArea: (id, areaData) => api.put(`/admin/areas/${id}`, areaData),
+  deleteArea: (id) => api.delete(`/admin/areas/${id}`),
 };
 
 export const applicantsAPI = {
-  submitApplication: (data) => api.post("/generate_request", data, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  }),
+  submitApplication: (data) =>
+    api.post("/generate_request", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
   getApplicants: (params) => api.get("/admin/employee_requests", { params }),
   getApplicant: (id) => api.get(`/admin/employee_request/detail/${id}`),
-  getApplicantCV: (id) => api.get(`/admin/employee_requests/${id}/cv/view`, { responseType: "blob" }),
-  acceptApplicant: (id) => api.put(`/admin/employee_requests/${id}/status`, { status: "accepted" }),
-  rejectApplicant: (id) => api.put(`/admin/employee_requests/${id}/status`, { status: "rejected" }),
+  getApplicantCV: (id) =>
+    api.get(`/admin/employee_requests/${id}/cv/view`, { responseType: "blob" }),
+  acceptApplicant: (id) =>
+    api.put(`/admin/employee_requests/${id}/status`, { status: "accepted" }),
+  rejectApplicant: (id) =>
+    api.put(`/admin/employee_requests/${id}/status`, { status: "rejected" }),
 };
 // export const examsAPI = {
 //   createExam: (examData) => api.post("/exams", examData),
