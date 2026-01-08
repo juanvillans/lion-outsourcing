@@ -264,7 +264,7 @@ class EmployeeRequestService
         $image = $manager->read($file->getPathname());
 
         // Redimensionar a máximo 800px ancho
-        $image = $image->resize(1200, null, function ($constraint) {
+        $image = $image->resize(800, 800, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         });
