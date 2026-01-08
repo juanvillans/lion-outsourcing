@@ -36,10 +36,11 @@ class WorkTeamController extends Controller
         try {
 
             $request->validate([
-                'name' => 'required|string'
+                'name' => 'required|string',
+                'description' => 'nullable|string'
             ]);
 
-            $workTeam = WorkTeam::create(['name' => $request->name]);
+            $workTeam = WorkTeam::create(['name' => $request->name, 'description' => $request->description]);
 
             return response()->json([
                 'success' => true,
@@ -84,7 +85,10 @@ class WorkTeamController extends Controller
      */
     public function update(Request $request, WorkTeam $workTeam)
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+            'employees' => 'array|nullable'
+        ]);
     }
 
     /**

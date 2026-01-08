@@ -43,10 +43,7 @@ class UpdateEmployeeRequest extends FormRequest
             'localization' => ['required', 'string', 'max:255'],
             'years_of_experience' => ['required', 'string', 'max:50'],
             'desired_monthly_income' => ['required', 'integer', 'min:0'],
-            'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
             'skills' => ['required', 'array'],
-            'new_skills' => ['nullable', 'array'],
         ];
     }
 

@@ -140,6 +140,83 @@ class EmployeeController extends Controller
         }
     }
 
+    public function updateCV(Request $request, Employee $employee)
+    {
+        try {
+
+            $request->validate([
+                'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
+            ]);
+
+            $employee = $this->employeeService->updateCV($request->toArray(), $employee);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'CV del Empleado actualizado exitosamente',
+                'data' => $employee,
+
+            ]);
+        } catch (ValidationException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
+            ], 500);
+        } catch (Exception $e) {
+
+            Log::error("Error al actualizar cv del empleado ", [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar cv del empleado',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+
+    public function updatePhoto(Request $request, Employee $employee)
+    {
+        try {
+
+            $request->validate([
+                'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
+            ]);
+
+            $employee = $this->employeeService->updatePhoto($request->validated(), $employee);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Foto del Empleado actualizado exitosamente',
+                'data' => $employee,
+
+            ]);
+        } catch (ValidationException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'error' => $e->getMessage(),
+            ], 500);
+        } catch (Exception $e) {
+
+            Log::error("Error al actualizar foto del empleado ", [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar foto del empleado',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+
+
     public function updateSkill(Request $request, Employee $employee)
     {
 

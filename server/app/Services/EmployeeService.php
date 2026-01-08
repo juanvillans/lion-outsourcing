@@ -225,15 +225,7 @@ class EmployeeService
     public function update(array $data, Employee $employee)
     {
         try {
-            $filePaths = $this->handleUpdateFiles($data, $employee);
 
-            if (!empty($filePaths['cv'])) {
-                $data['cv'] = $filePaths['cv'];
-            }
-
-            if (!empty($filePaths['photo'])) {
-                $data['photo'] = $filePaths['photo'];
-            }
 
             $employee->update($data);
 
@@ -245,6 +237,64 @@ class EmployeeService
             return $employee->fresh();
         } catch (\Exception $e) {
             Log::error('Error al actualizar Employee', [
+                'employee_id' => $employee->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            throw $e;
+        }
+    }
+
+    public function updateCV(array $data, Employee $employee)
+    {
+        try {
+
+            $filePaths = $this->handleUpdateFiles($data, $employee);
+
+            if (!empty($filePaths['cv'])) {
+                $data['cv'] = $filePaths['cv'];
+            }
+
+            $employee->update(['cv' => $filePaths['cv']]);
+
+            Log::info('Employee actualizado exitosamente', [
+                'employee_id' => $employee->id,
+            ]);
+
+            return $employee->fresh();
+        } catch (\Exception $e) {
+
+            Log::error('Error al actualizar cv Employee', [
+                'employee_id' => $employee->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            throw $e;
+        }
+    }
+
+    public function updatePhoto(array $data, Employee $employee)
+    {
+        try {
+
+            $filePaths = $this->handleUpdateFiles($data, $employee);
+
+            if (!empty($filePaths['photo'])) {
+                $data['photo'] = $filePaths['photo'];
+            }
+
+            $employee->update(['photo' => $filePaths['photo']]);
+
+            Log::info('Employee actualizado exitosamente', [
+                'employee_id' => $employee->id,
+            ]);
+
+            return $employee->fresh();
+        } catch (\Exception $e) {
+
+            Log::error('Error al actualizar foto Employee', [
                 'employee_id' => $employee->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
