@@ -85,12 +85,17 @@ export const industriesAPI = {
 
 export const skillsAPI = {
   searchSkills: (params) => api.get("/search_skills?search", { params }),
+  getNewSkills: () => api.get("/skills/newskills"),
+  createSkill: (skillData) => api.post("/admin/skills", skillData),
 };
 
 export const employeesAPI = {
   getEmployees: (params) => api.get("/admin/employees", { params }),
   getEmployeeById: (id) => api.get(`/admin/employees/detail/${id}`),
   updateEmployee: (id, userData) => api.put(`/admin/employees/${id}`, userData),
+  updateEmployeeCV: (id, userData) => api.put(`/admin/employees/${id}`, cv),
+  updateEmployeePhoto: (id, userData) => api.put(`/admin/employees/${id}`, photo),
+  updateEmployeeSkill: (id, skillData) => api.put(`/admin/employees/${id}/skill`, {skills: skillData}),
   deleteEmployee: (id) => api.delete(`/admin/employee/${id}`),
   getEmployeeCV: (id) => api.get(`/admin/employee_requests/${id}/cv/view`, { responseType: "blob" }),
 };

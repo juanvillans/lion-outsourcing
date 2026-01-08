@@ -86,9 +86,10 @@ export default function DetalleAplicantePage() {
     fetchApplicant();
   }, [fetchApplicant]);
 
-  const [loading, setLoading] = useState(false);
+  const [aceptLoading, setAceptLoading] = useState(false);
+  const [rejectLoading, setRejectLoading] = useState(false);
   const handleAccept = async () => {
-    setLoading(true);
+    setAceptLoading(true);
     try {
       await applicantsAPI.acceptApplicant(id);
       showSuccess("Aplicante aceptado con éxito");
@@ -97,10 +98,11 @@ export default function DetalleAplicantePage() {
       console.error("Failed to accept applicant", e);
       showError("No se pudo aceptar el aplicante");
     }
-    setLoading(false);
+    setAceptLoading(false);
   };
   const handleReject = async () => {
-    setLoading(true);
+    
+    setRejectLoading(true);
     try {
       await applicantsAPI.rejectApplicant(id);
       showSuccess("Aplicante rechazado con éxito");
@@ -109,7 +111,8 @@ export default function DetalleAplicantePage() {
       console.error("Failed to reject applicant", e);
       showError("No se pudo rechazar el aplicante");
     }
-    setLoading(false);
+    
+    setRejectLoading(false);
   };
 
   return (
@@ -192,10 +195,25 @@ export default function DetalleAplicantePage() {
         <button className="bg-red-500 text-white px-4 py-2 rounded-lg"
         onClick={() => window.confirm("¿Está seguro de eliminar este aplicante?") && handleReject()}
         >
-          Eliminar
+          {rejectLoading ? (
+            <div className="flex gap-2 items-center">
+              <div className="w-4 h-4 border-t-2 border-white border-solid rounded-full animate-spin"></div>
+              <span>Cargando...</span>
+            </div>
+          ) : (
+            <span>Rechazar</span>
+          )}
         </button>
         <button className="bg-caribe text-white px-4 py-2 rounded-lg" onClick={handleAccept}>
-          Aceptar
+          
+          {aceptLoading ? (
+            <div className="flex gap-2 items-center">
+              <div className="w-4 h-4 border-t-2 border-white border-solid rounded-full animate-spin"></div>
+              <span>Cargando...</span>
+            </div>
+          ) : (
+            <span>Aceptar</span>
+          )}
         </button>
       </div>
 
