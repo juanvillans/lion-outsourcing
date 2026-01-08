@@ -150,11 +150,13 @@ export default function DetalleAplicantePage() {
 
           <p>
             <strong className="text-dark">Habilidades:</strong>{" "}
-            {applicant?.skills?.map((skill) => {
+            {applicant?.skills?.map((skill, i) => {
               return (
                 <span
-                  className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-                  key={skill.id}
+                  className={`inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${
+                    skill.id == null ? "bg-red-200" : ""
+                  }`}
+                  key={skill.id+skill.name+i}
                 >
                   {skill.name}
                 </span>

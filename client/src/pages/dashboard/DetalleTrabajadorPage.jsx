@@ -306,11 +306,13 @@ export default function DetalleTrabajadorPage() {
 
           <p>
             <strong className="text-dark">Habilidades:</strong>{" "}
-            {applicant?.skills?.map((skill) => {
+            {applicant?.skills?.map((skill, i) => {
               return (
                 <span
-                  className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-                  key={skill.id}
+                  className={`inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${
+                    skill.id == null ? "bg-red-200" : ""
+                  }`}
+                  key={skill.id + skill.name + i}
                 >
                   {skill.name}
                 </span>
@@ -408,14 +410,13 @@ export default function DetalleTrabajadorPage() {
                     />
                   </div>
                 )}
-
                 {formData.fotoChanged && (
                   <div className="bg-gray-200 mt-1 rounded-md w-36 h-44 flex items-center justify-center cursor-pointer hover:bg-gray-400 duration-150">
                     <img
-                        src={URL.createObjectURL(formData.photo)}
-                        alt="preview"
-                        className="w-full h-full object-cover"
-                      />
+                      src={URL.createObjectURL(formData.photo)}
+                      alt="preview"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 )}
               </label>
@@ -426,8 +427,11 @@ export default function DetalleTrabajadorPage() {
                 className="hidden"
                 accept="image/*"
                 onChange={(e) =>
-                  
-                  setFormData({ ...formData, photo: e.target.files[0], fotoChanged: true })
+                  setFormData({
+                    ...formData,
+                    photo: e.target.files[0],
+                    fotoChanged: true,
+                  })
                 }
               />
             </div>
@@ -654,7 +658,11 @@ export default function DetalleTrabajadorPage() {
                 accept=".pdf"
                 className="sr-only"
                 onChange={(e) =>
-                  setFormData({ ...formData, cv: e.target.files[0], cv_changed: true })
+                  setFormData({
+                    ...formData,
+                    cv: e.target.files[0],
+                    cv_changed: true,
+                  })
                 }
               />
             </label>
