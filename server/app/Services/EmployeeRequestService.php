@@ -264,13 +264,13 @@ class EmployeeRequestService
         $image = $manager->read($file->getPathname());
 
         // Redimensionar a máximo 800px ancho
-        $image = $image->resize(800, null, function ($constraint) {
+        $image = $image->resize(1200, null, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         });
 
         // Comprimir a JPG calidad 70%
-        $encoded = $image->toJpeg(70);
+        $encoded = $image->toJpeg(100);
 
         Storage::disk('public')->put($filePath, $encoded);
 

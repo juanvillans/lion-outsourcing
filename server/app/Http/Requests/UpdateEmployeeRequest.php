@@ -133,13 +133,6 @@ class UpdateEmployeeRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            // Validar que haya al menos una habilidad (existente o nueva)
-            if (empty($this->skills) && empty($this->new_skills)) {
-                $validator->errors()->add(
-                    'skills',
-                    'Debe proporcionar al menos una habilidad existente o nueva.'
-                );
-            }
 
             // Validar límite razonable de ingreso mensual
             if ($this->has('desired_monthly_income') && $this->desired_monthly_income > 1000000) {

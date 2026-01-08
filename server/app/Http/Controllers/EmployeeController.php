@@ -186,7 +186,7 @@ class EmployeeController extends Controller
                 'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
             ]);
 
-            $employee = $this->employeeService->updatePhoto($request->validated(), $employee);
+            $employee = $this->employeeService->updatePhoto($request->toArray(), $employee);
 
             return response()->json([
                 'success' => true,
