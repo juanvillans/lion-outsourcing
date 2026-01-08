@@ -95,6 +95,7 @@ export default function DetalleTrabajadorPage() {
   const autocompleteContainerRef = useRef(null);
   const autocompleteInstanceRef = useRef(null);
 
+  const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     fullname: "",
@@ -149,22 +150,71 @@ export default function DetalleTrabajadorPage() {
     setFormData((prev) => ({ ...prev, [name]: newValue }));
   };
 
+  // Update photo only
+  const handleUpdatePhoto = async () => {
+    if (!formData.fotoChanged || !formData.photo) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const photoData = new FormData();
+      photoData.append("photo", formData.photo);
+
+      await employeesAPI.updateEmployee(id, photoData);
+      showSuccess("Foto actualizada exitosamente");
+      await fetchApplicant();
+      setFormData((prev) => ({ ...prev, fotoChanged: false }));
+    } catch (e) {
+      console.error("Failed to update photo", e);
+      showError("Error al actualizar la foto: " + e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update CV only
+  const handleUpdateCV = async () => {
+    if (!formData.cv_changed || !formData.cv) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const cvData = new FormData();
+      cvData.append("cv", formData.cv);
+
+      await employeesAPI.updateEmployee(id, cvData);
+      showSuccess("CV actualizado exitosamente");
+      await fetchApplicant();
+      setFormData((prev) => ({ ...prev, cv_changed: false }));
+    } catch (e) {
+      console.error("Failed to update CV", e);
+      showError("Error al actualizar el CV: " + e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update rest of the data (excluding photo and CV)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // Crear FormData para enviar archivos
+      // Crear FormData para enviar datos (sin archivos)
       const submitData = new FormData();
 
-      // Agregar todos los campos del formulario
+      // Agregar todos los campos del formulario excepto photo y cv
       Object.keys(formData).forEach((key) => {
+        // Skip file-related fields
+        if (key === "photo" || key === "cv" || key === "fotoChanged" || key === "cv_changed") {
+          return;
+        }
+
         const value = formData[key];
 
-        if (value instanceof File) {
-          // Archivos se agregan directamente
-          submitData.append(key, value);
-        } else if (Array.isArray(value) && value.length > 0) {
+        if (Array.isArray(value) && value.length > 0) {
           // Arrays de objetos se envían como JSON string
           submitData.append(key, JSON.stringify(value));
         } else if (typeof value === "object" && value !== null) {
@@ -174,12 +224,25 @@ export default function DetalleTrabajadorPage() {
           submitData.append(key, value);
         }
       });
+
       await employeesAPI.updateEmployee(id, submitData);
-      showSuccess("Formulario enviado exitosamente");
+      showSuccess("Datos actualizados exitosamente");
+
+      // Update photo if changed
+      if (formData.fotoChanged) {
+        await handleUpdatePhoto();
+      }
+
+      // Update CV if changed
+      if (formData.cv_changed) {
+        await handleUpdateCV();
+      }
+
+      await fetchApplicant();
       setShowForm(false);
     } catch (e) {
       console.error("Failed to submit application", e);
-      showError(e.message);
+      showError("Error al actualizar los datos: " + e.message);
     } finally {
       setLoading(false);
     }
@@ -198,8 +261,6 @@ export default function DetalleTrabajadorPage() {
   useEffect(() => {
     fetchApplicant();
   }, [fetchApplicant]);
-
-  const [loading, setLoading] = useState(false);
 
   const handleReject = async () => {
     setLoading(true);
