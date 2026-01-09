@@ -17,6 +17,7 @@ import AplicantesPage from './pages/dashboard/AplicantesPage';
 import DetalleAplicantePage from './pages/dashboard/DetalleAplicantePage';
 import DetalleTrabajadorPage from './pages/dashboard/DetalleTrabajadorPage';
 import ConfiguracionPage from './pages/dashboard/ConfiguracionPage'
+import EquiposPage from './pages/dashboard/EquiposPage';
 
 const PageLoader = () => (
   <div className="flex justify-center items-center h-screen bg-white">
@@ -72,6 +73,7 @@ function App() {
               <Route path="aplicantes" element={<AplicantesPage />} />
               <Route path="aplicantes/:id" element={<DetalleAplicantePage />} />
               <Route path="configuracion" element={<ConfiguracionPage />} />
+              <Route path="equipos" element={<EquiposPage />} />
 
 
               <Route path="*" element={<Navigate to="/dashboard" replace />} />

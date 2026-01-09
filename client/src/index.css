@@ -56,6 +56,9 @@ td.MuiTableCell-root {
   background: #f7f7f7;
   box-shadow: 12px 12px 25px #d3d3d3ec, -12px -12px 15px #ffffff;
 }
+.equipoFolder:hover .icon {
+  color: #145096 !important;
+}
 
 
 .animate-slideIn {
@@ -128,6 +131,9 @@ td.MuiTableCell-root {
     linear-gradient(142.51deg, #0E3F78 8.65%, #547DA0 88.82%) border-box;
   border-radius: 7px;
   border: 2px solid transparent;
+  display: flex;
+  gap: 4px;
+  align-items: center;
 
   text-shadow: 1px 1px 1px #00000040;
   box-shadow: 4px 4px 10px 0px #4509003f;
