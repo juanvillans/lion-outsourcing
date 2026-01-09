@@ -16,6 +16,7 @@ import CrearContraseña from './pages/CrearContraseña';
 import AplicantesPage from './pages/dashboard/AplicantesPage';
 import DetalleAplicantePage from './pages/dashboard/DetalleAplicantePage';
 import DetalleTrabajadorPage from './pages/dashboard/DetalleTrabajadorPage';
+import ConfiguracionPage from './pages/dashboard/ConfiguracionPage'
 
 const PageLoader = () => (
   <div className="flex justify-center items-center h-screen bg-white">
@@ -70,6 +71,8 @@ function App() {
               <Route path="trabajadores/:id" element={<DetalleTrabajadorPage />} />              
               <Route path="aplicantes" element={<AplicantesPage />} />
               <Route path="aplicantes/:id" element={<DetalleAplicantePage />} />
+              <Route path="configuracion" element={<ConfiguracionPage />} />
+
 
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
               {/* Fallback route */}
