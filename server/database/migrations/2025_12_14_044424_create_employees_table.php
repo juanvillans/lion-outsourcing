@@ -29,7 +29,6 @@ return new class extends Migration
             $table->string('cv');
             $table->string('photo')->nullable();
             $table->json('skills')->nullable();
-            $table->json('new_skills')->nullable();
             $table->timestamps();
         });
     }

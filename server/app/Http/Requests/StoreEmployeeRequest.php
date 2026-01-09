@@ -37,7 +37,6 @@ class StoreEmployeeRequest extends FormRequest
             'cv' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
             'skills' => ['required', 'array'],
-            'new_skills' => ['nullable', 'array'],
             'years_of_experience' => ['string', 'required']
         ];
     }
@@ -74,8 +73,6 @@ class StoreEmployeeRequest extends FormRequest
             'photo.max' => 'La foto no debe superar los 5MB.',
             'skills.required' => 'Debe seleccionar al menos una habilidad.',
             'skills.array' => 'Las habilidades deben ser un array.',
-            'new_skills.array' => 'Las nuevas habilidades deben ser un array.',
-            'new_skills.*.max' => 'Cada nueva habilidad no debe superar los 100 caracteres.',
             'years_of_experience.required' => 'Debe seleccionar al menos un intervalo de experiencia.',
 
         ];
@@ -102,7 +99,6 @@ class StoreEmployeeRequest extends FormRequest
             'cv' => 'CV',
             'photo' => 'foto',
             'skills' => 'habilidades',
-            'new_skills' => 'nuevas habilidades',
             'years_of_experience' => 'Años de experiencia',
         ];
     }
@@ -112,12 +108,7 @@ class StoreEmployeeRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        // Si new_skills viene como string, convertir a array
-        if ($this->has('new_skills') && is_string($this->new_skills)) {
-            $this->merge([
-                'new_skills' => json_decode($this->new_skills, true) ?? [],
-            ]);
-        }
+
 
         // Si skills viene como string, convertir a array
         if ($this->has('skills') && is_string($this->skills)) {
@@ -133,12 +124,7 @@ class StoreEmployeeRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            if (empty($this->skills) && empty($this->new_skills)) {
-                $validator->errors()->add(
-                    'skills',
-                    'Debe proporcionar al menos una habilidad existente o nueva.'
-                );
-            }
+
 
             if ($this->has('desired_monthly_income') && $this->desired_monthly_income > 1000000) {
                 $validator->errors()->add(

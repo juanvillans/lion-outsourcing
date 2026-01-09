@@ -43,10 +43,7 @@ class UpdateEmployeeRequest extends FormRequest
             'localization' => ['required', 'string', 'max:255'],
             'years_of_experience' => ['required', 'string', 'max:50'],
             'desired_monthly_income' => ['required', 'integer', 'min:0'],
-            'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
             'skills' => ['required', 'array'],
-            'new_skills' => ['nullable', 'array'],
         ];
     }
 
@@ -83,7 +80,6 @@ class UpdateEmployeeRequest extends FormRequest
             'photo.max' => 'La foto no debe superar los 5MB.',
             'skills.required' => 'Debe seleccionar al menos una habilidad.',
             'skills.array' => 'Las habilidades deben ser un array.',
-            'new_skills.array' => 'Las nuevas habilidades deben ser un array.',
         ];
     }
 
@@ -110,7 +106,6 @@ class UpdateEmployeeRequest extends FormRequest
             'cv' => 'CV',
             'photo' => 'foto',
             'skills' => 'habilidades',
-            'new_skills' => 'nuevas habilidades',
         ];
     }
 
@@ -119,11 +114,7 @@ class UpdateEmployeeRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->has('new_skills') && is_string($this->new_skills)) {
-            $this->merge([
-                'new_skills' => json_decode($this->new_skills, true) ?? [],
-            ]);
-        }
+
 
         // Si skills viene como string, convertir a array
         if ($this->has('skills') && is_string($this->skills)) {
@@ -136,13 +127,6 @@ class UpdateEmployeeRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            // Validar que haya al menos una habilidad (existente o nueva)
-            if (empty($this->skills) && empty($this->new_skills)) {
-                $validator->errors()->add(
-                    'skills',
-                    'Debe proporcionar al menos una habilidad existente o nueva.'
-                );
-            }
 
             // Validar límite razonable de ingreso mensual
             if ($this->has('desired_monthly_income') && $this->desired_monthly_income > 1000000) {
