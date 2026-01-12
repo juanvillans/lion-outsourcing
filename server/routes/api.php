@@ -80,6 +80,6 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
 
     Route::resource('work_teams', WorkTeamController::class)->except(['edit', 'create']);
-    Route::post('work_teams/add/{workTeam}', [WorkTeamController::class, 'addEmployee']);
-    Route::post('work_teams/remove/{workTeam}', [WorkTeamController::class, 'removeEmployee']);
+    Route::post('work_teams/add/{workTeam}', [WorkTeamController::class, 'addEmployees']);
+    Route::post('work_teams/remove/{workTeam}', [WorkTeamController::class, 'removeEmployees']);
 });
