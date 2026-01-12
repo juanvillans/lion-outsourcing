@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
+            $table->boolean('is_hired')->default(false);
+            $table->date('end_date_contract')->nullable();
             $table->timestamps();
         });
     }
