@@ -35,12 +35,14 @@ class WorkTeamController extends Controller
     {
         try {
 
-            $request->validate([
+            $validated = $request->validate([
                 'name' => 'required|string',
-                'description' => 'nullable|string'
+                'description' => 'nullable|string',
+                'is_hired' => 'nullable|boolean',
+                'end_date_contract' => 'nullable|date'
             ]);
 
-            $workTeam = WorkTeam::create(['name' => $request->name, 'description' => $request->description]);
+            $workTeam = WorkTeam::create($validated);
 
             return response()->json([
                 'success' => true,
