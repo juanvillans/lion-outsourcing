@@ -38,6 +38,12 @@ const links = [
     href: "/dashboard/administradores",
     icon: "dashicons:admin-network",
   },
+  {
+    permission: true,
+    name: "Configuración",
+    href: "/dashboard/configuracion",
+    icon: "mdi:cog",
+  },
 ];
 
 export default function SideNav(props) {
@@ -60,7 +66,7 @@ export default function SideNav(props) {
       onMouseLeave={() => props.handleSidebarToggle()}
     >
       <Link
-        className={`duration-150 hidden  mb-4 font-exo2 md:flex h-20 items-end justify-end rounded-md bg-white bg-opacity-5   md:h-28 ${
+        className={`duration-150 hidden  mb-4 font-exo2 md:flex h-20 items-end justify-end rounded-xl bg-white bg-opacity-5   md:h-28 ${
           props.isSidebarOpen ? "p-4" : "p-1"
         }`}
         href="/"

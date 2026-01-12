@@ -568,7 +568,7 @@ export default function TrabajadoresPage() {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Habilidades (selecciona 3 hasta 6)"
+                label="Habilidades"
                 placeholder="Buscar habilidad..."
               />
             )}
