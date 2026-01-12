@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class WorkTeam extends Model
 {
     protected $fillable = [
-        'name'
+        'name',
+        'description',
+        'is_hired',
+        'end_date_contract'
     ];
 
     public function employees()
