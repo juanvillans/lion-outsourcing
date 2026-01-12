@@ -71,15 +71,12 @@ class WorkTeamController extends Controller
      */
     public function show(WorkTeam $workTeam)
     {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(WorkTeam $workTeam)
-    {
-        //
+        $workTeams = WorkTeam::with('employees')
+            ->withCount('employees')
+            ->orderBy('name', 'asc')->get();
+
+        return response()->json(['data' => $workTeams]);
     }
 
     /**
@@ -87,10 +84,37 @@ class WorkTeamController extends Controller
      */
     public function update(Request $request, WorkTeam $workTeam)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'employees' => 'array|nullable'
-        ]);
+        try {
+
+            $validated = $request->validate([
+                'name' => 'required|string',
+                'description' => 'nullable|string',
+                'is_hired' => 'nullable|boolean',
+                'end_date_contract' => 'nullable|date'
+            ]);
+
+            $workTeam->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Equipo actualizado',
+                'data' => $workTeam
+            ]);
+        } catch (ValidationException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        } catch (Exception $e) {
+
+            Log::info('Error al actualizar equipo de trabajo', ['name' => $request->name]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar equipo de trabajo'
+            ]);
+        }
     }
 
     /**
@@ -98,6 +122,24 @@ class WorkTeamController extends Controller
      */
     public function destroy(WorkTeam $workTeam)
     {
-        //
+        try {
+
+            $workTeam->employees()->detach();
+            $workTeam->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Equipo eliminado exitosamente',
+                'data' => $workTeam
+            ]);
+        } catch (Exception $e) {
+
+            Log::info('Error al eliminar equipo de trabajo', ['name' => $request->name]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar equipo de trabajo'
+            ]);
+        }
     }
 }
