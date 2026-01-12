@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use Exception;
 use App\Models\WorkTeam;
 use Illuminate\Http\Request;
@@ -133,6 +134,94 @@ class WorkTeamController extends Controller
                 'success' => false,
                 'message' => 'Error al eliminar equipo de trabajo'
             ]);
+        }
+    }
+
+    public function addEmployee(Request $request, WorkTeam $workTeam)
+    {
+        try {
+
+            $request->validate([
+                'employee_id' => ['required', 'exists:employees,id']
+            ]);
+
+            if ($workTeam->employees()->where('employee_id', $request->employee_id)->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El empleado ya pertenece a este equipo'
+                ], 409);
+            }
+
+            $workTeam->employees()->attach($request->employee_id);
+
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Empleado agregado al equipo exitosamente',
+            ]);
+        } catch (ValidationException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error al agregar empleado al equipo', [
+                'work_team_id' => $workTeam->id,
+                'employee_id' => $request->employee_id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al agregar empleado al equipo'
+            ], 500);
+        }
+    }
+
+    public function removeEmployee(Request $request, WorkTeam $workTeam)
+    {
+        try {
+
+            $request->validate([
+                'employee_id' => ['required', 'exists:employees,id']
+            ]);
+
+            if (!$workTeam->employees()->where('employee_id', $request->employee_id)->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El empleado no pertenece a este equipo'
+                ], 404);
+            }
+
+            $workTeam->employees()->detach($request->employee_id);
+
+            $workTeam->load('employees');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Empleado removido del equipo exitosamente',
+                'data' => [
+                    'work_team' => $workTeam,
+                ]
+            ]);
+        } catch (ValidationException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error al remover empleado del equipo', [
+                'work_team_id' => $workTeam->id,
+                'employee_id' => $request->employee_id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al remover empleado del equipo'
+            ], 500);
         }
     }
 }
