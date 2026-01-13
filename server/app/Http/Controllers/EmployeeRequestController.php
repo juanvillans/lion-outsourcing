@@ -38,6 +38,7 @@ class EmployeeRequestController extends Controller
                 'sort_direction' => 'nullable|in:asc,desc',
                 'date_from' => 'nullable|date',
                 'date_to' => 'nullable|date|after_or_equal:date_from',
+                'skills' => 'nullable'
             ]);
 
             $employeeRequests = $this->employeeRequestService->getAll($validated);

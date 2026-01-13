@@ -99,9 +99,7 @@ export const employeesAPI = {
   getEmployees: (params) => api.get("/admin/employees", { params }),
   getEmployeeById: (id) => api.get(`/admin/employees/detail/${id}`),
   updateEmployee: (id, userData) =>
-    api.put(`/admin/employees/${id}`, userData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+    api.put(`/admin/employees/${id}`, userData),
   updateEmployeePhoto: (id, photoData) =>
     api.put(`/admin/employees/${id}`, photoData, {
       headers: { "Content-Type": "multipart/form-data" },

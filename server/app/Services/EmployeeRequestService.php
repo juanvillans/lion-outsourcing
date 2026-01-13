@@ -60,7 +60,6 @@ class EmployeeRequestService
 
         $employeeRequest->save();
 
-        Log::info('que paso', [$employeeRequest]);
 
         if ($employeeRequest->status == EmployeeRequestStatusEnum::Accepted->value)
             $this->handleAcceptedEmployeeRequest($employeeRequest);
@@ -104,14 +103,13 @@ class EmployeeRequestService
 
     private function applyFilters($query, array $params): void
     {
+
+        if (!empty($params['skills'])) {
+            $this->applyJsonFilters($query, $params);
+        }
+
         if (!empty($params['search'])) {
-            $searchTerm = $params['search'];
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('fullname', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('email', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('phone_number', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('localization', 'LIKE', "%{$searchTerm}%");
-            });
+            $this->applySearch($query, $params['search']);
         }
 
         if (!empty($params['status'])) {
@@ -151,6 +149,78 @@ class EmployeeRequestService
         }
     }
 
+    private function applySearch($query, string $searchTerm): void
+    {
+        $searchTerm = trim($searchTerm);
+        $searchTerms = array_filter(explode(' ', $searchTerm));
+
+        if (empty($searchTerms)) {
+            return;
+        }
+
+        $query->where(function ($q) use ($searchTerms) {
+            foreach ($searchTerms as $term) {
+                $term = trim($term);
+                if (strlen($term) < 2) continue;
+
+                $termLower = strtolower($term);
+
+                $this->searchInTextFields($q, $termLower);
+
+                $this->searchInJsonFields($q, $termLower);
+            }
+        });
+    }
+
+    private function searchInTextFields($query, string $termLower): void
+    {
+        $textFields = [
+            'fullname',
+            'email',
+            'phone_number',
+            'academic_title',
+            'localization',
+            'linkedin_url',
+            'website_url',
+        ];
+
+        foreach ($textFields as $field) {
+            $query->orWhereRaw('LOWER(' . $field . ') LIKE ?', ['%' . $termLower . '%']);
+        }
+    }
+
+    private function searchInJsonFields($query, string $termLower): void
+    {
+        $query->orWhere(function ($q) use ($termLower) {
+            $q->whereRaw('LOWER(skills) LIKE ?', ['%"' . $termLower . '"%'])
+                ->orWhereRaw('LOWER(skills) LIKE ?', ['%' . $termLower . '%']);
+        });
+    }
+
+    private function applyJsonFilters($query, $params): void
+    {
+        if (!empty($params['skills'])) {
+            $skills = is_array($params['skills'])
+                ? $params['skills']
+                : array_filter(explode(',', $params['skills']));
+
+            if (!empty($skills)) {
+                $query->where(function ($q) use ($skills) {
+                    foreach ($skills as $skill) {
+                        $skill = trim($skill);
+                        if (!empty($skill)) {
+                            // Buscar insensible a mayúsculas/minúsculas
+                            $skillLower = strtolower($skill);
+
+                            $q->orWhereRaw('LOWER(skills) LIKE ?', ['%"' . $skillLower . '"%'])
+                                ->orWhereRaw('LOWER(skills) LIKE ?', ['%' . $skillLower . '%']);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
     /**
      * Aplicar ordenamiento a la consulta
      */
@@ -160,6 +230,25 @@ class EmployeeRequestService
         $sortDirection = $params['sort_direction'] ?? 'desc';
 
         $allowedSortColumns = ['created_at', 'fullname', 'desired_monthly_income', 'status'];
+
+        if (!empty($params['search'])) {
+            $searchTerm = trim($params['search']);
+            $normalizedTerm = strtolower($searchTerm);
+
+            $query->orderByRaw(
+                "CASE
+                WHEN LOWER(fullname) LIKE ? THEN 1
+                WHEN LOWER(email) LIKE ? THEN 2
+                WHEN LOWER(skills) LIKE ? THEN 3
+                ELSE 4
+            END",
+                [
+                    "%{$normalizedTerm}%",
+                    "%{$normalizedTerm}%",
+                    "%\"{$normalizedTerm}\"%"
+                ]
+            );
+        }
 
         if (in_array($sortBy, $allowedSortColumns)) {
             $query->orderBy($sortBy, $sortDirection);

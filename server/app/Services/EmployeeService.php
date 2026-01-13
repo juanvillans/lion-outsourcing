@@ -85,28 +85,14 @@ class EmployeeService
                     foreach ($skills as $skill) {
                         $skill = trim($skill);
                         if (!empty($skill)) {
-                            // Búsqueda en campo JSON para MySQL
-                            $q->orWhere('skills', 'LIKE', '%"' . $skill . '"%');
+                            // Buscar insensible a mayúsculas/minúsculas
+                            $skillLower = strtolower($skill);
+
+                            $q->orWhereRaw('LOWER(skills) LIKE ?', ['%"' . $skillLower . '"%'])
+                                ->orWhereRaw('LOWER(skills) LIKE ?', ['%' . $skillLower . '%']);
                         }
                     }
                 });
-            }
-        }
-
-
-        // Filtro que requiera que tenga TODAS las skills especificadas
-        if (!empty($params['required_skills'])) {
-            $requiredSkills = is_array($params['required_skills'])
-                ? $params['required_skills']
-                : array_filter(explode(',', $params['required_skills']));
-
-            if (!empty($requiredSkills)) {
-                foreach ($requiredSkills as $skill) {
-                    $skill = trim($skill);
-                    if (!empty($skill)) {
-                        $query->where('skills', 'LIKE', '%"' . $skill . '"%');
-                    }
-                }
             }
         }
     }
@@ -153,10 +139,12 @@ class EmployeeService
 
     private function searchInJsonFields($query, string $term): void
     {
-        // Para MySQL/MariaDB
-        $query->orWhere(function ($q) use ($term) {
-            // Búsqueda en skills (JSON array)
-            $q->where('skills', 'LIKE', '%"' . $term . '"%')
+        $termLower = strtolower($term);
+
+        $query->orWhere(function ($q) use ($term, $termLower) {
+            $q->whereRaw('LOWER(skills) LIKE ?', ['%"' . $termLower . '"%'])
+                ->orWhereRaw('LOWER(skills) LIKE ?', ['%' . $termLower . '%'])
+                ->orWhere('skills', 'LIKE', '%"' . $term . '"%')
                 ->orWhere('skills', 'LIKE', '%' . $term . '%');
         });
     }
@@ -168,20 +156,19 @@ class EmployeeService
 
         // Si es búsqueda, ordenar por relevancia primero
         if (!empty($params['search'])) {
-            // Para MySQL podemos usar orden por relevancia simple
-            // Buscando coincidencias exactas primero
             $searchTerm = trim($params['search']);
+
+            // Solo 3 placeholders necesarios
             $query->orderByRaw(
                 "CASE
-                    WHEN fullname LIKE ? THEN 1
-                    WHEN email LIKE ? THEN 2
-                    WHEN skills LIKE ? THEN 3
-                    ELSE 4
-                END",
+                WHEN fullname LIKE ? THEN 1
+                WHEN email LIKE ? THEN 2
+                WHEN skills LIKE ? THEN 3
+                ELSE 4
+            END",
                 [
                     "%{$searchTerm}%",
                     "%{$searchTerm}%",
-                    "%\"{$searchTerm}\"%",
                     "%\"{$searchTerm}\"%"
                 ]
             );

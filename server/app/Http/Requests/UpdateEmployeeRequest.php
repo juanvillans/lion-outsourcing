@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateEmployeeRequest extends FormRequest
 {
@@ -114,7 +115,7 @@ class UpdateEmployeeRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-
+        Log::info(['data' => $this->email]);
 
         // Si skills viene como string, convertir a array
         if ($this->has('skills') && is_string($this->skills)) {
