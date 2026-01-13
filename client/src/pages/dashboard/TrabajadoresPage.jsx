@@ -160,10 +160,19 @@ export default function TrabajadoresPage() {
     tests: {},
   };
 
+  const [data, setData] = useState([]);
   const [formData, setFormData] = useState(structuredClone(defaultFormData));
   const [submitString, setSubmitString] = useState("Registrar");
   const [isFormInitialized, setIsFormInitialized] = useState(false);
   const [openModalSkill, setOpenModalSkill] = useState(false);
+  const [rowSelection, setRowSelection] = useState({});
+
+  // Para obtener las filas seleccionadas
+  const selectedRowData = Object.keys(rowSelection)
+  .filter(key => rowSelection[key])
+  .map(key => data[parseInt(key)]);
+  console.log("Filas seleccionadas:", selectedRowData);
+
 
   const handleCreateSkill = async (i, new_skill, worker, e) => {
     e.preventDefault();
@@ -345,7 +354,6 @@ export default function TrabajadoresPage() {
     // Call your delete API or show a confirmation dialog
   };
 
-  const [data, setData] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -621,51 +629,74 @@ export default function TrabajadoresPage() {
           >
             {
               <MaterialReactTable
-                columns={columns}
-                data={data}
-                rowCount={rowCount}
-                manualPagination
-                manualSorting
-                manualFiltering
-                manualGlobalFilter
-                initialState={{
-                  density: "compact",
-                  columnVisibility: {
-                    created_at: false,
-                  },
-                }}
-                state={{
-                  pagination,
-                  sorting,
-                  columnFilters,
-                  globalFilter,
-                  isLoading,
-                }}
-                onPaginationChange={setPagination}
-                onSortingChange={setSorting}
-                onColumnFiltersChange={setColumnFilters}
-                onGlobalFilterChange={(value) => debouncedGlobalFilter(value)}
-                enableGlobalFilter={true}
-                enableColumnFilters={true}
-                enableSorting={true}
-                enableFilters={true}
-                muiTablePaginationProps={{
-                  rowsPerPageOptions: [25, 50, 100],
-                  showFirstButton: true,
-                  showLastButton: true,
-                }}
-                muiSearchTextFieldProps={{
-                  placeholder: "Buscar",
-                  sx: { minWidth: "300px" },
-                  variant: "outlined",
-                }}
-                muiTableBodyRowProps={({ row }) => ({
-                  onClick: () => {
-                    navigate(`/dashboard/trabajadores/${row.original.id}`);
-                  },
-                  sx: { cursor: "pointer" },
-                })}
-              />
+              columns={columns}
+              data={data}
+              rowCount={rowCount}
+              manualPagination
+              manualSorting
+              manualFiltering
+              manualGlobalFilter
+              // Habilitar selección de filas
+              enableRowSelection
+              enableMultiRowSelection={true} // Permite seleccionar múltiples filas
+              positionToolbarAlertBanner="top" // Muestra el contador de selección
+              // Opcional: Selección inicial
+              initialState={{
+                density: "compact",
+                columnVisibility: {
+                  created_at: false,
+                },
+                rowSelection: {}, // Para selección inicial si es necesario
+              }}
+              // Estado para la selección
+              state={{
+                pagination,
+                sorting,
+                columnFilters,
+                globalFilter,
+                isLoading,
+                rowSelection, // Añade esto
+              }}
+              // Handler para cambios en selección
+              onRowSelectionChange={setRowSelection}
+              onPaginationChange={setPagination}
+              onSortingChange={setSorting}
+              onColumnFiltersChange={setColumnFilters}
+              onGlobalFilterChange={(value) => debouncedGlobalFilter(value)}
+              enableGlobalFilter={true}
+              enableColumnFilters={true}
+              enableSorting={true}
+              enableFilters={true}
+              muiTablePaginationProps={{
+                rowsPerPageOptions: [25, 50, 100],
+                showFirstButton: true,
+                showLastButton: true,
+              }}
+              muiSearchTextFieldProps={{
+                placeholder: "Buscar",
+                sx: { minWidth: "300px" },
+                variant: "outlined",
+              }}
+              // Actualiza las props de las filas para manejar tanto click como checkbox
+              muiTableBodyRowProps={({ row }) => ({
+                onClick: (event) => {
+                  // Evita que el click en el checkbox navegue
+                  if (event.target.closest('input[type="checkbox"]')) {
+                    return;
+                  }
+                  navigate(`/dashboard/trabajadores/${row.original.id}`);
+                },
+                sx: { cursor: "pointer" },
+              })}
+              // Estilos para los checkboxes
+              muiSelectCheckboxProps={({ row }) => ({
+                sx: {
+                  // Ajusta según necesites
+                },
+              })}
+              // Opcional: Personalizar la posición de las checkboxes
+              positionActionsColumn="first" // 'first' o 'last', por defecto es 'first'
+            />
             }
           </div>
         )}
