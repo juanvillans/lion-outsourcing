@@ -117,6 +117,18 @@ export const employeesAPI = {
     api.get(`/admin/employee_requests/${id}/cv/view`, { responseType: "blob" }),
 };
 
+export const workTeamAPI = {
+  addEmployeeToWorkTeam: (id, employeeData) =>
+    api.post(`/admin/work_teams/add/${id}`, employeeData),
+  removeEmployeeFromWorkTeam: (id, employeeData) =>
+    api.post(`/admin/work_teams/remove/${id}`, employeeData),
+  getWorkTeams: () => api.get("/admin/work_teams"),
+  createWorkTeam: (workTeamData) => api.post("/admin/work_teams", workTeamData),
+  updateWorkTeam: (id, workTeamData) =>
+    api.put(`/admin/work_teams/${id}`, workTeamData),
+  deleteWorkTeam: (id) => api.delete(`/admin/work_teams/${id}`),
+}
+
 export const areasAPI = {
   getAreas: () => api.get("/admin/areas"),
   createArea: (areaData) => api.post("/admin/areas", areaData),

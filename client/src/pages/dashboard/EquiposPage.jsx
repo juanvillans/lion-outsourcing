@@ -1,8 +1,23 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Icon } from "@iconify/react";
 import FuturisticButton from "../../components/FuturisticButton";
+import CreateWorkTeamModal from "../../components/dashboard/CreateWorkTeamModal";
+
+import { workTeamAPI } from "../../services/api";
 
 export default function EquiposPage() {
+  const [workTeams, setWorkTeams] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const fetchWorkTeams = useCallback(async () => {
+    try {
+      const res = await workTeamAPI.getWorkTeams();
+      setWorkTeams(res.data);
+    } catch (e) {
+      console.error("Failed to fetch data", e);
+    }
+  }, []);
+  useEffect(() => {}, [fetchWorkTeams]);
+
   return (
     <div>
       <div>
@@ -10,10 +25,24 @@ export default function EquiposPage() {
           <h1 className="text-lg md:text-2xl font-bold mb-2 md:mb-0">
             Equipos de Trabajo
           </h1>
-          <FuturisticButton>
+          <FuturisticButton
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
             <Icon icon="mdi:plus" />
             Nuevo Equipo
           </FuturisticButton>
+
+          <CreateWorkTeamModal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setEditData(null);
+            }}
+            editMode={false}
+            initialData={null}
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-4 lg:gap-10 mt-10">

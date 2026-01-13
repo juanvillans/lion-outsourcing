@@ -8,7 +8,7 @@ import React, {
 import {
   employeesAPI,
   areasAPI,
-  industriesAPI,
+  workTeamAPI,
   skillsAPI,
 } from "../../services/api";
 import { Icon } from "@iconify/react";
@@ -170,7 +170,7 @@ export default function TrabajadoresPage() {
   // Para obtener las filas seleccionadas
   const selectedRowData = Object.keys(rowSelection)
   .filter(key => rowSelection[key])
-  .map(key => data[parseInt(key)]);
+  .map(key => data[parseInt(key)].id);
   console.log("Filas seleccionadas:", selectedRowData);
 
 
