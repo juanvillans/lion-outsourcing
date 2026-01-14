@@ -14,7 +14,6 @@ use App\Http\Requests\StoreEmployeeRequest;
 
 class EmployeeRequestService
 {
-
     public function getAll(array $params = [])
     {
         $defaultParams = [
@@ -55,11 +54,8 @@ class EmployeeRequestService
 
     public function updateStatus(EmployeeRequest $employeeRequest, array $data)
     {
-
         $employeeRequest->status = $data['status'];
-
         $employeeRequest->save();
-
 
         if ($employeeRequest->status == EmployeeRequestStatusEnum::Accepted->value)
             $this->handleAcceptedEmployeeRequest($employeeRequest);
@@ -71,9 +67,7 @@ class EmployeeRequestService
 
     private function handleAcceptedEmployeeRequest(EmployeeRequest $employeeRequest)
     {
-
         $employeeService = new EmployeeService;
-
         $employee = $employeeService->storeFromRequest($employeeRequest);
 
         $employeeRequest->cv = $employee->cv;
@@ -87,7 +81,6 @@ class EmployeeRequestService
 
     private function handleRejectedEmployeeRequest(EmployeeRequest $employeeRequest)
     {
-
         Storage::disk('private')->delete($employeeRequest->cv);
 
         if (!is_null($employeeRequest->photo))
@@ -103,7 +96,6 @@ class EmployeeRequestService
 
     private function applyFilters($query, array $params): void
     {
-
         if (!empty($params['skills'])) {
             $this->applyJsonFilters($query, $params);
         }
@@ -120,16 +112,13 @@ class EmployeeRequestService
             $query->where('industry_id', $params['industry_id']);
         }
 
-        //
         if (!empty($params['area_id'])) {
             $query->where('area_id', $params['area_id']);
         }
 
-
         if (!empty($params['english_level'])) {
             $query->where('english_level', $params['english_level']);
         }
-
 
         if (!empty($params['date_from'])) {
             $query->whereDate('created_at', '>=', $params['date_from']);
@@ -139,13 +128,37 @@ class EmployeeRequestService
             $query->whereDate('created_at', '<=', $params['date_to']);
         }
 
-
         if (!empty($params['min_income'])) {
             $query->where('desired_monthly_income', '>=', $params['min_income']);
         }
 
         if (!empty($params['max_income'])) {
             $query->where('desired_monthly_income', '<=', $params['max_income']);
+        }
+    }
+
+    private function applyJsonFilters($query, $params): void
+    {
+        if (!empty($params['skills'])) {
+            $skills = is_array($params['skills'])
+                ? $params['skills']
+                : array_filter(explode(',', $params['skills']));
+
+            if (!empty($skills)) {
+                $query->where(function ($q) use ($skills) {
+                    foreach ($skills as $skill) {
+                        $skill = trim($skill);
+                        if (!empty($skill)) {
+                            $normalizedSkill = $this->normalizeForSearch($skill);
+
+                            $q->orWhere(function ($subQuery) use ($skill, $normalizedSkill) {
+                                $subQuery->whereRaw("JSON_SEARCH(skills, 'all', ?) IS NOT NULL", ["%{$skill}%"]);
+                                $subQuery->orWhereRaw("JSON_SEARCH(skills, 'all', ?) IS NOT NULL", ["%{$normalizedSkill}%"]);
+                            });
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -163,62 +176,38 @@ class EmployeeRequestService
                 $term = trim($term);
                 if (strlen($term) < 2) continue;
 
-                $termLower = strtolower($term);
+                // Búsqueda en campos de texto normales
+                $this->searchInTextFields($q, $term);
 
-                $this->searchInTextFields($q, $termLower);
-
-                $this->searchInJsonFields($q, $termLower);
+                // Búsqueda en campos JSON (skills)
+                $this->searchInJsonFields($q, $term);
             }
         });
     }
 
-    private function searchInTextFields($query, string $termLower): void
+    private function searchInTextFields($query, string $term): void
     {
-        $textFields = [
-            'fullname',
-            'email',
-            'phone_number',
-            'academic_title',
-            'localization',
-            'linkedin_url',
-            'website_url',
-        ];
+        $textFields = ['fullname', 'email', 'phone_number', 'academic_title', 'localization', 'linkedin_url', 'website_url'];
+
+        $normalizedTerm = $this->normalizeForSearch($term);
 
         foreach ($textFields as $field) {
-            $query->orWhereRaw('LOWER(' . $field . ') LIKE ?', ['%' . $termLower . '%']);
+            $query->orWhereRaw("LOWER($field) LIKE ?", ["%{$normalizedTerm}%"]);
         }
     }
 
-    private function searchInJsonFields($query, string $termLower): void
+    private function searchInJsonFields($query, string $term): void
     {
-        $query->orWhere(function ($q) use ($termLower) {
-            $q->whereRaw('LOWER(skills) LIKE ?', ['%"' . $termLower . '"%'])
-                ->orWhereRaw('LOWER(skills) LIKE ?', ['%' . $termLower . '%']);
+        $normalizedTerm = $this->normalizeForSearch($term);
+
+        $query->orWhere(function ($q) use ($normalizedTerm, $term) {
+            $q->whereRaw("JSON_SEARCH(skills, 'all', ?) IS NOT NULL", ["%{$term}%"]);
+            $q->orWhereRaw("JSON_SEARCH(skills, 'all', ?) IS NOT NULL", ["%{$normalizedTerm}%"]);
+            $q->orWhereRaw(
+                "LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(skills, 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u'), 'ñ', 'n'), 'ü', 'u')) LIKE ?",
+                ["%{$normalizedTerm}%"]
+            );
         });
-    }
-
-    private function applyJsonFilters($query, $params): void
-    {
-        if (!empty($params['skills'])) {
-            $skills = is_array($params['skills'])
-                ? $params['skills']
-                : array_filter(explode(',', $params['skills']));
-
-            if (!empty($skills)) {
-                $query->where(function ($q) use ($skills) {
-                    foreach ($skills as $skill) {
-                        $skill = trim($skill);
-                        if (!empty($skill)) {
-                            // Buscar insensible a mayúsculas/minúsculas
-                            $skillLower = strtolower($skill);
-
-                            $q->orWhereRaw('LOWER(skills) LIKE ?', ['%"' . $skillLower . '"%'])
-                                ->orWhereRaw('LOWER(skills) LIKE ?', ['%' . $skillLower . '%']);
-                        }
-                    }
-                });
-            }
-        }
     }
 
     /**
@@ -233,19 +222,19 @@ class EmployeeRequestService
 
         if (!empty($params['search'])) {
             $searchTerm = trim($params['search']);
-            $normalizedTerm = strtolower($searchTerm);
+            $normalizedTerm = $this->normalizeForSearch($searchTerm);
 
             $query->orderByRaw(
                 "CASE
                 WHEN LOWER(fullname) LIKE ? THEN 1
                 WHEN LOWER(email) LIKE ? THEN 2
-                WHEN LOWER(skills) LIKE ? THEN 3
+                WHEN JSON_SEARCH(skills, 'all', ?) IS NOT NULL THEN 3
                 ELSE 4
             END",
                 [
                     "%{$normalizedTerm}%",
                     "%{$normalizedTerm}%",
-                    "%\"{$normalizedTerm}\"%"
+                    "%{$normalizedTerm}%"
                 ]
             );
         }
@@ -255,6 +244,17 @@ class EmployeeRequestService
         } else {
             $query->orderBy('created_at', 'desc');
         }
+    }
+
+    /**
+     * Método auxiliar para normalizar términos de búsqueda
+     */
+    private function normalizeForSearch(string $text): string
+    {
+        $text = mb_strtolower($text, 'UTF-8');
+        $search = ['á', 'é', 'í', 'ó', 'ú', 'ñ', 'ü'];
+        $replace = ['a', 'e', 'i', 'o', 'u', 'n', 'u'];
+        return str_replace($search, $replace, $text);
     }
 
     private function handleFiles(array &$data, StoreEmployeeRequest $request): void
@@ -313,7 +313,6 @@ class EmployeeRequestService
 
         // Si es imagen → procesar
         if (str_starts_with($file->getMimeType(), 'image/')) {
-
             $manager = new ImageManager(new Driver());
             $image = $manager->read($file->getPathname());
 
@@ -340,7 +339,6 @@ class EmployeeRequestService
         return $filePath;
     }
 
-
     /**
      * Manejar archivo de foto (siempre comprimir)
      */
@@ -365,7 +363,6 @@ class EmployeeRequestService
 
         return $filePath;
     }
-
 
     /**
      * Eliminar archivos asociados a una solicitud
