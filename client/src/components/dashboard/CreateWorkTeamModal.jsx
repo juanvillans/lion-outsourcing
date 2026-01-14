@@ -4,13 +4,15 @@ import Modal from "../Modal";
 import FormField from "../forms/FormField";
 import { workTeamAPI } from "../../services/api";
 import { useFeedback } from "../../context/FeedbackContext";
+import FuturisticButton from "../FuturisticButton";
 
-const CreateWorkTeamModal = ({ 
-  isOpen, 
-  onClose, 
+const CreateWorkTeamModal = ({
+  isOpen,
+  onClose,
   onSuccess,
   editMode = false,
-  initialData = null 
+  initialData = null,
+  employeeIds = [] // Array of employee IDs to add to the team after creation
 }) => {
   const { showError, showSuccess } = useFeedback();
   const [loading, setLoading] = useState(false);
@@ -48,18 +50,41 @@ const CreateWorkTeamModal = ({
     setLoading(true);
 
     try {
+      let createdTeamId = null;
+
       if (editMode && initialData?.id) {
         await workTeamAPI.updateWorkTeam(initialData.id, formData);
         showSuccess("Equipo actualizado exitosamente");
+        createdTeamId = initialData.id;
       } else {
-        await workTeamAPI.createWorkTeam(formData);
+        // Create the work team and get the response with the ID
+        const response = await workTeamAPI.createWorkTeam(formData);
+        createdTeamId = response.data.id; // Extract the ID from the response
         showSuccess("Equipo creado exitosamente");
       }
-      
-      onSuccess?.(); // Refresh data in parent
+
+      // If there are employees to add, add them to the team
+      if (employeeIds && employeeIds.length > 0 && createdTeamId) {
+        try {
+          await workTeamAPI.addEmployeeToWorkTeam(createdTeamId, {
+            employee_ids: employeeIds,
+          });
+          showSuccess(`${employeeIds.length} trabajador(es) agregado(s) al equipo`);
+        } catch (addError) {
+          // Show error but don't fail the whole operation
+          showError(addError.response?.data?.message || "Error al agregar trabajadores al equipo");
+        }
+      }
+
+      // Call onSuccess with the created team ID
+      onSuccess?.(createdTeamId);
       onClose();
     } catch (error) {
-      showError(error.response?.data?.message || "Error al guardar el equipo");
+      const errorMessage =
+      error.response?.data?.message ||
+      error.message ||
+      "Error en el sistema principal";
+    showError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -118,13 +143,12 @@ const CreateWorkTeamModal = ({
           >
             Cancelar
           </button>
-          <button
+          <FuturisticButton
             type="submit"
-            className="px-4 py-2 bg-caribe text-white rounded-lg hover:brightness-110 disabled:opacity-50"
             disabled={loading}
           >
             {loading ? "Guardando..." : editMode ? "Actualizar" : "Crear"}
-          </button>
+          </FuturisticButton>
         </div>
       </form>
     </Modal>

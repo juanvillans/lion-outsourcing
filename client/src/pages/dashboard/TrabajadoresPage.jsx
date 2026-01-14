@@ -471,6 +471,8 @@ export default function TrabajadoresPage() {
         employee_ids: employeeIds,
       });
       showSuccess("Trabajador agregado al equipo con éxito");
+      getWorkTeams()
+      setIsModalOpenSelectTeam(false)
       fetchData();
     } catch (error) {
       const errorMessage =
@@ -528,6 +530,8 @@ export default function TrabajadoresPage() {
             size="small"
             sx={{
               width: "min-content",
+              minWidth: "400px", // Recomendado para que el label y el input no se colapsen
+
             }}
             options={areas || []}
             autoHighlight
@@ -565,7 +569,7 @@ export default function TrabajadoresPage() {
                 </Box>
               );
             }}
-            renderInput={(params) => <TextField {...params} required />}
+                renderInput={(params) => <TextField label="Área de especialización" {...params} required />}
           />
 
           <Autocomplete
@@ -585,6 +589,8 @@ export default function TrabajadoresPage() {
             }}
             sx={{
               width: "min-content",
+              minWidth: "400px", // Recomendado para que el label y el input no se colapsen
+
             }}
             value={customFilters.skills}
             onInputChange={(_, value) => searchSkills(value)}
@@ -724,10 +730,22 @@ export default function TrabajadoresPage() {
           isOpen={isModalOpenCreateTeam}
           onClose={() => {
             setIsModalOpenCreateTeam(false);
-            setEditData(null);
+          }}
+          onSuccess={(createdTeamId) => {
+            // Refresh work teams list
+            getWorkTeams();
+            // Close the create team modal
+            setIsModalOpenCreateTeam(false);
+            // Close the select team modal if it was open
+            setIsModalOpenSelectTeam(false);
+            // Refresh the employees data to show updated team assignments
+            fetchData();
+            // Clear row selection
+            setRowSelection({});
           }}
           editMode={false}
           initialData={null}
+          employeeIds={selectedRowData} // Pass selected employee IDs
         />
 
         <Modal
@@ -763,7 +781,7 @@ export default function TrabajadoresPage() {
                             : "bg-gray-600"
                         }`}
                       ></div>
-                      <p className="  text-gray-800 w-full">
+                      <p className="  text-gray-800 w-full mt-1">
                         {team.is_hired
                           ? "Contratado hasta el " + team.end_date_contract
                           : "No contratado"}
@@ -786,7 +804,7 @@ export default function TrabajadoresPage() {
           </button>
         </Modal>
         {selectedRowData.length > 0 && (
-          <div className="flex gap-3 justify-end pt-4">
+          <div className="flex z-50 fixed bottom-10  gap-3 justify-end pt-4">
             <button
               className="px-4 py-2 bg-caribe text-white rounded-lg hover:brightness-110"
               onClick={() => setIsModalOpenSelectTeam(true)}

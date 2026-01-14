@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 export default function EquiposPage() {
   const [workTeams, setWorkTeams] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+
   const fetchWorkTeams = useCallback(async () => {
     try {
       const res = await workTeamAPI.getWorkTeams();
@@ -42,7 +44,9 @@ export default function EquiposPage() {
             onClose={() => {
               setIsModalOpen(false);
               setEditData(null);
+            
             }}
+            onSuccess={() => fetchWorkTeams()}
             editMode={false}
             initialData={null}
           />
@@ -57,7 +61,6 @@ export default function EquiposPage() {
               className="text-gray-500 font-bold border-t-2  flex-col  border-l-2 absolute flex text-xs items-baseline -left-0.5 px-2 rounded-xl rounded-l-none -top-6 pt-1 h-14 w-32"
               style={{ background: "#f7f7f7" }}
             >
-              <p>EQUIPO 1</p>
               <p className="text-xs font-normal">9/4/1299</p>
             </div>
             <h2 className="font-semibold mb-2 mt-3">
