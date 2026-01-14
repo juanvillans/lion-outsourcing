@@ -63,7 +63,7 @@ const MemoizedTestField = React.memo(
   }
 );
 
-export default function TrabajadoresPage() {
+export default function TrabajadoresPage( { useForWorkTeam = false, workTeamId = null }) {
   const [loading, setLoading] = useState(false);
   const { showError, showSuccess, showInfo } = useFeedback();
   const [isModalOpenCreateTeam, setIsModalOpenCreateTeam] = useState(false);
@@ -530,7 +530,7 @@ export default function TrabajadoresPage() {
             size="small"
             sx={{
               width: "min-content",
-              minWidth: "400px", // Recomendado para que el label y el input no se colapsen
+              minWidth: "460px", // Recomendado para que el label y el input no se colapsen
             }}
             options={areas || []}
             autoHighlight
@@ -705,9 +705,13 @@ export default function TrabajadoresPage() {
               }}
               // Actualiza las props de las filas para manejar tanto click como checkbox
               muiTableBodyRowProps={({ row }) => ({
+
                 onClick: (event) => {
                   // Evita que el click en el checkbox navegue
                   if (event.target.closest('input[type="checkbox"]')) {
+                    return;
+                  }
+                  if (useForWorkTeam) {
                     return;
                   }
                   navigate(`/dashboard/trabajadores/${row.original.id}`);
@@ -811,7 +815,16 @@ export default function TrabajadoresPage() {
           <div className="flex z-50 fixed bottom-10  gap-3 justify-end pt-4">
             <button
               className="px-4 py-2 bg-caribe text-white rounded-lg hover:brightness-110"
-              onClick={() => setIsModalOpenSelectTeam(true)}
+              onClick={() => {
+                if (useForWorkTeam) {
+                  addEmployeeToWorkTeam(workTeamId, selectedRowData);
+                  return;
+                } else {
+
+                  setIsModalOpenSelectTeam(true)
+                }
+              }}
+
             >
               Agregar a equipo
             </button>
