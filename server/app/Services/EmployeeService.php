@@ -72,9 +72,9 @@ class EmployeeService
         $this->applyJsonFilters($query, $params);
     }
 
+
     private function applyJsonFilters($query, $params): void
     {
-        // Filtro por skills (array/coma separado)
         if (!empty($params['skills'])) {
             $skills = is_array($params['skills'])
                 ? $params['skills']
@@ -85,11 +85,12 @@ class EmployeeService
                     foreach ($skills as $skill) {
                         $skill = trim($skill);
                         if (!empty($skill)) {
-                            // Buscar insensible a mayúsculas/minúsculas
-                            $skillLower = strtolower($skill);
+                            $normalizedSkill = $this->normalizeForSearch($skill);
 
-                            $q->orWhereRaw('LOWER(skills) LIKE ?', ['%"' . $skillLower . '"%'])
-                                ->orWhereRaw('LOWER(skills) LIKE ?', ['%' . $skillLower . '%']);
+                            $q->orWhere(function ($subQuery) use ($skill, $normalizedSkill) {
+                                $subQuery->whereRaw("JSON_SEARCH(skills, 'all', ?) IS NOT NULL", ["%{$skill}%"]);
+                                $subQuery->orWhereRaw("JSON_SEARCH(skills, 'all', ?) IS NOT NULL", ["%{$normalizedSkill}%"]);
+                            });
                         }
                     }
                 });
@@ -122,30 +123,28 @@ class EmployeeService
 
     private function searchInTextFields($query, string $term): void
     {
-        $textFields = [
-            'fullname',
-            'email',
-            'phone_number',
-            'academic_title',
-            'localization',
-            'linkedin_url',
-            'website_url',
-        ];
+        $textFields = ['fullname', 'email', 'phone_number', 'academic_title', 'localization', 'linkedin_url', 'website_url'];
+
+        $normalizedTerm = $this->normalizeForSearch($term);
 
         foreach ($textFields as $field) {
-            $query->orWhere($field, 'LIKE', "%{$term}%");
+            $query->orWhereRaw("LOWER($field) LIKE ?", ["%{$normalizedTerm}%"]);
         }
     }
 
     private function searchInJsonFields($query, string $term): void
     {
-        $termLower = strtolower($term);
+        $normalizedTerm = $this->normalizeForSearch($term);
 
-        $query->orWhere(function ($q) use ($term, $termLower) {
-            $q->whereRaw('LOWER(skills) LIKE ?', ['%"' . $termLower . '"%'])
-                ->orWhereRaw('LOWER(skills) LIKE ?', ['%' . $termLower . '%'])
-                ->orWhere('skills', 'LIKE', '%"' . $term . '"%')
-                ->orWhere('skills', 'LIKE', '%' . $term . '%');
+        $query->orWhere(function ($q) use ($normalizedTerm, $term) {
+            $q->whereRaw("JSON_SEARCH(skills, 'all', ?) IS NOT NULL", ["%{$term}%"]);
+
+            $q->orWhereRaw("JSON_SEARCH(skills, 'all', ?) IS NOT NULL", ["%{$normalizedTerm}%"]);
+
+            $q->orWhereRaw(
+                "LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(skills, 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o'), 'ú', 'u'), 'ñ', 'n'), 'ü', 'u')) LIKE ?",
+                ["%{$normalizedTerm}%"]
+            );
         });
     }
 
@@ -154,27 +153,25 @@ class EmployeeService
         $sortBy = $params['sort_by'] ?? 'created_at';
         $sortDirection = $params['sort_direction'] ?? 'desc';
 
-        // Si es búsqueda, ordenar por relevancia primero
         if (!empty($params['search'])) {
             $searchTerm = trim($params['search']);
+            $normalizedTerm = $this->normalizeForSearch($searchTerm);
 
-            // Solo 3 placeholders necesarios
             $query->orderByRaw(
                 "CASE
-                WHEN fullname LIKE ? THEN 1
-                WHEN email LIKE ? THEN 2
-                WHEN skills LIKE ? THEN 3
-                ELSE 4
-            END",
+            WHEN LOWER(fullname) LIKE ? THEN 1
+            WHEN LOWER(email) LIKE ? THEN 2
+            WHEN JSON_SEARCH(skills, 'all', ?) IS NOT NULL THEN 3
+            ELSE 4
+        END",
                 [
-                    "%{$searchTerm}%",
-                    "%{$searchTerm}%",
-                    "%\"{$searchTerm}\"%"
+                    "%{$normalizedTerm}%",
+                    "%{$normalizedTerm}%",
+                    "%{$normalizedTerm}%"
                 ]
             );
         }
 
-        // Luego aplicar el orden específico
         $query->orderBy($sortBy, $sortDirection);
     }
 
@@ -527,5 +524,15 @@ class EmployeeService
             'view' => route('employee.cv.view', $employee),
             'download' => route('employee.cv.download', $employee),
         ];
+    }
+
+    private function normalizeForSearch(string $text): string
+    {
+        $text = mb_strtolower($text, 'UTF-8');
+
+        $search = ['á', 'é', 'í', 'ó', 'ú', 'ñ', 'ü'];
+        $replace = ['a', 'e', 'i', 'o', 'u', 'n', 'u'];
+
+        return str_replace($search, $replace, $text);
     }
 }

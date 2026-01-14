@@ -110,20 +110,10 @@ class EmployeeController extends Controller
     //     }
     // }
 
-    public function update(Request $request, Employee $employee)
+    public function update(UpdateEmployeeRequest $request, Employee $employee)
     {
 
-        Log::info('Raw request data:', [
-            'all' => $request->all(),
-            'email' => $request->input('email'),
-            'content_type' => $request->header('Content-Type'),
-        ]);
-
-        return response()->json(['status' => 'ok']);
-
         try {
-
-
 
             $employee = $this->employeeService->update($request->validated(), $employee);
 
