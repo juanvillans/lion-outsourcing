@@ -312,6 +312,7 @@ export default function AplicantesPage() {
             }
             isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(_, value) => {
+              
               setCustomFilters((prev) => ({
                 ...prev,
                 area_id: value?.id || null,
@@ -356,12 +357,15 @@ export default function AplicantesPage() {
             options={skills}
             autoHighlight
             getOptionLabel={(option) => option.name}
-            onChange={(_, value) =>
+            onChange={(_, value) => {
+              let newValue = value.map((skill) => skill.name).join(",")
+                          
               setCustomFilters((prev) => ({
                 ...prev,
-                skills: value,
+                skills: newValue,
               }))
             }
+          }
             sx={{
               width: "min-content",
               minWidth: "400px", // Recomendado para que el label y el input no se colapsen

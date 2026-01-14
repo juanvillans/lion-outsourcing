@@ -74,7 +74,7 @@ const CreateWorkTeamModal = ({
     >
       <form className="space-y-4" onSubmit={handleSubmit}>
         <FormField
-          label="Nombre del Equipo"
+          label="Nombre del Equipo o empresa"
           name="name"
           value={formData.name}
           onChange={handleChange}

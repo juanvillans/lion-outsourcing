@@ -4,6 +4,7 @@ import FuturisticButton from "../../components/FuturisticButton";
 import CreateWorkTeamModal from "../../components/dashboard/CreateWorkTeamModal";
 
 import { workTeamAPI } from "../../services/api";
+import { Link } from "react-router-dom";
 
 export default function EquiposPage() {
   const [workTeams, setWorkTeams] = useState([]);
@@ -16,7 +17,9 @@ export default function EquiposPage() {
       console.error("Failed to fetch data", e);
     }
   }, []);
-  useEffect(() => {}, [fetchWorkTeams]);
+  useEffect(() => {
+    fetchWorkTeams();
+  }, [fetchWorkTeams]);
 
   return (
     <div>
@@ -46,7 +49,10 @@ export default function EquiposPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-4 lg:gap-10 mt-10">
-          <div className="border-t-2  border-l-2 p-4 relative neuphormism bg-gray-100 group cursor-pointer rounded-tl-none hover:text-gray-700  equipoFolder">
+          {workTeams.map((workTeam) => (
+          <Link 
+            to={`/dashboard/equipos/${workTeam.id}`}
+            className="border-t-2  border-l-2 p-4 relative neuphormism bg-gray-100 group cursor-pointer rounded-tl-none hover:text-gray-700  equipoFolder">
             <div
               className="text-gray-500 font-bold border-t-2  flex-col  border-l-2 absolute flex text-xs items-baseline -left-0.5 px-2 rounded-xl rounded-l-none -top-6 pt-1 h-14 w-32"
               style={{ background: "#f7f7f7" }}
@@ -55,7 +61,7 @@ export default function EquiposPage() {
               <p className="text-xs font-normal">9/4/1299</p>
             </div>
             <h2 className="font-semibold mb-2 mt-3">
-              Empresa xxi administration US
+              {workTeam.name}
             </h2>
 
             <div className="grid grid-cols-12 gap-2 mb-2">
@@ -66,9 +72,7 @@ export default function EquiposPage() {
                 />
               </div>
               <p className="text-sm text-gray-800 col-span-11">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero
-                esse maiores a quo enim deserunt. Ipsa minima assumenda adipisci
-                laudantium vitae..
+                {workTeam.description}
               </p>
             </div>
 
@@ -79,28 +83,22 @@ export default function EquiposPage() {
                   className="w-4 h-4 mt-1 text-gray-500"
                 ></Icon>
               </div>
-              <p className="col-span-11 text-sm text-gray-800">23 Personas</p>
+              <p className="col-span-11 text-sm text-gray-800">{workTeam.employees_count} Personas</p>
             </div>
 
             <div className="grid grid-cols-12 gap-2 w-full mt-2">
               <div className="w-16 col-span-1">
-                <div className="h-3 w-3 rounded-full mt-1 bg-green-600 shadow-lg shadow-color2"></div>
+                <div className={`h-3 w-3 rounded-full mt-1 shadow-lg ${workTeam.is_hired ? "bg-green-600 shadow-color3" : "bg-gray-600"}`}></div>
               </div>
               <p className="col-span-11 text-sm text-gray-800">
-                Contratado hasta el 12/05/2027
+                {workTeam.is_hired ? "Contratado hasta el " + workTeam.end_date_contract : "No contratado"}
               </p>
             </div>
-          </div>
+          </Link>
 
-          <div className="p-4 relative neuphormism bg-gray-100 group cursor-pointer hover:text-gray-400 equipoFolder">
-            <h2 className="font-semibold">Equipo 1</h2>
-            <p></p>
-          </div>
+          
 
-          <div className="p-4 relative neuphormism bg-gray-100 group cursor-pointer hover:text-gray-400 equipoFolder">
-            <h2 className="font-semibold">Equipo 1</h2>
-            <p></p>
-          </div>
+          ))}
         </div>
       </div>
     </div>
