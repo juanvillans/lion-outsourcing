@@ -471,8 +471,8 @@ export default function TrabajadoresPage() {
         employee_ids: employeeIds,
       });
       showSuccess("Trabajador agregado al equipo con éxito");
-      getWorkTeams()
-      setIsModalOpenSelectTeam(false)
+      getWorkTeams();
+      setIsModalOpenSelectTeam(false);
       fetchData();
     } catch (error) {
       const errorMessage =
@@ -531,7 +531,6 @@ export default function TrabajadoresPage() {
             sx={{
               width: "min-content",
               minWidth: "400px", // Recomendado para que el label y el input no se colapsen
-
             }}
             options={areas || []}
             autoHighlight
@@ -569,7 +568,9 @@ export default function TrabajadoresPage() {
                 </Box>
               );
             }}
-                renderInput={(params) => <TextField label="Área de especialización" {...params} required />}
+            renderInput={(params) => (
+              <TextField label="Área de especialización" {...params} required />
+            )}
           />
 
           <Autocomplete
@@ -590,7 +591,6 @@ export default function TrabajadoresPage() {
             sx={{
               width: "min-content",
               minWidth: "400px", // Recomendado para que el label y el input no se colapsen
-
             }}
             value={customFilters.skills}
             onInputChange={(_, value) => searchSkills(value)}
@@ -766,9 +766,13 @@ export default function TrabajadoresPage() {
                   <div className="w-max text-left">
                     <p>{team.name}</p>
                     <p className="text-xs text-gray-500">
-                      {team.description.length > 40
-                        ? team.description.substring(0, 40) + "..."
-                        : team.description}
+                      {team.description && (
+                        <p className="text-xs text-gray-500">
+                          {team.description?.length > 40
+                            ? team.description.substring(0, 40) + "..."
+                            : team.description}
+                        </p>
+                      )}
                     </p>
                     <p className="text-xs text-gray-500">
                       {team.employees_count} Personas
