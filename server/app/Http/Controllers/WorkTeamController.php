@@ -68,7 +68,7 @@ class WorkTeamController extends Controller
     {
 
         $data = WorkTeam::where('id', $workTeam->id)
-            ->with('employees')
+            ->with('employees.industry', 'employees.area')
             ->withCount('employees')
             ->orderBy('name', 'asc')->first();
 
