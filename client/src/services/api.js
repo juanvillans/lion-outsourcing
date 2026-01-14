@@ -112,7 +112,7 @@ export const employeesAPI = {
     api.put(`/admin/employees/${id}/skill`, { skills: skillData }),
   deleteEmployee: (id) => api.delete(`/admin/employee/${id}`),
   getEmployeeCV: (id) =>
-    api.get(`/admin/employee_requests/${id}/cv/view`, { responseType: "blob" }),
+    api.get(`/admin/employee/${id}/cv/view`, { responseType: "blob" }),
 };
 
 export const workTeamAPI = {
@@ -121,6 +121,7 @@ export const workTeamAPI = {
   removeEmployeeFromWorkTeam: (id, employeeData) =>
     api.post(`/admin/work_teams/remove/${id}`, employeeData),
   getWorkTeams: () => api.get("/admin/work_teams"),
+  getWorkTeam: (id) => api.get(`/admin/work_teams/${id}`),
   createWorkTeam: (workTeamData) => api.post("/admin/work_teams", workTeamData),
   updateWorkTeam: (id, workTeamData) =>
     api.put(`/admin/work_teams/${id}`, workTeamData),

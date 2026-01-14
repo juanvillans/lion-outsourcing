@@ -25,6 +25,7 @@ import { useAuth } from "../../context/AuthContext";
 import { API_URL } from "../../config/env";
 import { useNavigate } from "react-router-dom";
 import { getIndustryIcon } from "../../config/industryIcons";
+import CreateWorkTeamModal from "../../components/dashboard/CreateWorkTeamModal";
 
 let isThereLocalStorageFormData = localStorage.getItem("formData")
   ? true
@@ -65,7 +66,8 @@ const MemoizedTestField = React.memo(
 export default function TrabajadoresPage() {
   const [loading, setLoading] = useState(false);
   const { showError, showSuccess, showInfo } = useFeedback();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenCreateTeam, setIsModalOpenCreateTeam] = useState(false);
+  const [isModalOpenSelectTeam, setIsModalOpenSelectTeam] = useState(false);
   const [messageData, setMessageData] = useState({});
   const [resultsToken, setResultsToken] = useState(null);
   const [examinationTypes, setExaminationTypes] = useState([]);
@@ -73,7 +75,7 @@ export default function TrabajadoresPage() {
   const [loadingMessage, setLoadingMessage] = useState(false);
   const { user } = useAuth();
   const [areas, setAreas] = useState([]);
-
+  const [workTeams, setWorkTeams] = useState([]);
   const [industries, setIndustries] = useState([]);
   const [skills, setSkills] = useState([]);
   const navigate = useNavigate();
@@ -82,63 +84,51 @@ export default function TrabajadoresPage() {
   const patientFormFields = useMemo(() => [
     {
       name: "first_name",
-      label: "Nombre completo",
       type: "text",
       required: true,
       className: "col-span-1",
     },
     {
       name: "last_name",
-      label: "Apellido",
       type: "text",
       required: true,
       className: "col-span-1",
     },
     {
       name: "date_birth",
-      label: "Fecha de Nacimiento",
       type: "date",
       required: true,
       className: "col-span-1",
     },
     {
       name: "email",
-      label: "Correo Electrónico",
       type: "email",
       required: false,
       className: "col-span-1",
     },
     {
       name: "phone_number",
-      label: "Teléfono",
       type: "text",
       required: false,
       className: "col-span-1",
     },
     {
       name: "address",
-      label: "Dirección",
       type: "text",
       required: false,
       className: "col-span-1",
     },
     {
       name: "sex",
-      label: "Sexo *",
       type: "select",
-      options: [
-        { value: "Masculino", label: "Masculino" },
-        { value: "Femenino", label: "Femenino" },
-      ],
+      options: [],
       className: "col-span-1",
     },
     {
       name: "origin_id",
-      label: "Procedencia *",
       type: "select",
       options: origins?.map((origin) => ({
         value: origin.id,
-        label: origin.name,
       })),
       className: "col-span-2",
     },
@@ -169,10 +159,9 @@ export default function TrabajadoresPage() {
 
   // Para obtener las filas seleccionadas
   const selectedRowData = Object.keys(rowSelection)
-  .filter(key => rowSelection[key])
-  .map(key => data[parseInt(key)].id);
+    .filter((key) => rowSelection[key])
+    .map((key) => data[parseInt(key)].id);
   console.log("Filas seleccionadas:", selectedRowData);
-
 
   const handleCreateSkill = async (i, new_skill, worker, e) => {
     e.preventDefault();
@@ -182,9 +171,11 @@ export default function TrabajadoresPage() {
     try {
       const createSkill = await skillsAPI.createSkill({ name: new_skill });
       worker.skills[i] = createSkill.data;
-      const updateWorker =  await employeesAPI.updateEmployeeSkill(worker.id, worker.skills);
+      const updateWorker = await employeesAPI.updateEmployeeSkill(
+        worker.id,
+        worker.skills
+      );
       setOpenModalSkill(false);
-
     } catch (error) {
       // This will only catch errors from the internal API
       const errorMessage =
@@ -196,7 +187,6 @@ export default function TrabajadoresPage() {
       setLoading(false);
     }
   };
-
 
   const columns = useMemo(
     () => [
@@ -316,9 +306,13 @@ export default function TrabajadoresPage() {
                 onClick={(e) => {
                   if (skill.id == null) {
                     e.preventDefault();
-                    e.stopPropagation()
+                    e.stopPropagation();
                     // Handle creation of new skill
-                    setSelectedWorkerForNewSkill({index: i, skillName: skill.name, worker: cell.row.original});
+                    setSelectedWorkerForNewSkill({
+                      index: i,
+                      skillName: skill.name,
+                      worker: cell.row.original,
+                    });
                     setOpenModalSkill(true);
                   }
                 }}
@@ -363,7 +357,9 @@ export default function TrabajadoresPage() {
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [customFilters, setCustomFilters] = useState({});
-  const [selectedWorkerForNewSkill, setSelectedWorkerForNewSkill] = useState([])
+  const [selectedWorkerForNewSkill, setSelectedWorkerForNewSkill] = useState(
+    []
+  );
   // Move useMemo outside the map - process all test sections at once
 
   const fetchData = useCallback(async () => {
@@ -404,28 +400,39 @@ export default function TrabajadoresPage() {
     }
   }, []);
 
+  const getAreas = useCallback(async () => {
+    try {
+      const res = await areasAPI.getAreas();
+      setAreas(res.data);
+    } catch (e) {
+      console.error("Failed to fetch data", e);
+    }
+  }, []);
 
-    const getAreas = useCallback(async () => {
-      try {
-        const res = await areasAPI.getAreas();
-        setAreas(res.data);
-      } catch (e) {
-        console.error("Failed to fetch data", e);
-      }
-    }, []);
-  
-    const searchSkills = useCallback(async (searchTerm) => {
-      try {
-        const response = await skillsAPI.searchSkills({ search: searchTerm });
-        setSkills(response.data);
-      } catch (e) {
-        console.error("Failed to fetch data", e);
-      }
-    }, []);
+  const getWorkTeams = useCallback(async () => {
+    try {
+      const res = await workTeamAPI.getWorkTeams();
+      setWorkTeams(res.data);
+    } catch (e) {
+      console.error("Failed to fetch data", e);
+    }
+  }, []);
+
+  const searchSkills = useCallback(async (searchTerm) => {
+    try {
+      const response = await skillsAPI.searchSkills({ search: searchTerm });
+      setSkills(response.data);
+    } catch (e) {
+      console.error("Failed to fetch data", e);
+    }
+  }, []);
 
   useEffect(() => {
     fetchInitialData();
-  }, [fetchInitialData]);
+    getAreas();
+    getWorkTeams();
+    searchSkills();
+  }, [fetchInitialData, getAreas, getWorkTeams, searchSkills]);
 
   useEffect(() => {
     fetchData();
@@ -457,6 +464,20 @@ export default function TrabajadoresPage() {
       }, 300),
     []
   );
+
+  const addEmployeeToWorkTeam = async (teamId, employeeIds) => {
+    try {
+      await workTeamAPI.addEmployeeToWorkTeam(teamId, {
+        employee_ids: employeeIds,
+      });
+      showSuccess("Trabajador agregado al equipo con éxito");
+      fetchData();
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred";
+      showError(errorMessage);
+    }
+  };
 
   return (
     <>
@@ -507,7 +528,6 @@ export default function TrabajadoresPage() {
             size="small"
             sx={{
               width: "min-content",
-              minWidth: "400px", // Recomendado para que el label y el input no se colapsen
             }}
             options={areas || []}
             autoHighlight
@@ -545,13 +565,7 @@ export default function TrabajadoresPage() {
                 </Box>
               );
             }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Área de especialización" // Etiqueta ajustada a plural
-                required
-              />
-            )}
+            renderInput={(params) => <TextField {...params} required />}
           />
 
           <Autocomplete
@@ -561,24 +575,21 @@ export default function TrabajadoresPage() {
             options={skills}
             autoHighlight
             getOptionLabel={(option) => option.name}
-            onChange={(_, value) =>
+            onChange={(_, value) => {
+              let newValue = value.map((skill) => skill.name).join(",");
+
               setCustomFilters((prev) => ({
                 ...prev,
-                skills: value,
-              }))
-            }
+                skills: newValue,
+              }));
+            }}
             sx={{
               width: "min-content",
-              minWidth: "400px", // Recomendado para que el label y el input no se colapsen
             }}
             value={customFilters.skills}
             onInputChange={(_, value) => searchSkills(value)}
             renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Habilidades"
-                placeholder="Buscar habilidad..."
-              />
+              <TextField {...params} placeholder="Buscar habilidad..." />
             )}
           />
         </div>
@@ -586,7 +597,7 @@ export default function TrabajadoresPage() {
         <Modal
           isOpen={openModalSkill}
           onClose={() => {
-            setOpenModalSkill(false)
+            setOpenModalSkill(false);
             // Opcional: también limpiar localStorage aquí si quieres
           }}
           title="Crear habilidad"
@@ -594,17 +605,27 @@ export default function TrabajadoresPage() {
         >
           <form
             className={`space-y-5 md:space-y-0 gap-7 w-full relative`}
-            onSubmit={(e) => handleCreateSkill(selectedWorkerForNewSkill.index, selectedWorkerForNewSkill.skillName, selectedWorkerForNewSkill.worker, e)}
+            onSubmit={(e) =>
+              handleCreateSkill(
+                selectedWorkerForNewSkill.index,
+                selectedWorkerForNewSkill.skillName,
+                selectedWorkerForNewSkill.worker,
+                e
+              )
+            }
           >
-
-              <FormField
-                label="Nombre de la habilidad"
-                name="name"
-                value={selectedWorkerForNewSkill.skillName}
-                onChange={(e) => setSelectedWorkerForNewSkill((prev) => ({...prev, skillName: e.target.value}))}
-                required
-              />
-              <div className="col-span-2">
+            <FormField
+              name="name"
+              value={selectedWorkerForNewSkill.skillName}
+              onChange={(e) =>
+                setSelectedWorkerForNewSkill((prev) => ({
+                  ...prev,
+                  skillName: e.target.value,
+                }))
+              }
+              required
+            />
+            <div className="col-span-2">
               <div className="flex justify-end space-x-4 pt-4">
                 <button
                   type="submit"
@@ -618,17 +639,16 @@ export default function TrabajadoresPage() {
                   {loading ? "Procesando..." : "Crear"}
                 </button>
               </div>
-              </div>
-            
-          </form> 
+            </div>
+          </form>
         </Modal>
-        {!isModalOpen && (
-          <div
-            className="ag-theme-alpine ag-grid-no-border"
-            style={{ height: 500 }}
-          >
-            {
-              <MaterialReactTable
+
+        <div
+          className="ag-theme-alpine ag-grid-no-border"
+          style={{ height: 500 }}
+        >
+          {
+            <MaterialReactTable
               columns={columns}
               data={data}
               rowCount={rowCount}
@@ -697,7 +717,82 @@ export default function TrabajadoresPage() {
               // Opcional: Personalizar la posición de las checkboxes
               positionActionsColumn="first" // 'first' o 'last', por defecto es 'first'
             />
-            }
+          }
+        </div>
+
+        <CreateWorkTeamModal
+          isOpen={isModalOpenCreateTeam}
+          onClose={() => {
+            setIsModalOpenCreateTeam(false);
+            setEditData(null);
+          }}
+          editMode={false}
+          initialData={null}
+        />
+
+        <Modal
+          isOpen={isModalOpenSelectTeam}
+          onClose={() => setIsModalOpenSelectTeam(false)}
+          title="Agregar a equipo"
+          size="md"
+        >
+          <ul className="flex flex-col gap-2">
+            {workTeams.map((team) => (
+              <li key={team.id} className="2 items-center">
+                <button
+                  onClick={() => {
+                    addEmployeeToWorkTeam(team.id, selectedRowData); // Agregar los IDs de los trabajadores seleccionados aquí
+                  }}
+                  className="flex justify-between items-center w-full p-3 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <div className="w-max text-left">
+                    <p>{team.name}</p>
+                    <p className="text-xs text-gray-500">
+                      {team.description.length > 40
+                        ? team.description.substring(0, 40) + "..."
+                        : team.description}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {team.employees_count} Personas
+                    </p>
+                    <div className="flex gap-2 text-xs">
+                      <div
+                        className={`h-2 w-2 flex rounded-full mt-2 shadow-lg ${
+                          team.is_hired
+                            ? "bg-green-600 shadow-color3"
+                            : "bg-gray-600"
+                        }`}
+                      ></div>
+                      <p className="  text-gray-800 w-full">
+                        {team.is_hired
+                          ? "Contratado hasta el " + team.end_date_contract
+                          : "No contratado"}
+                      </p>
+                    </div>
+                  </div>{" "}
+                  <Icon icon="mdi:plus" />
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            className="px-4 py-2 mt-7 mx-auto bg-caribe text-white rounded-lg hover:brightness-110"
+            onClick={() => {
+              setIsModalOpenSelectTeam(false);
+              setIsModalOpenCreateTeam(true);
+            }}
+          >
+            Crear un nuevo equipo
+          </button>
+        </Modal>
+        {selectedRowData.length > 0 && (
+          <div className="flex gap-3 justify-end pt-4">
+            <button
+              className="px-4 py-2 bg-caribe text-white rounded-lg hover:brightness-110"
+              onClick={() => setIsModalOpenSelectTeam(true)}
+            >
+              Agregar a equipo
+            </button>
           </div>
         )}
       </div>
