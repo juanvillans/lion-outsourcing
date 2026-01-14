@@ -67,11 +67,12 @@ class WorkTeamController extends Controller
     public function show(WorkTeam $workTeam)
     {
 
-        $workTeams = WorkTeam::with('employees')
+        $data = WorkTeam::where('id', $workTeam->id)
+            ->with('employees')
             ->withCount('employees')
-            ->orderBy('name', 'asc')->get();
+            ->orderBy('name', 'asc')->first();
 
-        return response()->json(['data' => $workTeams]);
+        return response()->json(['data' => $data]);
     }
 
     /**
