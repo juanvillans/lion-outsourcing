@@ -63,7 +63,12 @@ const MemoizedTestField = React.memo(
   }
 );
 
-export default function TrabajadoresPage( { useForWorkTeam = false, workTeamId = null }) {
+export default function TrabajadoresPage({
+  useForWorkTeam = false,
+  workTeamId = null,
+  employeeIdsObj = {},
+  onSuccessTeam = () => {},
+}) {
   const [loading, setLoading] = useState(false);
   const { showError, showSuccess, showInfo } = useFeedback();
   const [isModalOpenCreateTeam, setIsModalOpenCreateTeam] = useState(false);
@@ -80,6 +85,7 @@ export default function TrabajadoresPage( { useForWorkTeam = false, workTeamId =
   const [skills, setSkills] = useState([]);
   const navigate = useNavigate();
 
+  console.log({ employeeIdsObj });
   // Form configuration for ReusableForm
   const patientFormFields = useMemo(() => [
     {
@@ -471,6 +477,9 @@ export default function TrabajadoresPage( { useForWorkTeam = false, workTeamId =
         employee_ids: employeeIds,
       });
       showSuccess("Trabajador agregado al equipo con éxito");
+      if (useForWorkTeam) {
+        onSuccessTeam();
+      }
       getWorkTeams();
       setIsModalOpenSelectTeam(false);
       fetchData();
@@ -705,7 +714,6 @@ export default function TrabajadoresPage( { useForWorkTeam = false, workTeamId =
               }}
               // Actualiza las props de las filas para manejar tanto click como checkbox
               muiTableBodyRowProps={({ row }) => ({
-
                 onClick: (event) => {
                   // Evita que el click en el checkbox navegue
                   if (event.target.closest('input[type="checkbox"]')) {
@@ -820,11 +828,9 @@ export default function TrabajadoresPage( { useForWorkTeam = false, workTeamId =
                   addEmployeeToWorkTeam(workTeamId, selectedRowData);
                   return;
                 } else {
-
-                  setIsModalOpenSelectTeam(true)
+                  setIsModalOpenSelectTeam(true);
                 }
               }}
-
             >
               Agregar a equipo
             </button>

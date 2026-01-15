@@ -193,8 +193,6 @@ export default function DetalleEquipoPage() {
     []
   );
 
-  console.log({ workTeam });
-
   return (
     <div>
       <title>Detalle de Equipo - Lion PR Services</title>
@@ -234,7 +232,7 @@ export default function DetalleEquipoPage() {
             Miembros del equipo
           </h2>
           <button
-            className="px-4 py-2 bg-caribe text-white rounded-lg hover:brightness-110"
+            className="px-4 py-2 mb-3 bg-caribe text-white rounded-lg hover:brightness-110"
             onClick={() => setIsOpenModal(true)}
           >
             Agregar miembros
@@ -291,7 +289,18 @@ export default function DetalleEquipoPage() {
         title="Agregar miembros"
         size="full"
       >
-        <TrabajadoresPage useForWorkTeam={true} workTeamId={id} />
+        <TrabajadoresPage
+          onSuccessTeam={() => {
+            fetchWorkTeam();
+            setIsOpenModal(false);
+          }}
+          useForWorkTeam={true}
+          workTeamId={id}
+          employeeIdsObj={workTeam?.employees.reduce((acc, employee) => {
+            acc[employee.id] = true;
+            return acc;
+          }, {})}
+        />
       </Modal>
     </div>
   );
