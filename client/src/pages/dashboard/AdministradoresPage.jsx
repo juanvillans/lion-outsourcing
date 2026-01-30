@@ -163,7 +163,7 @@ export default function AdministradoresPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await adminAPI.getAdmins();
+      const res = await adminAPI.getAdmins("/admin/admins");
       console.log(res.admins);
       setRowData(res.admins);
     } catch (e) {
