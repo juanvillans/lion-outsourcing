@@ -245,8 +245,13 @@ export default function TrabajadoresPage({
         accessorKey: "area.name",
         header: "Especialidad",
         size: 83,
-        enableColumnFilter: false,
+        enableColumnFilter: true,
         enableSorting: true,
+        filterVariant: 'select',
+        filterSelectOptions: areas.map((area) => ({
+          value: area.name,
+          label: area.name,
+        })),
       },
       //   {
       //     accessorKey: "email",

@@ -20,34 +20,57 @@ export default function Home() {
           </a>
 
           <div className="flex gap-5 flex-nowrap  h-min items-center ">
-            <FuturisticButton>
+            {/* <FuturisticButton>
               <a href="/contratar">Contratar</a>
-            </FuturisticButton>
+            </FuturisticButton> */}
             <a href="/login">Iniciar Sesión</a>
             {/* <a href="/register" className="flex gap-2 items-center">    <Icon icon="solar:user-circle-outline" width="24" height="24" />  <span> Mi perfil</span></a> */}
           </div>
         </nav>
       </header>
       <main className="mt-10 lg:mt-5 xl:pt-20 px-3 lg:px-32 overflow-hidden">
-        <h1 className="text-xl md:text-5xl max-w-[700px] font-semibold">
-          Contrata a los expertos que necesitas para tu proyecto
+        <h1 className="text-xl md:text-6xl max-w-[700px] font-semibold">
+          {/* Contrata a los expertos que necesitas para tu proyecto */}
+          Impulsamos sus Proyectos con Personal Técnico de Alto Nivel
+          {/* Talento Especializado para los Sectores de Energía e infraestructura */}
         </h1>
+
         <p className="max-w-[440px] mb-4 mt-2">
-          En Lion Outsourcing reunimos a los mejores talentos en el área de
-          petróleo y gas [aquí va la lista de áreas] en Venezuela. ...
+          Conectamos a empresas exigentes con expertos certificados en Petróleo,
+          Gas y el sector eléctrico de Venezuela
         </p>
 
         <div className="flex flex-col md:flex-row  items-center gap-3 md:gap-10">
-          <FuturisticButton>Contratar</FuturisticButton>
-          <a href="/aplicar" className="bg-gray-100 rounded-xl px-10 py-3 hover:bg-gray-200">
-            Busco trabajo
+          <FuturisticButton>Contactar</FuturisticButton>
+          <a
+            href="/aplicar"
+            className="bg rounded-xl px-10 py-2.5 border border-caribe hover:bg-pink "
+          >
+            Postular mi CV
           </a>
         </div>
-          {/* <img src={hero} alt="hero" className="absolute -right-24 bottom-0 " />
-           */}
-           <div className="absolute -bottom-14 -right-20 -max  pointer-events-none ">
-              <HeroSVG />
-           </div>
+        <div className="flex  w-[380px] justify-between mt-5 text-gray-400">
+          <div className="bg-gray-200 rounded-full p-3 shadow-inner ">
+            <Icon  icon="temaki:oil-well" width="24" height="24" />
+          </div>
+          <div className="bg-gray-200 rounded-full p-3 shadow-inner">
+            <Icon  icon="material-symbols-light:electric-bolt" width="24" height="24" />
+          </div>
+          <div className="bg-gray-200 rounded-full p-3 shadow-inner">
+           <Icon  icon="mdi:factory" width="24" height="24" />
+          </div>
+          <div className="bg-gray-200 rounded-full p-3 shadow-inner">
+            <Icon  icon="fluent:gas-propane-20-filled" width="24" height="24" />
+          </div>
+          <div className="bg-gray-200 rounded-full p-3 shadow-inner">
+            <Icon  icon="fa7-solid:helmet-safety" width="24" height="24" />
+          </div>
+        </div>
+        {/* <img src={hero} alt="hero" className="absolute -right-24 bottom-0 " />
+         */}
+        <div className="absolute -bottom-14 -right-20 -max  pointer-events-none ">
+          <HeroSVG />
+        </div>
       </main>
       <footer></footer>
     </div>

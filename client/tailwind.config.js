@@ -12,7 +12,7 @@ export default {
       "color2": "#397373",
       "color3": "#6595BF",
       "color4": "#C9EBF2",
-      "pink": "#ffa2a2",
+      "pink": "#FF828D",
       "black": "#000000",
       "caribe": "#0E3F78",
       "dark": "#161616",
