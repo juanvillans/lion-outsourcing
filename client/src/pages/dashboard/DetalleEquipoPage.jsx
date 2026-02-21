@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react";
 import { MaterialReactTable } from "material-react-table";
 import TrabajadoresPage from "./TrabajadoresPage";
 import Modal from "../../components/Modal";
+import CreateWorkTeamModal from "../../components/dashboard/CreateWorkTeamModal";
 
 import { API_URL } from "../../config/env";
 
@@ -18,6 +19,7 @@ export default function DetalleEquipoPage() {
   const navigate = useNavigate();
   const [rowSelection, setRowSelection] = useState({});
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const selectedRowData = Object.keys(rowSelection)
     .filter((key) => rowSelection[key])
     .map((key) => workTeam?.employees[parseInt(key)].id);
@@ -190,7 +192,7 @@ export default function DetalleEquipoPage() {
         enableSorting: false,
       },
     ],
-    []
+    [],
   );
 
   return (
@@ -221,9 +223,18 @@ export default function DetalleEquipoPage() {
           {workTeam?.is_hired ? "Sí" : "No"}
         </p>
         <p>
-          <strong className="text-dark">Fecha de fin de contrato:</strong>{" "}
+          <strong className="text-dark ">Fecha de fin de contrato:</strong>{" "}
           {workTeam?.end_date_contract}
         </p>
+        <div className="flex justify-end">
+          <button
+            className="px-4 py-2  mt-3  bg-color3 text-white rounded-lg hover:brightness-110"
+            onClick={() => setIsEditModalOpen(true)}
+            title="Editar equipo"
+          >
+            <Icon icon="mdi:pencil" className="mr-2" />
+          </button>
+        </div>
       </div>
 
       <div>
@@ -234,6 +245,7 @@ export default function DetalleEquipoPage() {
           <button
             className="px-4 py-2 mb-3 bg-caribe text-white rounded-lg hover:brightness-110"
             onClick={() => setIsOpenModal(true)}
+            title="Agregar miembros"
           >
             Agregar miembros
           </button>
@@ -302,6 +314,17 @@ export default function DetalleEquipoPage() {
           }, {})}
         />
       </Modal>
+
+      <CreateWorkTeamModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        editMode={true}
+        initialData={workTeam}
+        onSuccess={() => {
+          fetchWorkTeam();
+          setIsEditModalOpen(false);
+        }}
+      />
     </div>
   );
 }

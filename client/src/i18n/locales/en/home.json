@@ -1,0 +1,53 @@
+{
+  "hero": {
+    "title": "Empowering Your Projects with High-Level Technical Staff",
+    "subtitle": "We connect demanding companies with certified experts in Oil, Gas and the electrical sector in Venezuela",
+    "cta": "Contact Us",
+    "ctaSecondary": "Submit Your CV"
+  },
+  "chooseSection": {
+    "title": "Choose how to work with Lion PR Services",
+    "companies": {
+      "label": "COMPANIES",
+      "title": "Hire certified technical talent",
+      "benefits": [
+        "Reduced operational costs",
+        "Verified professionals",
+        "Fast onboarding"
+      ],
+      "cta": "Request consultation"
+    },
+    "candidates": {
+      "label": "CANDIDATES",
+      "title": "Access high-level projects",
+      "benefits": [
+        "Professional growth",
+        "Reliable companies",
+        "Real projects"
+      ],
+      "cta": "Submit Your CV"
+    }
+  },
+  "about": {
+    "title": "About Lion Personal Realty Services",
+    "slogan": "Leading the talent that moves the industry.",
+    "description": "Lion Personal Realty Services is the strategic ally that connects specialized talent with the critical demands of the Venezuelan energy industry. From our operational base in Maracaibo, Zulia State, we provide comprehensive human capital solutions designed to ensure continuity, safety and efficiency of high-demand projects.",
+    "whatWeDo": {
+      "title": "What we do?",
+      "description": "We specialize in providing technical and professional outsourcing services for the oil, gas and energy sectors. We comprehensively manage human resources, covering selection, hiring, payroll administration, social benefits and labor relations, allowing our clients to eliminate administrative and legal liabilities and focus on their business operations."
+    },
+    "scope": {
+      "title": "Our Scope",
+      "items": [
+        "Industrial safety and environmental protection",
+        "Technical and specialized consulting",
+        "Engineering, construction supervision and quality control",
+        "Exploration, production and refining",
+        "Industrial operation and maintenance",
+        "Facility management and operation",
+        "Logistics and operational support"
+      ]
+    }
+  }
+}
+

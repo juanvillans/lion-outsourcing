@@ -393,6 +393,10 @@ td.MuiTableCell-root {
     animation: pump 6s ease-in-out infinite alternate;
     transform-origin: 67% 50%;
 }
+.rotate_harmer2 {
+    animation: pump 6s ease-in-out infinite alternate;
+    transform-origin: 62% 68%;
+}
 
 .upAndDown {
   animation: upAndDown 3s ease-in-out infinite alternate;
@@ -450,4 +454,31 @@ td.MuiTableCell-root {
 .custom-progress::-moz-progress-bar {
   background-color: #145096; /* Your desired color, e.g., Blue */
   border-radius: 10px;
+}
+
+.invert{
+  filter: invert(1);
+mix-blend-mode: difference;
+}
+.spinAnimation {
+  animation: spin 120s linear infinite;
+}
+.spinAnimationBackwards {
+  animation: spinBackwards 120s linear infinite;
+}
+@keyframes spinBackwards {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

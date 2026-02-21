@@ -1,0 +1,53 @@
+{
+  "hero": {
+    "title": "Impulsamos sus Proyectos con Personal Técnico de Alto Nivel",
+    "subtitle": "Conectamos a empresas exigentes con expertos certificados en Petróleo, Gas y el sector eléctrico de Venezuela",
+    "cta": "Contactar",
+    "ctaSecondary": "Postular mi CV"
+  },
+  "chooseSection": {
+    "title": "Elige como trabajar con Lion PR Services",
+    "companies": {
+      "label": "EMPRESAS",
+      "title": "Contrata talento técnico certificado",
+      "benefits": [
+        "Reducción de costos operativos",
+        "Profesionales verificados",
+        "Incorporación rápida"
+      ],
+      "cta": "Solicitar consultoria"
+    },
+    "candidates": {
+      "label": "CANDIDATOS",
+      "title": "Accede a proyectos de alto nivel",
+      "benefits": [
+        "Crecimiento profesional",
+        "Empresas confiables",
+        "Proyectos reales"
+      ],
+      "cta": "Postular mi CV"
+    }
+  },
+  "about": {
+    "title": "Sobre Lion Personal Realty Services",
+    "slogan": "Liderando el talento que mueve la industria.",
+    "description": "Lion Personal Realty Services es el aliado estratégico que conecta talento especializado con las demandas críticas de la industria energética venezolana. Desde nuestra base operativa en Maracaibo, Estado Zulia, brindamos soluciones integrales de capital humano diseñadas para garantizar la continuidad, seguridad y eficiencia de proyectos de alta exigencia.",
+    "whatWeDo": {
+      "title": "¿Que hacemos?",
+      "description": "Nos especializamos en la prestación de servicios de outsourcing técnico y profesional para los sectores de petróleo, gas y energía. Gestionamos de forma integral el recurso humano, abarcando la selección, contratación, administración de nómina, beneficios sociales y relaciones laborales, lo que permite a nuestros clientes eliminar pasivos administrativos y legales, y enfocarse en la operación de su negocio."
+    },
+    "scope": {
+      "title": "Nuestro alcance",
+      "items": [
+        "Seguridad industrial y protección ambiental",
+        "Consultoría técnica y especializada",
+        "Ingeniería, supervisión de obras y control de calidad",
+        "Exploración, producción y refinación",
+        "Operación y mantenimiento industrial",
+        "Gestión y operación de instalaciones",
+        "Logística y soporte operativo"
+      ]
+    }
+  }
+}
+

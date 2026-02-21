@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "aboutUs": "About Us",
+    "login": "Log In",
+    "myProfile": "My Profile",
+    "contact": "Contact",
+    "submitCV": "Submit CV"
+  },
+  "footer": {
+    "rights": "All rights reserved"
+  },
+  "buttons": {
+    "next": "Next",
+    "back": "Back",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email",
+    "minLength": "Minimum {{count}} characters"
+  }
+}
+
