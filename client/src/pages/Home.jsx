@@ -2,9 +2,6 @@ import { Icon } from "@iconify/react";
 import { useTranslation } from "react-i18next";
 import FuturisticButton from "../components/FuturisticButton";
 import LanguageSwitcher from "../components/LanguageSwitcher";
-import logo from "../assets/logo.png";
-import hero from "../assets/hero.svg";
-import tip from "../assets/tip.svg";
 import HeroSVG from "../components/HeroSVG";
 import energy from "../assets/energy.mp4";
 import trabajadores from "../assets/trabajadores2.png";
@@ -36,14 +33,14 @@ export default function Home() {
       <div className="relative h-screen w-full overflow-hidden overflow-x-hidden ">
         <title>Home</title>
           <Navigation />
-        <main className="mt-36 xl:pt-16 lg:mt-44 px-4 w-full lg:px-32 overflow-hidden">
+        <main className="mt-28 xl:pt-16 lg:mt-40 px-4 w-full lg:px-32 overflow-hidden">
           <h1 className="fadeInUp text-2xl z-40 md:text-6xl max-w-[700px] font-semibold">
             {t("hero.title")}
           </h1>
 
           <p className="max-w-[440px] text-sm md:text-base z-40 mb-4 mt-2 fadeInUp">{t("hero.subtitle")}</p>
 
-          <div className="fadeInUp-delay-0-5 flex  md:flex-row  items-center gap-3 md:gap-10">
+          <div className="fadeInUp-delay-0-5 flex justify-between md:justify-normal  md:flex-row  items-center gap-3 md:gap-10">
             <FuturisticButton>{t("hero.cta")}</FuturisticButton>
             <a
               href="/aplicar"
@@ -52,7 +49,7 @@ export default function Home() {
               {t("hero.ctaSecondary")}
             </a>
           </div>
-          <div className="fadeInUp-delay-1 flex  md:w-[380px] mx-auto md:mx-0 justify-center gap-3 md:justify-between mt-5 text-gray-400">
+          <div className="z-50 fadeInUp-delay-1 flex  md:w-[380px] mx-auto md:mx-0 justify-center gap-3 md:justify-between mt-5 text-gray-400">
             <div className="bg-gray-200 rounded-full p-2 md:p-3 shadow-inner  flex items-center justify-center w-10 h-10  ">
               <Icon icon="temaki:oil-well" className="" />
             </div>
@@ -71,7 +68,7 @@ export default function Home() {
           </div>
           {/* <img src={hero} alt="hero" className="absolute -right-24 bottom-0 " />
            */}
-          <div className="absolute -right-10 -bottom-14 md:-right-20   pointer-events-none ">
+          <div className="absolute -right-5  -bottom-0 md:-bottom-14 md:-right-20 lg:-bottom-1 lg:-right-60 pointer-events-none w-full ">
             <HeroSVG />
           </div>
         </main>
@@ -88,7 +85,7 @@ export default function Home() {
           <source src={energy} type="video/mp4" />
         </video>
 
-        <p className="hidden md:block absolute text-center -translate-x-1/2 top-4 left-1/2 tracking-widest font-bold text-sm ">
+        <p className=" hidden md:block absolute text-center -translate-x-1/2 top-10 left-1/2 tracking-widest font-bold text-sm ">
           {t("chooseSection.title")}
         </p>
         <div className="absolute w-full text-white grid grid-cols-1 md:grid-cols-2 top-0 left-0 h-full">
@@ -130,36 +127,36 @@ export default function Home() {
               ))}
             </ul>
 
-            <button className="animateOnScroll shadow mt-5 md:mt-20 bg-white/30 px-6 py-3 rounded-xl hover:bg-purple">
+            <a href="/aplicar" className="inline-block animateOnScroll shadow mt-5 md:mt-20 bg-white/30 px-6 py-3 rounded-xl hover:bg-purple">
               {t("chooseSection.candidates.cta")}
-            </button>
+            </a>
           </div>
         </div>
       </section>
 
-      <div className="relative animateOnScroll">
+      <div className="relative animateOnScroll ">
         <img
           src={rueda}
           alt="rueda"
-          className="absolute -left-[500px] top-[290px] w-[1000px] spinAnimation  "
+          className="absolute hidden md:block -left-[500px] top-[290px] w-[1000px] spinAnimation  "
         />
         
          <img
           src={rueda}
           alt="rueda"
-          className="absolute -left-[100px] top-[670px] w-[200px] spinAnimation  spinFaster  "
+          className="absolute hidden md:block -left-[100px] top-[670px] w-[200px] spinAnimation  spinFaster  "
         />
 
          <img
           src={rueda}
           alt="rueda"
-          className="absolute left-[65px] top-[795px] w-[135px] spinAnimationBackwards spinFaster2  "
+          className="absolute hidden md:block left-[65px] top-[795px] w-[135px] spinAnimationBackwards spinFaster2  "
         />
 
          <img
           src={rueda}
           alt="rueda"
-          className="absolute -left-[10px] top-[897px] w-[135px] spinAnimation spinFaster2  "
+          className="absolute hidden md:block -left-[10px] top-[897px] w-[135px] spinAnimation spinFaster2  "
         />
         <section
           id="quienes-somos"

@@ -435,7 +435,7 @@ td.MuiTableCell-root {
 }
 
 .upAndDown2 {
-  animation: upAndDown2 3s ease-in-out infinite alternate;
+  animation: upAndDown2 3s ease-out infinite alternate;
 }
 
 @keyframes upAndDown2 {

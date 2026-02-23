@@ -1,12 +1,14 @@
 export default function HeroSVG() {
   return (
+    
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="1200"
-      height="676"
+      width="100%"
+      height="auto"
       viewBox="0 0 1421 676"
+      preserveAspectRatio="xMidYMid meet"
       fill="none"
-      className="max-w-[1200px]"
+      className="w-full max-w-[1334px] h-auto"
     >
       <script xmlns="" id="eppiocemhmnlbhjplcgkofciiegomcon" />
       <script xmlns="" />
@@ -513,7 +515,10 @@ export default function HeroSVG() {
           fill="#27415A"
         />
       </g>
-      <g filter="url(#filter19_f_1660_2)">
+      <g filter="url(#filter19_f_1660_2)" 
+        className="fadeInUp-delay-0-5"
+
+      >
         <rect
           width="97.0846"
           height="198.738"
@@ -522,6 +527,10 @@ export default function HeroSVG() {
           fill="#27415A"
         />
       </g>
+      <g
+        className="fadeInUp-delay-1"
+
+      >
       <rect
         width="39.976"
         height="150.767"
@@ -529,6 +538,8 @@ export default function HeroSVG() {
         transform="matrix(-1 0 0 1 814.863 512.066)"
         fill="#27415A"
       />
+
+      </g>
       <g filter="url(#filter20_f_1660_2)">
         <rect
           width="6.85303"
@@ -751,6 +762,7 @@ export default function HeroSVG() {
           fill="#27415A"
         />
       </g>
+      <g className="fadeInUp">
       <g filter="url(#filter43_f_1660_2)">
         <rect
           x="1099.26"
@@ -787,7 +799,7 @@ export default function HeroSVG() {
           fill="#27415A"
         />
       </g>
-      <g filter="url(#filter47_f_1660_2)">
+      <g  filter="url(#filter47_f_1660_2)">
         <rect
           x="1010.17"
           y="571.46"
@@ -795,6 +807,7 @@ export default function HeroSVG() {
           height="91.3737"
           fill="#27415A"
         />
+      </g>
       </g>
       <path
         d="M1562 520.5C1562 668.788 1444.25 789 1299 789C1153.75 789 1036 668.788 1036 520.5C1036 372.212 1153.75 252 1299 252C1444.25 252 1562 372.212 1562 520.5Z"
