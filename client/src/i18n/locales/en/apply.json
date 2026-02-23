@@ -1,0 +1,75 @@
+{
+  "pageTitle": "Application Form",
+  "steps": {
+    "accountData": "Account Data",
+    "professionalProfile": "Professional Profile",
+    "documents": "Documents"
+  },
+  "step1": {
+    "title": "Account Data",
+    "fullname": "Full legal name",
+    "fullnamePlaceholder": "Your full name as it appears on your ID",
+    "email": "Email Address",
+    "emailPlaceholder": "you@email.com",
+    "photo": {
+      "label": "Profile photo",
+      "requirements": "The photo must be passport-style and meet the following requirements:",
+      "reqList": [
+        "Background: Plain, white or light.",
+        "Framing: Close-up of face, looking forward.",
+        "Clarity: Sharp, no shadows, face completely visible.",
+        "Must be JPG, PNG, JPEG or GIF and not exceed 5MB."
+      ]
+    }
+  },
+  "step2": {
+    "title": "Professional Profile",
+    "industry": "Industry to apply",
+    "area": "Specialization area",
+    "skills": "Skills (select 3 to 6)",
+    "skillsPlaceholder": "Search skill...",
+    "addSkill": "add \"{{skill}}\"",
+    "yearsOfExperience": "Years of experience *",
+    "experienceOptions": [
+      { "value": "", "label": "Select" },
+      { "value": "0-1", "label": "0-1 years" },
+      { "value": "1-3", "label": "1-3 years" },
+      { "value": "3-5", "label": "3-5 years" },
+      { "value": "5-10", "label": "5-10 years" },
+      { "value": "10+", "label": "10+ years" }
+    ],
+    "academicTitle": "Academic degree/title",
+    "academicTitlePlaceholder": "E.g.: Petrochemical Engineer, IT Technician",
+    "englishLevel": "English Level *",
+    "englishOptions": [
+      { "value": "none", "label": "None" },
+      { "value": "beginner", "label": "Basic" },
+      { "value": "intermediate", "label": "Intermediate" },
+      { "value": "advanced", "label": "Advanced" }
+    ]
+  },
+  "step3": {
+    "title": "Additional Information and Documents",
+    "localization": "Residence location",
+    "localizationPlaceholder": "Search city, state..",
+    "desiredIncome": "Desired monthly income in USD ($)",
+    "phoneNumber": "Phone number",
+    "phoneNumberPlaceholder": "E.g.: +1 123 456 7890",
+    "linkedin": "LinkedIn (optional)",
+    "website": "Website (optional)",
+    "uploadCV": "Upload CV / Resume",
+    "fileSelected": "Selected file",
+    "selectPDF": "Select PDF file (Max. 10 MB)"
+  },
+  "navigation": {
+    "previous": "Previous",
+    "next": "Next",
+    "submit": "Submit Application"
+  },
+  "success": {
+    "title": "Your application has been submitted successfully!",
+    "thanks": "Thank you for applying to Lion PR Services.",
+    "message": "Our team will review your application and contact you soon."
+  }
+}
+

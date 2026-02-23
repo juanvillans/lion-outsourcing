@@ -1,0 +1,75 @@
+{
+  "pageTitle": "Formulario de Aplicación",
+  "steps": {
+    "accountData": "Datos de Cuenta",
+    "professionalProfile": "Perfil Profesional",
+    "documents": "Documentos"
+  },
+  "step1": {
+    "title": "Datos de Cuenta",
+    "fullname": "Nombre legal completo",
+    "fullnamePlaceholder": "Tu nombre completo como aparece en tu documento de identidad",
+    "email": "Correo Electrónico",
+    "emailPlaceholder": "tu@email.com",
+    "photo": {
+      "label": "Foto de perfil",
+      "requirements": "La foto debe ser tipo carnet y cumplir con lo siguiente:",
+      "reqList": [
+        "Fondo: Liso, blanco o claro.",
+        "Encuadre: Primer plano de la cara, mirando al frente.",
+        "Claridad: Nítida, sin sombras, y la cara completamente visible.",
+        "Debe ser JPG, PNG, JPEG o GIF y no superar los 5MB."
+      ]
+    }
+  },
+  "step2": {
+    "title": "Perfil Profesional",
+    "industry": "Industria a aplicar",
+    "area": "Área de especialización",
+    "skills": "Habilidades (selecciona 3 hasta 6)",
+    "skillsPlaceholder": "Buscar habilidad...",
+    "addSkill": "agrega \"{{skill}}\"",
+    "yearsOfExperience": "Años de experiencia *",
+    "experienceOptions": [
+      { "value": "", "label": "Seleccionar" },
+      { "value": "0-1", "label": "0-1 años" },
+      { "value": "1-3", "label": "1-3 años" },
+      { "value": "3-5", "label": "3-5 años" },
+      { "value": "5-10", "label": "5-10 años" },
+      { "value": "10+", "label": "10+ años" }
+    ],
+    "academicTitle": "Título/Grado académico",
+    "academicTitlePlaceholder": "Ej: Ingeniero petroquímico, TSU en Informática",
+    "englishLevel": "Nivel de Inglés *",
+    "englishOptions": [
+      { "value": "none", "label": "Ninguno" },
+      { "value": "beginner", "label": "Básico" },
+      { "value": "intermediate", "label": "Intermedio" },
+      { "value": "advanced", "label": "Avanzado" }
+    ]
+  },
+  "step3": {
+    "title": "Información Adicional y Documentos",
+    "localization": "Localización de residencia",
+    "localizationPlaceholder": "Buscar ciudad, estado..",
+    "desiredIncome": "Ingresos mensuales deseados en USD ($)",
+    "phoneNumber": "Número de teléfono",
+    "phoneNumberPlaceholder": "Ej: +58 123 456 7890",
+    "linkedin": "LinkedIn (opcional)",
+    "website": "Página web (opcional)",
+    "uploadCV": "Subir CV / Currículum Vitae",
+    "fileSelected": "Archivo seleccionado",
+    "selectPDF": "Seleccionar archivo PDF (Máx. 10 MB)"
+  },
+  "navigation": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "submit": "Enviar Solicitud"
+  },
+  "success": {
+    "title": "¡Su solicitud ha sido enviada exitosamente!",
+    "thanks": "Gracias por aplicar a Lion PR Services.",
+    "message": "Nuestro equipo revisará tu solicitud y te contactará pronto."
+  }
+}
+

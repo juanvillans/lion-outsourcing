@@ -5,6 +5,9 @@ import App from './App.jsx'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import "./components/Icons.jsx";
 
+// Initialize i18n
+import './i18n';
+
 // PWA Update logic
 import { registerSW } from 'virtual:pwa-register'
 

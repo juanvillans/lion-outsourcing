@@ -26,6 +26,7 @@ import { API_URL } from "../../config/env";
 import { useNavigate } from "react-router-dom";
 import { getIndustryIcon } from "../../config/industryIcons";
 import CreateWorkTeamModal from "../../components/dashboard/CreateWorkTeamModal";
+import FilterAreaAndSkill from "../../components/dashboard/FilterAreaAndSkill";
 
 let isThereLocalStorageFormData = localStorage.getItem("formData")
   ? true
@@ -63,7 +64,12 @@ const MemoizedTestField = React.memo(
   }
 );
 
-export default function TrabajadoresPage() {
+export default function TrabajadoresPage({
+  useForWorkTeam = false,
+  workTeamId = null,
+  employeeIdsObj = {},
+  onSuccessTeam = () => {},
+}) {
   const [loading, setLoading] = useState(false);
   const { showError, showSuccess, showInfo } = useFeedback();
   const [isModalOpenCreateTeam, setIsModalOpenCreateTeam] = useState(false);
@@ -74,12 +80,13 @@ export default function TrabajadoresPage() {
   const [origins, setOrigins] = useState([]);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const { user } = useAuth();
-  const [areas, setAreas] = useState([]);
   const [workTeams, setWorkTeams] = useState([]);
   const [industries, setIndustries] = useState([]);
+  const [areas, setAreas] = useState([]);
   const [skills, setSkills] = useState([]);
   const navigate = useNavigate();
 
+  console.log({ employeeIdsObj });
   // Form configuration for ReusableForm
   const patientFormFields = useMemo(() => [
     {
@@ -239,8 +246,13 @@ export default function TrabajadoresPage() {
         accessorKey: "area.name",
         header: "Especialidad",
         size: 83,
-        enableColumnFilter: false,
+        enableColumnFilter: true,
         enableSorting: true,
+        filterVariant: 'select',
+        filterSelectOptions: areas.map((area) => ({
+          value: area.name,
+          label: area.name,
+        })),
       },
       //   {
       //     accessorKey: "email",
@@ -356,7 +368,12 @@ export default function TrabajadoresPage() {
   const [sorting, setSorting] = useState([{ id: "id", desc: true }]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [customFilters, setCustomFilters] = useState({});
+  const [customFilters, setCustomFilters] = useState({
+    area_id: null,
+    area: null,
+    skills: "",
+    skillsArray: [],
+  });
   const [selectedWorkerForNewSkill, setSelectedWorkerForNewSkill] = useState(
     []
   );
@@ -471,6 +488,9 @@ export default function TrabajadoresPage() {
         employee_ids: employeeIds,
       });
       showSuccess("Trabajador agregado al equipo con éxito");
+      if (useForWorkTeam) {
+        onSuccessTeam();
+      }
       getWorkTeams();
       setIsModalOpenSelectTeam(false);
       fetchData();
@@ -524,81 +544,14 @@ export default function TrabajadoresPage() {
           </div>
         </div>
 
-        <div className="flex  gap-4 mb-3">
-          <Autocomplete
-            id="areas-select-multiple" // Cambiado el ID para mayor claridad
-            size="small"
-            sx={{
-              width: "min-content",
-              minWidth: "400px", // Recomendado para que el label y el input no se colapsen
-            }}
-            options={areas || []}
-            autoHighlight
-            // disabled={!formData.industry_id}
-            getOptionLabel={(option) =>
-              option.name + " - " + option.industry.name
-            }
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            onChange={(_, value) => {
-              setCustomFilters((prev) => ({
-                ...prev,
-                area_id: value?.id || null,
-              }));
-              fetchData();
-            }}
-            value={customFilters.area}
-            renderOption={(props, option) => {
-              const { key, ...optionProps } = props;
-              return (
-                <Box
-                  key={key}
-                  component="li"
-                  {...optionProps}
-                  className="hover:text-black text-sm md:text-md  py-0.5 px-8 flex  gap-3 my-1 cursor-pointer"
-                >
-                  {option.name}
-
-                  <p className="flex gap-1 text-black/40 text-xs mt-1">
-                    <Icon
-                      icon={getIndustryIcon(option.industry_id)}
-                      width={16}
-                    />
-                    {option.industry.name}
-                  </p>
-                </Box>
-              );
-            }}
-            renderInput={(params) => (
-              <TextField label="Área de especialización" {...params} required />
-            )}
-          />
-
-          <Autocomplete
-            id="skills-select"
-            multiple
-            size="small"
-            options={skills}
-            autoHighlight
-            getOptionLabel={(option) => option.name}
-            onChange={(_, value) => {
-              let newValue = value.map((skill) => skill.name).join(",");
-
-              setCustomFilters((prev) => ({
-                ...prev,
-                skills: newValue,
-              }));
-            }}
-            sx={{
-              width: "min-content",
-              minWidth: "400px", // Recomendado para que el label y el input no se colapsen
-            }}
-            value={customFilters.skills}
-            onInputChange={(_, value) => searchSkills(value)}
-            renderInput={(params) => (
-              <TextField {...params} placeholder="Buscar habilidad..." />
-            )}
-          />
-        </div>
+        <FilterAreaAndSkill
+          areas={areas}
+          skills={skills}
+          customFilters={customFilters}
+          setCustomFilters={setCustomFilters}
+          onFilterChange={fetchData}
+          onSearchSkills={searchSkills}
+        />
 
         <Modal
           isOpen={openModalSkill}
@@ -710,6 +663,9 @@ export default function TrabajadoresPage() {
                   if (event.target.closest('input[type="checkbox"]')) {
                     return;
                   }
+                  if (useForWorkTeam) {
+                    return;
+                  }
                   navigate(`/dashboard/trabajadores/${row.original.id}`);
                 },
                 sx: { cursor: "pointer" },
@@ -811,7 +767,14 @@ export default function TrabajadoresPage() {
           <div className="flex z-50 fixed bottom-10  gap-3 justify-end pt-4">
             <button
               className="px-4 py-2 bg-caribe text-white rounded-lg hover:brightness-110"
-              onClick={() => setIsModalOpenSelectTeam(true)}
+              onClick={() => {
+                if (useForWorkTeam) {
+                  addEmployeeToWorkTeam(workTeamId, selectedRowData);
+                  return;
+                } else {
+                  setIsModalOpenSelectTeam(true);
+                }
+              }}
             >
               Agregar a equipo
             </button>

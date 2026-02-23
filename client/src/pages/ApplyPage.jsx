@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Box,
   TextField,
@@ -8,6 +8,7 @@ import {
   createFilterOptions,
   Chip,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 import { GEOAPIFY_KEY } from "../config/env.js";
 import { Icon } from "@iconify/react";
@@ -15,6 +16,7 @@ import { getIndustryIcon } from "../config/industryIcons";
 import { industriesAPI, skillsAPI, applicantsAPI } from "../services/api";
 import { useFeedback } from "../context/FeedbackContext";
 import Footer from "../components/Footer";
+import Navigation from "../components/navigation";
 
 import "@geoapify/geocoder-autocomplete/styles/round-borders.css";
 
@@ -44,18 +46,22 @@ const defaultFormData = {
   phone_number: "",
 };
 
-const STEPS = [
-  { number: 1, title: "Datos de Cuenta", icon: "mdi:account" },
-  { number: 2, title: "Perfil Profesional", icon: "mdi:briefcase" },
-  { number: 3, title: "Documentos", icon: "mdi:file-document" },
-];
+// Steps are now defined inside the component with translations
 
 export default function ApplyPage() {
+  const { t, i18n } = useTranslation("apply");
   const [formData, setFormData] = useState(structuredClone(defaultFormData));
   const [currentStep, setCurrentStep] = useState(1);
   const autocompleteContainerRef = useRef(null);
   const autocompleteInstanceRef = useRef(null);
   const { showSuccess, showError } = useFeedback();
+
+  // Dynamic steps with translations
+  const steps = [
+    { number: 1, title: t("steps.accountData"), icon: "mdi:account" },
+    { number: 2, title: t("steps.professionalProfile"), icon: "mdi:briefcase" },
+    { number: 3, title: t("steps.documents"), icon: "mdi:file-document" },
+  ];
 
   // Initialize Geocoder Autocomplete (solo cuando estamos en el paso 3)
   useEffect(() => {
@@ -69,13 +75,18 @@ export default function ApplyPage() {
         );
       }
 
+      // Geoapify expects a short language code (e.g. 'en', 'es').
+      // i18n.language can be 'en-US' or 'es-ES' which Geoapify rejects,
+      // so we extract the base language.
+      const geoLang = (i18n.language || "en").split(/[-_]/)[0].toLowerCase();
+
       const autocomplete = new GeocoderAutocomplete(
         autocompleteContainerRef.current,
         GEOAPIFY_KEY,
         {
           type: "city",
-          placeholder: "Buscar ciudad, estado..",
-          lang: "es",
+          placeholder: t("step3.localizationPlaceholder"),
+          lang: geoLang,
           limit: 5,
         }
       );
@@ -108,6 +119,7 @@ export default function ApplyPage() {
       }
     };
   }, [currentStep]);
+
 
   const [industries, setIndustries] = useState([]);
   const [skills, setSkills] = useState([]);
@@ -198,17 +210,10 @@ export default function ApplyPage() {
 
   return (
     <div className=" bg-gray-50 mt-2  ">
-      <header className="flex items-center flex-col justify-center">
-        <a href="/" className="flex  items-center  gap-2 ">
-          <img src={logo} alt="logo" className="w-20" />
-          <span className="font-bold text-xl text-al leading-4 text-center">
-            LION <span className="text-caribe">PR</span>
-            <br />
-            services
-          </span>
-        </a>
-        <h1 className="text-center text-2xl font-bold text-gray-800 my-4 mb-7">
-          Formulario de Aplicación
+      <header className="flex items-center flex-col justify-center relative">
+        <Navigation />
+        <h1 className="text-center text-2xl font-bold text-gray-800 my-4 md:mt-20 mb-7">
+          {t("pageTitle")}
         </h1>
       </header>
 
@@ -221,7 +226,7 @@ export default function ApplyPage() {
             value={currentStep === 1 ? 10 : currentStep === 2 ? 50 : 100}
             className="custom-progress rounded-full duration-200 text-c absolute w-full z-0 h-1 top-5 pt-0.5 bg-caribe"
           ></progress>
-          {STEPS.map((step, index) => (
+          {steps.map((step, index) => (
             <div
               key={step.number}
               className="flex items-center flex-nowrap justify-end z-10"
@@ -252,7 +257,7 @@ export default function ApplyPage() {
                 </span>
               </div>
               {/* Connector Line */}
-              {index < STEPS.length - 1 && (
+              {index < steps.length - 1 && (
                 <div
                   className={`flex-1 h-1 mx-2 rounded ${
                     currentStep > step.number ? "bg-caribe" : "bg-gray-300"
@@ -274,27 +279,27 @@ export default function ApplyPage() {
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-700 border-b pb-2">
                 <Icon icon="mdi:account" className="inline mr-2" />
-                Datos de Cuenta
+                {t("step1.title")}
               </h2>
 
               <FormField
                 name="fullname"
-                label="Nombre legal completo"
+                label={t("step1.fullname")}
                 type="text"
                 value={formData.fullname}
                 onChange={handleChange}
                 required
-                placeholder="Tu nombre completo como aparece en tu documento de identidad"
+                placeholder={t("step1.fullnamePlaceholder")}
               />
 
               <FormField
                 name="email"
-                label="Correo Electrónico"
+                label={t("step1.email")}
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                placeholder="tu@email.com"
+                placeholder={t("step1.emailPlaceholder")}
               />
 
               {/* <div className="grid grid-cols-2 gap-4">
@@ -332,7 +337,7 @@ export default function ApplyPage() {
               <div className="flex gap-8">
                 <div>
                   <label htmlFor="photo" className="text-gray-600 text-sm">
-                    Foto de perfil
+                    {t("step1.photo.label")}
                     <div className="bg-gray-200 mt-1 rounded-md w-36 h-44 flex items-center justify-center cursor-pointer hover:bg-gray-400 duration-150">
                       {formData.photo ? null : (
                         <Icon
@@ -363,20 +368,12 @@ export default function ApplyPage() {
 
                 <FormHelperText>
                   <span className="mt-5 text-sm block">
-                    La foto debe ser tipo carnet y cumplir con lo siguiente:
+                    {t("step1.photo.requirements")}
                   </span>
                   <span className="text-xs list-disc flex flex-col  mt-2 space-y-1">
-                    <span>Fondo: Liso, blanco o claro.</span>
-                    <span>
-                      Encuadre: Primer plano de la cara, mirando al frente.
-                    </span>
-                    <span>
-                      Claridad: Nítida, sin sombras, y la cara completamente
-                      visible.
-                    </span>
-                    <span>
-                      Debe ser JPG, PNG, JPEG o GIF y no superar los 5MB.
-                    </span>
+                    {t("step1.photo.reqList", { returnObjects: true }).map((req, i) => (
+                      <span key={i}>{req}</span>
+                    ))}
                   </span>
                 </FormHelperText>
               </div>
@@ -388,7 +385,7 @@ export default function ApplyPage() {
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-700 border-b pb-2">
                 <Icon icon="mdi:briefcase" className="inline mr-2" />
-                Perfil Profesional
+                {t("step2.title")}
               </h2>
               <Autocomplete
                 id="industries-select"
@@ -418,11 +415,11 @@ export default function ApplyPage() {
                   );
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} label="Industria a aplicar" required />
+                  <TextField {...params} label={t("step2.industry")} required />
                 )}
               />
               <Autocomplete
-                id="areas-select-multiple" // Cambiado el ID para mayor claridad
+                id="areas-select-multiple"
                 size="small"
                 options={formData.industry?.areas || []}
                 autoHighlight
@@ -437,13 +434,6 @@ export default function ApplyPage() {
                   }));
                 }}
                 value={formData.area}
-                // Opcional: Para mostrar las selecciones actuales si el componente es controlado
-                // value={
-                //   formData.area_ids // Suponiendo que 'area_ids' es un array de IDs seleccionados
-                //     ? (formData.industry?.areas || []).filter(area => formData.area_ids.includes(area.id))
-                //     : []
-                // }
-
                 renderOption={(props, option) => {
                   const { key, ...optionProps } = props;
                   return (
@@ -455,7 +445,7 @@ export default function ApplyPage() {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Área de especialización" // Etiqueta ajustada a plural
+                    label={t("step2.area")}
                     required
                   />
                 )}
@@ -513,48 +503,36 @@ export default function ApplyPage() {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Habilidades (selecciona 3 hasta 6)"
-                    placeholder="Buscar habilidad..."
+                    label={t("step2.skills")}
+                    placeholder={t("step2.skillsPlaceholder")}
                   />
                 )}
               />
               <FormField
-                label="Años de experiencia *"
+                label={t("step2.yearsOfExperience")}
                 type="select"
                 name="years_of_experience"
                 value={formData.years_of_experience}
                 onChange={handleChange}
                 required
-                options={[
-                  { value: "", label: "Seleccionar" },
-                  { value: "0-1", label: "0-1 años" },
-                  { value: "1-3", label: "1-3 años" },
-                  { value: "3-5", label: "3-5 años" },
-                  { value: "5-10", label: "5-10 años" },
-                  { value: "10+", label: "10+ años" },
-                ]}
+                options={t("step2.experienceOptions", { returnObjects: true })}
               />
               <FormField
-                label="Título/Grado académico"
+                label={t("step2.academicTitle")}
                 name="academic_title"
                 value={formData.academic_title}
                 onChange={handleChange}
                 required
-                placeholder="Ej: Ingeniero petroquímico, TSU en Informática"
+                placeholder={t("step2.academicTitlePlaceholder")}
               />
               <FormField
-                label="Nivel de Inglés *"
+                label={t("step2.englishLevel")}
                 type="radio"
                 name="english_level"
                 value={formData.english_level}
                 onChange={handleChange}
                 required
-                options={[
-                  { value: "none", label: "Ninguno" },
-                  { value: "beginner", label: "Básico" },
-                  { value: "intermediate", label: "Intermedio" },
-                  { value: "advanced", label: "Avanzado" },
-                ]}
+                options={t("step2.englishOptions", { returnObjects: true })}
               />
             </div>
           )}
@@ -564,12 +542,12 @@ export default function ApplyPage() {
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-700 border-b pb-2">
                 <Icon icon="mdi:file-document" className="inline mr-2" />
-                Información Adicional y Documentos
+                {t("step3.title")}
               </h2>
 
               <div>
                 <label className="block text-sm text-gray-600 mb-1">
-                  Localización de residencia
+                  {t("step3.localization")}
                 </label>
                 <div
                   ref={autocompleteContainerRef}
@@ -578,7 +556,7 @@ export default function ApplyPage() {
               </div>
 
               <FormField
-                label="Ingresos mensuales deseados en USD ($)"
+                label={t("step3.desiredIncome")}
                 type="number"
                 name="desired_monthly_income"
                 value={formData.desired_monthly_income}
@@ -588,45 +566,45 @@ export default function ApplyPage() {
               />
 
               <FormField
-                label="Número de teléfono"
+                label={t("step3.phoneNumber")}
                 type="text"
                 name="phone_number"
                 value={formData.phone_number}
                 onChange={handleChange}
                 required
-                placeholder="Ej: +52 123 456 7890"
+                placeholder={t("step3.phoneNumberPlaceholder")}
               />
 
               <FormField
-                label="LinkedIn (opcional)"
+                label={t("step3.linkedin")}
                 type="text"
                 name="linkedin_url"
                 value={formData.linkedin_url}
                 onChange={handleChange}
-                placeholder="https://linkedin.com/in/tu-perfil"
+                placeholder="https://linkedin.com/in/your-profile"
               />
 
               <FormField
-                label="Página web (opcional)"
+                label={t("step3.website")}
                 type="text"
                 name="website_url"
                 value={formData.website_url}
                 onChange={handleChange}
-                placeholder="https://tu-pagina.com"
+                placeholder="https://your-website.com"
               />
 
               <label htmlFor="cv" className="mt-3 block w-full cursor-pointer">
                 <p className="block text-sm font-medium text-gray-700 mb-2">
-                  📄 Subir CV / Currículum Vitae
+                  📄 {t("step3.uploadCV")}
                 </p>
                 {formData.cv ? (
                   <p className="text-sm text-gray-500">
-                    Archivo seleccionado: {formData.cv.name}
+                    {t("step3.fileSelected")}: {formData.cv.name}
                   </p>
                 ) : (
                   <div className="flex justify-center items-center w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-600 hover:border-blue-500 hover:text-blue-500 transition duration-300">
                     <Icon icon="mdi:upload" className="w-5 h-5 mr-2" />
-                    <span>Seleccionar archivo PDF (Máx. 10 MB)</span>
+                    <span>{t("step3.selectPDF")}</span>
                   </div>
                 )}
                 <input
@@ -656,7 +634,7 @@ export default function ApplyPage() {
               }`}
             >
               <Icon icon="mdi:arrow-left" />
-              Anterior
+              {t("navigation.previous")}
             </button>
 
             {currentStep < 3 ? (
@@ -665,7 +643,7 @@ export default function ApplyPage() {
                 onClick={handleNext}
                 className="flex items-center gap-2 px-6 py-2 bg-caribe text-white rounded-lg font-medium hover:bg-black transition-all"
               >
-                Siguiente
+                {t("navigation.next")}
                 <Icon icon="mdi:arrow-right" />
               </button>
             ) : (
@@ -675,7 +653,7 @@ export default function ApplyPage() {
                     {loading ? (
                       <CircularProgress size={20} className="mr-2" />
                     ) : null}
-                    Enviar Solicitud <Icon icon="mdi:check" className="ml-2" />
+                    {t("navigation.submit")} <Icon icon="mdi:check" className="ml-2" />
                   </div>
                 </FuturisticButton>
               </div>
@@ -686,10 +664,10 @@ export default function ApplyPage() {
       {!showForm && (
         <div className="text-center mx-auto w-max mt-20">
           <h1 className="text-2xl font-bold mb-4">
-            ¡Su solicitud ha sido enviada exitosamente!
+            {t("success.title")}
           </h1>
-          <p>Gracias por aplicar a Lion PR Services.</p>
-          <p>Nuestro equipo revisará tu solicitud y te contactará pronto.</p>
+          <p>{t("success.thanks")}</p>
+          <p>{t("success.message")}</p>
         </div>
       )}
 

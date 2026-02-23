@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "aboutUs": "Quienes somos",
+    "login": "Iniciar Sesión",
+    "myProfile": "Mi perfil",
+    "contact": "Contactar",
+    "submitCV": "Postular mi CV"
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados"
+  },
+  "buttons": {
+    "next": "Siguiente",
+    "back": "Atrás",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "save": "Guardar"
+  },
+  "validation": {
+    "required": "Este campo es requerido",
+    "email": "Ingresa un email válido",
+    "minLength": "Mínimo {{count}} caracteres"
+  }
+}
+

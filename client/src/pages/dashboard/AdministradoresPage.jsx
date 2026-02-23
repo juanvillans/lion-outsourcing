@@ -164,7 +164,6 @@ export default function AdministradoresPage() {
   const fetchData = useCallback(async () => {
     try {
       const res = await adminAPI.getAdmins();
-      console.log(res.admins);
       setRowData(res.admins);
     } catch (e) {
       console.error("Failed to fetch data", e);

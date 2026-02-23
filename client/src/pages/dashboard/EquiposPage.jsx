@@ -56,6 +56,7 @@ export default function EquiposPage() {
           {workTeams.map((workTeam) => (
           <Link 
             to={`/dashboard/equipos/${workTeam.id}`}
+            key={workTeam.id}
             className="border-t-2  border-l-2 p-4 relative neuphormism bg-gray-100 group cursor-pointer rounded-tl-none hover:text-gray-700  equipoFolder">
             <div
               className="text-gray-500 font-bold border-t-2  flex-col  border-l-2 absolute flex text-xs items-baseline -left-0.5 px-2 rounded-xl rounded-l-none -top-6 pt-1 h-14 w-32"
