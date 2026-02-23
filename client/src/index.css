@@ -148,8 +148,8 @@ td.MuiTableCell-root {
 }
 @media (max-width: 500px) {
   .button {
-    font-size: 13px;
-    padding: 5px 20px;
+    font-size: 15px;
+    padding: 7px 20px;
   }
 }
 
@@ -354,17 +354,23 @@ td.MuiTableCell-root {
 
 .fadeInUp {
   animation: fadeInUp 0.5s ease-out forwards;
+  opacity: 0 ; /* Asegura que el elemento esté inicialmente invisible */
+}
+.animateOnScroll {
+  opacity: 0 ; /* Asegura que el elemento esté inicialmente invisible */
 }
 .fadeInUp-delay-1 {
   /* Define cuánto tiempo quieres esperar. Por ejemplo, 0.4s */
+  animation: fadeInUp 0.5s ease-out forwards;
   animation-delay: 0.4s;
   /* Necesitas que esté inicialmente invisible mientras espera */
-  opacity: 0;
+  opacity: 0 ; /* Asegura que el elemento esté inicialmente invisible */
 }
 .fadeInUp-delay-0-5 {
+  animation: fadeInUp 0.25s ease-out forwards;
   animation-delay: 0.2s;
   /* Necesitas que esté inicialmente invisible mientras espera */
-  opacity: 0;
+  opacity: 0 ; /* Asegura que el elemento esté inicialmente invisible */
 }
 
 
@@ -389,13 +395,29 @@ td.MuiTableCell-root {
     }
 }
 
+@keyframes pump2 {
+    0% {
+        /* Posición baja, rotado hacia abajo */
+        transform: rotate(-30deg); 
+    }
+    50% {
+        /* Posición alta, rotado hacia arriba */
+        transform: rotate(7deg); 
+    }
+    100% {
+        /* Regresa a la posición inicial para el ciclo */
+        transform: rotate(-30deg);
+    }
+}
+
 .rotate_harmer {
     animation: pump 6s ease-in-out infinite alternate;
     transform-origin: 67% 50%;
 }
 .rotate_harmer2 {
-    animation: pump 6s ease-in-out infinite alternate;
-    transform-origin: 62% 68%;
+    animation: pump2 6.3s ease-in-out infinite alternate;
+    transform-origin: 59% 76%;
+    /* animation: spin 1s linear infinite; */
 }
 
 .upAndDown {
@@ -426,7 +448,18 @@ td.MuiTableCell-root {
     transform: translateY(38px);
   }
 }
+.upAndDownHarmer2 {
+  animation: upAndDownHarmer2 3.15s ease-in-out infinite alternate;
+}
 
+@keyframes upAndDownHarmer2 {
+  0% {
+    transform: translateY(35px);
+  }
+  100% {
+    transform: translateY(-10px);
+  }
+}
 /* 🎨 1. Style the Track (The Background) */
 
 .custom-progress {
@@ -455,13 +488,27 @@ td.MuiTableCell-root {
   background-color: #145096; /* Your desired color, e.g., Blue */
   border-radius: 10px;
 }
-
+.glass-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+}
 .invert{
   filter: invert(1);
 mix-blend-mode: difference;
 }
 .spinAnimation {
   animation: spin 120s linear infinite;
+}
+.spinFaster {
+  animation-duration: 50s !important;
+}
+.spinFaster2 {
+  animation-duration: 19s !important;
 }
 .spinAnimationBackwards {
   animation: spinBackwards 120s linear infinite;

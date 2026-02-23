@@ -75,13 +75,18 @@ export default function ApplyPage() {
         );
       }
 
+      // Geoapify expects a short language code (e.g. 'en', 'es').
+      // i18n.language can be 'en-US' or 'es-ES' which Geoapify rejects,
+      // so we extract the base language.
+      const geoLang = (i18n.language || "en").split(/[-_]/)[0].toLowerCase();
+
       const autocomplete = new GeocoderAutocomplete(
         autocompleteContainerRef.current,
         GEOAPIFY_KEY,
         {
           type: "city",
           placeholder: t("step3.localizationPlaceholder"),
-          lang: i18n.language,
+          lang: geoLang,
           limit: 5,
         }
       );
@@ -114,6 +119,7 @@ export default function ApplyPage() {
       }
     };
   }, [currentStep]);
+
 
   const [industries, setIndustries] = useState([]);
   const [skills, setSkills] = useState([]);
@@ -206,7 +212,7 @@ export default function ApplyPage() {
     <div className=" bg-gray-50 mt-2  ">
       <header className="flex items-center flex-col justify-center relative">
         <Navigation />
-        <h1 className="text-center text-2xl font-bold text-gray-800 my-4 mb-7">
+        <h1 className="text-center text-2xl font-bold text-gray-800 my-4 md:mt-20 mb-7">
           {t("pageTitle")}
         </h1>
       </header>
