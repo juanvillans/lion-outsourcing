@@ -15,7 +15,7 @@ class IndustrySeeder extends Seeder
     {
         $industries = [
             ['name' => 'Petróleo y gas'],
-            ['name' => 'Energia electrica'],
+            ['name' => 'Energía eléctrica'],
             ['name' => 'Servicios Generales']
         ];
 
