@@ -30,11 +30,11 @@ export default function Home() {
 
   return (
     <div>
-      <div className="relative h-screen w-full overflow-hidden overflow-x-hidden ">
+      <div className="relative h-[610px] md:h-screen w-full overflow-hidden overflow-x-hidden ">
         <title>Home</title>
           <Navigation />
-        <main className="mt-28 xl:pt-16 lg:mt-40 px-4 w-full lg:px-32 overflow-hidden">
-          <h1 className="fadeInUp text-2xl z-40 md:text-6xl max-w-[700px] font-semibold">
+        <main className="mt-28 xl:pt-16 lg:mt-40 px-7 w-full lg:px-32 overflow-hidden">
+          <h1 className="fadeInUp text-3xl z-40 md:text-6xl max-w-[700px] font-semibold">
             {t("hero.title")}
           </h1>
 
@@ -44,12 +44,12 @@ export default function Home() {
             <FuturisticButton>{t("hero.cta")}</FuturisticButton>
             <a
               href="/aplicar"
-              className="text-sm md:text-base px-5 bg rounded-xl md:px-10 py-2.5 border border-caribe hover:bg-pink "
+              className="text-sm md:text-base font-semibold px-6 bg rounded-lg md:px-10 py-2.5 border border-caribe hover:bg-pink "
             >
               {t("hero.ctaSecondary")}
             </a>
           </div>
-          <div className="z-50 fadeInUp-delay-1 flex  md:w-[380px] mx-auto md:mx-0 justify-center gap-3 md:justify-between mt-5 text-gray-400">
+          <div className="z-50 fadeInUp-delay-1 flex  md:w-[380px] mx-auto md:mx-0  gap-3 justify-between mt-5 text-gray-400">
             <div className="bg-gray-200 rounded-full p-2 md:p-3 shadow-inner  flex items-center justify-center w-10 h-10  ">
               <Icon icon="temaki:oil-well" className="" />
             </div>
