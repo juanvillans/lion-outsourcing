@@ -39,7 +39,7 @@
 
 
         <div style="text-align: center; margin: 30px 0; padding: 20px; background: #f8fafc; border-radius: 8px;">
-            <a href="{{ config('app.url') . '/admin/employee-requests/' . $request->id }}"
+            <a href="{{ config('app.frontend') . '/dashboard/aplicantes/' . $request->id }}"
                 style="background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
                 👁️ Ver Solicitud Completa
             </a>
@@ -49,7 +49,7 @@
             style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">
             <p style="margin: 0;">
                 &copy; {{ date('Y') }} {{ config('app.name') }}.
-                <a href="{{ config('app.url') . '/admin/employee_requests' }}" style="color: #2563eb;">Ver todas las
+                <a href="{{ config('app.frontend') . '/dashboard/aplicantes' }}" style="color: #2563eb;">Ver todas las
                     solicitudes</a>
             </p>
         </div>
