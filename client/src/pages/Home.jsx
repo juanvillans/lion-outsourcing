@@ -1,47 +1,79 @@
 import { Icon } from "@iconify/react";
 import { useTranslation } from "react-i18next";
-import FuturisticButton from "../components/FuturisticButton";
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import FuturisticButton from "../components/FuturisticButton.jsx";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import HeroSVG from "../components/HeroSVG";
 import energy from "../assets/energy.mp4";
 import trabajadores from "../assets/trabajadores2.png";
 import rueda from "../assets/rueda.svg";
 import Navigation from "../components/navigation";
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("fadeInUp");
-    } else {
-      entry.target.classList.remove("fadeInUp");
-    }
-  });
-});
-
-setTimeout(() => {
-  const elements = document.querySelectorAll(".animateOnScroll");
-  elements.forEach((el) => observer.observe(el));
-}, 1000);
+import { useFeedback } from "../context/FeedbackContext";
+import Modal from "../components/Modal";
 
 
 export default function Home() {
   const { t } = useTranslation("home");
   const { t: tCommon } = useTranslation("common");
+  const { showInfo } = useFeedback();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const location = useLocation();
+
+  // set up scroll-triggered animations for elements marked with .animateOnScroll
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("fadeInUp");
+        } else {
+          entry.target.classList.remove("fadeInUp");
+        }
+      });
+    });
+
+    const elements = document.querySelectorAll(".animateOnScroll");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
+  // when the route contains a hash we scroll the matching element into view
+  // also force any inner animateOnScroll children to become visible
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) {
+        // scroll slightly later so observer has time to attach
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth" });
+          el.querySelectorAll(".animateOnScroll").forEach((child) => {
+            child.classList.add("fadeInUp");
+          });
+        }, 100);
+      }
+    }
+  }, [location]);
 
   return (
     <div>
       <div className="relative h-[610px] md:h-screen w-full overflow-hidden overflow-x-hidden ">
         <title>Home</title>
-          <Navigation />
+        <Navigation />
         <main className="mt-28 xl:pt-16 lg:mt-40 px-7 w-full lg:px-32 overflow-hidden">
           <h1 className="fadeInUp text-3xl z-40 md:text-6xl max-w-[700px] font-semibold">
             {t("hero.title")}
           </h1>
 
-          <p className="max-w-[440px] text-sm md:text-base z-40 mb-4 mt-2 fadeInUp">{t("hero.subtitle")}</p>
+          <p className="max-w-[440px] text-sm md:text-base z-40 mb-4 mt-2 fadeInUp">
+            {t("hero.subtitle")}
+          </p>
 
           <div className="fadeInUp-delay-0-5 flex justify-between md:justify-normal  md:flex-row  items-center gap-3 md:gap-10">
-            <FuturisticButton>{t("hero.cta")}</FuturisticButton>
+            <FuturisticButton onClick={() => setIsModalOpen(true)}>
+              {t("hero.cta")}
+            </FuturisticButton>
             <a
               href="/aplicar"
               className="text-sm md:text-base font-semibold px-6 bg rounded-lg md:px-10 py-2.5 border border-caribe hover:bg-pink "
@@ -98,15 +130,20 @@ export default function Home() {
               {t("chooseSection.companies.title")}
             </h4>
 
-            <ul className="mt-5 animateOnScroll text-sm md:mt-20  list-disc list-inside ">
+            <ul className="mt-5 animateOnScroll text-sm md:mt-20   list-disc list-inside ">
               {t("chooseSection.companies.benefits", {
                 returnObjects: true,
               }).map((benefit, i) => (
-                <li key={i}>{benefit}</li>
+                <li key={i}>
+                  {benefit}
+                </li>
               ))}
             </ul>
 
-            <button className="animateOnScroll shadow mt-5 md:mt-20 bg-white/30 px-6 py-3 rounded-xl hover:bg-caribe">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="animateOnScroll shadow mt-5 md:mt-20 bg-white/30 px-6 py-3 rounded-xl hover:bg-caribe"
+            >
               <p className="text-shadow">{t("chooseSection.companies.cta")}</p>
             </button>
           </div>
@@ -123,11 +160,16 @@ export default function Home() {
               {t("chooseSection.candidates.benefits", {
                 returnObjects: true,
               }).map((benefit, i) => (
-                <li key={i}>{benefit}</li>
+                <li key={i}>
+                  {benefit}
+                </li>
               ))}
             </ul>
 
-            <a href="/aplicar" className="inline-block animateOnScroll shadow mt-5 md:mt-20 bg-white/30 px-6 py-3 rounded-xl hover:bg-purple">
+            <a
+              href="/aplicar"
+              className="inline-block animateOnScroll shadow mt-5 md:mt-20 bg-white/30 px-6 py-3 rounded-xl hover:bg-purple"
+            >
               {t("chooseSection.candidates.cta")}
             </a>
           </div>
@@ -140,27 +182,27 @@ export default function Home() {
           alt="rueda"
           className="absolute hidden md:block -left-[500px] top-[290px] w-[1000px] spinAnimation  "
         />
-        
-         <img
+
+        <img
           src={rueda}
           alt="rueda"
           className="absolute hidden md:block -left-[100px] top-[670px] w-[200px] spinAnimation  spinFaster  "
         />
 
-         <img
+        <img
           src={rueda}
           alt="rueda"
           className="absolute hidden md:block left-[65px] top-[795px] w-[135px] spinAnimationBackwards spinFaster2  "
         />
 
-         <img
+        <img
           src={rueda}
           alt="rueda"
           className="absolute hidden md:block -left-[10px] top-[897px] w-[135px] spinAnimation spinFaster2  "
         />
         <section
           id="quienes-somos"
-          className="relative gap-5 justify-between mx-auto max-w-[750px] px-1 w-11/12 mt-16 lg:mt-36 md:flex"
+          className="relative gap-5 justify-between mx-auto max-w-[750px] px-1 w-11/12 mt-16 lg:mt-36 md:flex scroll-mt-32"
         >
           <div className="">
             <h2 className="animateOnScroll z-40 text-2xl md:text-4xl lg:text-7xl font-bold max-w-[520px] md:absolute ">
@@ -176,7 +218,9 @@ export default function Home() {
               src={trabajadores}
               alt=""
             />
-            <p className="mt-6 md:mt-10 text-sm animateOnScroll text-dark">{t("about.description")}</p>
+            <p className="mt-6 md:mt-10 text-sm animateOnScroll text-dark">
+              {t("about.description")}
+            </p>
 
             <div className="animateOnScroll mt-6 md:mt-10">
               <h4 className="text-lg font-bold md:text-xl text-dark">
@@ -203,6 +247,22 @@ export default function Home() {
         </section>
       </div>
 
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="text-dark">
+          <p>
+            <b>{t("modal.title")}</b>
+          </p>
+          <p>
+            {t("modal.description")}
+          </p>
+          <p className="mt-4">
+            <b>
+              {" "}
+              {t("modal.description2")}
+            </b>{" "}
+          </p>
+        </div>
+      </Modal>
       <footer></footer>
     </div>
   );

@@ -2,8 +2,13 @@
   "hero": {
     "title": "Empowering Your Projects with High-Level Technical Staff",
     "subtitle": "We connect demanding companies with certified experts in Oil, Gas and the electrical sector in Venezuela",
-    "cta": "Contact Us",
+    "cta": "Request consultation",
     "ctaSecondary": "Submit Your CV"
+  },
+  "modal": {
+    "title": "We are working on something big",
+    "description": "Thank you for your interest in our consulting services. At this time, our advisory positions are closed as we optimize our work flows.",
+    "description2": "At the moment we are only receiving profiles for Recruitment. If you want to be the first to know when we open new dates for consulting, please stay tuned for our updates."
   },
   "chooseSection": {
     "title": "Choose how to work with Lion PR Services",
@@ -23,7 +28,7 @@
       "benefits": [
         "Professional growth",
         "Reliable companies",
-        "Real projects"
+        "High-impact projects"
       ],
       "cta": "Submit Your CV"
     }

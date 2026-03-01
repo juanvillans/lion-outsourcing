@@ -3,14 +3,16 @@ import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
+let currentPath = window.location.pathname;
 export default function Navigation() {
   const { t: tCommon } = useTranslation("common");
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <nav className="glass-card flex w-full justify-between px-2 md:px-5 lg:px-32 py-2 items-center fixed  md:top-0  z-50  bg-white/10">
-      <a href="/" className="flex  items-center  gap-2">
+      <Link to="/" className="flex  items-center  gap-2">
         <img src={logo} alt="logo" className="w-12 md:w-16 " />
         <span className="font-bold text-md md:text-xl text-al leading-3 text-center">
           LION <span className="text-caribe">PR</span>
@@ -18,16 +20,23 @@ export default function Navigation() {
           services
           </span>
         </span>
-      </a>
+      </Link>
 
       <div className="flex gap-5 flex-nowrap slideIn   h-full  items-center ">
        
         <div
-          className={`flex-col lg:flex-row  gap-5 flex lg:flex  ${menuOpen ? "flex" : "hidden"} py-3 absolute lg:static top-full left-0 w-full lg:w-auto bg-white/90 lg:bg-transparent py- lg:py-0 px-5 lg:px-0`}
+          className={`flex-col lg:flex-row  gap-5 flex lg:flex  ${menuOpen ? "flex h-screen visible" : "invisible h-4"} lg:h-auto lg:visible duration-150 ease-linear py-3 absolute lg:static top-full left-0 w-full lg:w-auto bg-white   lg:bg-transparent py- lg:py-0 px-5 lg:px-0`}
         >
-          <a href="#quienes-somos" className="slideIn text-caribe font-bold">
+          <Link
+            to="/#quienes-somos"
+            className={`slideIn  fadeIn`}
+            onClick={() => setMenuOpen(false)}
+          >
             {tCommon("nav.aboutUs")}
-          </a>
+          </Link>
+          <Link to="/aplicar" className={`slideIn ${currentPath === "/aplicar" ? "activeLink" : ""}`}>
+            {tCommon("nav.submitCV")}
+          </Link>
           
         </div>
         <LanguageSwitcher />

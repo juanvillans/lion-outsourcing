@@ -2,8 +2,14 @@
   "hero": {
     "title": "Impulsamos sus Proyectos con Personal Técnico de Alto Nivel",
     "subtitle": "Conectamos a empresas exigentes con expertos certificados en Petróleo, Gas y el sector eléctrico de Venezuela",
-    "cta": "Contactar",
+    "cta": "Solicitar consultoria",
     "ctaSecondary": "Postular mi CV"
+  },
+  "modal": {
+    "title": "Estamos preparando algo grande",
+    "description": "Agradecemos tu interés en nuestras consultorías. En este momento, nuestras plazas de asesoría están cerradas mientras optimizamos nuestros flujos de trabajo.",
+    "description2": "Actualmente solo estamos recibiendo perfiles para Reclutamiento. Si deseas ser el primero en enterarte cuando abramos nuevas fechas de consultoría, por favor mantente atento a nuestras actualizaciones."
+    
   },
   "chooseSection": {
     "title": "Elige como trabajar con Lion PR Services",
@@ -23,7 +29,7 @@
       "benefits": [
         "Crecimiento profesional",
         "Empresas confiables",
-        "Proyectos reales"
+        "Proyectos de alto impacto"
       ],
       "cta": "Postular mi CV"
     }

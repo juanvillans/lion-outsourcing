@@ -122,7 +122,7 @@ export default function ApplyPage() {
 
 
   const [industries, setIndustries] = useState([]);
-  const [skills, setSkills] = useState([]);
+  const [skills, setSkills] = useState([{name: t("step2.writeAndSearch"), id: "writeAndSearch"}]);
   const [showForm, setShowForm] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -460,6 +460,9 @@ export default function ApplyPage() {
                 value={formData.skills}
                 getOptionLabel={(option) => option.name}
                 filterOptions={(options, params) => {
+                  if (options.length === 0) return []; // No hay opciones para filtrar
+
+                  if (options.id === "writeAndSearch") return [];
                   const filtered = filter(options, params);
                   const inputValue = params.inputValue.trim();
 
@@ -467,13 +470,14 @@ export default function ApplyPage() {
                     (option) =>
                       option.name.toLowerCase() === inputValue.toLowerCase()
                   );
-
+                  
                   if (inputValue !== "" && !exists) {
                     filtered.push({
                       id: null,
                       name: inputValue,
                       isNew: true,
                     });
+
                   }
 
                   return filtered;
@@ -490,15 +494,16 @@ export default function ApplyPage() {
                     )}
                   </li>
                 )}
-                onChange={(_, value) =>
+                onChange={(_, value) => {
+                  
                   setFormData((prev) => ({
                     ...prev,
                     skills: value.map((item) => ({
                       id: item.id ?? null,
                       name: item.name,
-                    })),
+                    })).filter((skill) => skill.id !== "writeAndSearch"),
                   }))
-                }
+                }}
                 onInputChange={(_, value) => searchSkills(value)}
                 renderInput={(params) => (
                   <TextField
