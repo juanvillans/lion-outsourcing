@@ -12,7 +12,7 @@
     "email": "Email Address",
     "emailPlaceholder": "you@email.com",
     "photo": {
-      "label": "Profile photo",
+      "label": "Profile photo (optional)",
       "requirements": "The photo must be passport-style and meet the following requirements:",
       "reqList": [
         "Background: Plain, white or light.",
