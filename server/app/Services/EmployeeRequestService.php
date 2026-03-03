@@ -275,8 +275,21 @@ class EmployeeRequestService
         // Manejar foto
         if ($request->hasFile('photo')) {
             $data['photo'] = $this->handlePhotoFile($request->file('photo'), $baseName);
-        }
+        }else {
+        $data['photo'] = $this->getDefaultPhotoPath();
     }
+    }
+
+    private function getDefaultPhotoPath(): string
+{
+    $defaultPhotoPath = 'default.webp';
+
+    if (file_exists(public_path($defaultPhotoPath))) {
+        return $defaultPhotoPath;
+    }
+
+    return $defaultPhotoPath;
+}
 
     /**
      * Crear directorios necesarios
