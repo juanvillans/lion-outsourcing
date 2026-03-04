@@ -12,7 +12,7 @@
     "email": "Correo Electrónico",
     "emailPlaceholder": "tu@email.com",
     "photo": {
-      "label": "Foto de perfil",
+      "label": "Foto de perfil (opcional)",
       "requirements": "La foto debe ser tipo carnet y cumplir con lo siguiente:",
       "reqList": [
         "Fondo: Liso, blanco o claro.",
