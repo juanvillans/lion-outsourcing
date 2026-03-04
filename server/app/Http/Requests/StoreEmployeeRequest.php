@@ -37,7 +37,10 @@ class StoreEmployeeRequest extends FormRequest
             'cv' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
             'skills' => ['required', 'array'],
-            'years_of_experience' => ['string', 'required']
+            'years_of_experience' => ['string', 'required'],
+            'area_secondary_1_id' => ['nullable', 'exists:areas,id'],
+            'area_secondary_2_id' => ['nullable', 'exists:areas,id'],
+
         ];
     }
 

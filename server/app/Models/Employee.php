@@ -22,7 +22,9 @@ class Employee extends Model
         'photo',
         'skills',
         'years_of_experience',
-        'employee_request_id'
+        'employee_request_id',
+        'area_secondary_1_id',
+        'area_secondary_2_id'
     ];
 
 
@@ -39,6 +41,16 @@ class Employee extends Model
     public function area()
     {
         return $this->belongsTo(Area::class);
+    }
+
+    public function areaSecondary1()
+    {
+        return $this->belongsTo(Area::class, 'area_secondary_1_id');
+    }
+
+    public function areaSecondary2()
+    {
+        return $this->belongsTo(Area::class, 'area_secondary_2_id');
     }
 
     public function workteams()

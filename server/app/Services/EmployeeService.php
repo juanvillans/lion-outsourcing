@@ -13,7 +13,7 @@ class EmployeeService
 
     public function getAll(array $params = [])
     {
-        $query = Employee::with(['industry', 'area']);
+        $query = Employee::with(['industry', 'area', 'areaSecondary1', 'areaSecondary2']);
 
         $this->applyAllFilters($query, $params);
 
@@ -31,13 +31,34 @@ class EmployeeService
         // Filtros básicos
         $filters = [
             'industry_id' => 'industry_id',
-            'area_id' => 'area_id',
             'english_level' => 'english_level',
         ];
 
         foreach ($filters as $param => $column) {
             if (!empty($params[$param])) {
                 $query->where($column, $params[$param]);
+            }
+        }
+
+        // Filtro por areas
+
+        if (!empty($params['area_ids'])) {
+
+            $area_ids = is_array($params['area_id'])
+                ? $params['area_id']
+                : array_filter(explode(',', $params['area_id']));
+
+            if (!empty($area_ids)) {
+                $query->where(function ($q) use ($area_ids) {
+                    foreach ($area_ids as $area) {
+                        if (!empty($area)) {
+
+                            $q->orWhere('area_id', $area )
+                            ->orWhere('area_secondary_1_id', $area)
+                            ->orWhere('area_secondary_2_id', $area);
+                        }
+                    }
+                });
             }
         }
 

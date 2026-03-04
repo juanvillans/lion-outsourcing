@@ -33,7 +33,7 @@ class EmployeeRequestService
 
         $this->applySorting($query, $params);
 
-        $query->with(['industry', 'area']);
+        $query->with(['industry', 'area', 'areaSecondary1', 'areaSecondary2']);
 
         $perPage = max(1, min(100, (int)$params['per_page']));
         $page = max(1, (int)$params['page']);
@@ -112,8 +112,24 @@ class EmployeeRequestService
             $query->where('industry_id', $params['industry_id']);
         }
 
-        if (!empty($params['area_id'])) {
-            $query->where('area_id', $params['area_id']);
+        if (!empty($params['area_ids'])) {
+
+            $area_ids = is_array($params['area_ids'])
+                ? $params['area_ids']
+                : array_filter(explode(',', $params['area_ids']));
+
+            if (!empty($area_ids)) {
+                $query->where(function ($q) use ($area_ids) {
+                    foreach ($area_ids as $area) {
+                        if (!empty($area)) {
+
+                            $q->orWhere('area_id', $area )
+                            ->orWhere('area_secondary_1_id', $area)
+                            ->orWhere('area_secondary_2_id', $area);
+                        }
+                    }
+                });
+            }
         }
 
         if (!empty($params['english_level'])) {

@@ -30,7 +30,7 @@ class EmployeeController extends Controller
                 'per_page' => 'nullable|integer|min:1|max:100',
                 'search' => 'nullable|string|max:255',
                 'industry_id' => 'nullable|exists:industries,id',
-                'area_id' => 'nullable|exists:areas,id',
+                'area_ids' => 'nullable',
                 'english_level' => 'nullable|in:none,beginner,intermediate,advanced',
                 'sort_by' => 'nullable|in:created_at,fullname,desired_monthly_income,status',
                 'sort_direction' => 'nullable|in:asc,desc',
@@ -258,7 +258,7 @@ class EmployeeController extends Controller
     {
         try {
 
-            $employee->load(['industry', 'area']);
+            $employee->load(['industry', 'area', 'areaSecondary1', 'areaSecondary2']);
 
             $employee->photo_url = $this->employeeService->getFileUrl($employee->photo);
 

@@ -32,7 +32,7 @@ class EmployeeRequestController extends Controller
                 'search' => 'nullable|string|max:255',
                 'status' => 'nullable|in:pending,rejected',
                 'industry_id' => 'nullable|exists:industries,id',
-                'area_id' => 'nullable|exists:areas,id',
+                'area_ids' => 'nullable',
                 'english_level' => 'nullable|in:none,beginner,intermediate,advanced',
                 'sort_by' => 'nullable|in:created_at,fullname,desired_monthly_income,status',
                 'sort_direction' => 'nullable|in:asc,desc',
@@ -84,7 +84,7 @@ class EmployeeRequestController extends Controller
 
             $employeeRequest = $this->employeeRequestService->store($request);
 
-            $employeeRequest->load(['industry', 'area']);
+            $employeeRequest->load(['industry', 'area', 'areaSecondary1', 'areaSecondary2']);
 
             $mailjetService = new EmailService;
             $mailjetService->sendEmailToNotifyAdminForNewEmployeeRequest($employeeRequest);
@@ -109,7 +109,7 @@ class EmployeeRequestController extends Controller
     {
         try {
 
-            $employeeRequest->load(['industry', 'area']);
+            $employeeRequest->load(['industry', 'area', 'areaSecondary1', 'areaSecondary2']);
 
             $employeeRequest->photo_url = $this->employeeRequestService
                 ->getFileUrl($employeeRequest->photo);

@@ -45,6 +45,8 @@ class UpdateEmployeeRequest extends FormRequest
             'years_of_experience' => ['required', 'string', 'max:50'],
             'desired_monthly_income' => ['required', 'integer', 'min:0'],
             'skills' => ['required', 'array'],
+            'area_secondary_1_id' => ['nullable', 'exists:areas,id'],
+            'area_secondary_2_id' => ['nullable', 'exists:areas,id'],
         ];
     }
 
