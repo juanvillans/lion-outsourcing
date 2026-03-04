@@ -106,11 +106,23 @@ export default function AplicantesPage() {
         },
       },
       {
-        accessorKey: "area.name",
+        accessorKey: "area",
         header: "Especialidad",
         size: 83,
         enableColumnFilter: true,
         enableSorting: true,
+        Cell: ({ renderedCellValue, row }) => {
+          const { original } = row;
+          const areas = [];
+
+          if (original.area) areas.push(original.area.name);
+          if (original.area_secondary1)
+            areas.push(original.area_secondary1.name);
+          if (original.area_secondary2)
+            areas.push(original.area_secondary2.name);
+
+          return  areas.map((area, i) => <p className="bg-gray-100 mb-1 w-min px-2 block rounded-full" key={i + area}>{area}</p>);
+        },
       },
 
       {
@@ -166,12 +178,10 @@ export default function AplicantesPage() {
           return value.map((skill) => {
             return (
               <span
-               
                 className={`${
                   skill.id == null ? "bg-red-200" : ""
                 } inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2`}
                 key={skill.id}
-               
               >
                 {skill.id == null ? (
                   <Icon icon="mdi:plus" className="inline mr-1" />
@@ -184,7 +194,7 @@ export default function AplicantesPage() {
         enableSorting: false,
       },
     ],
-    []
+    [],
   );
 
   const [data, setData] = useState([]);
@@ -196,9 +206,13 @@ export default function AplicantesPage() {
   const [sorting, setSorting] = useState([{ id: "id", desc: true }]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  // `areas` is an array because the Autocomplete component expects an array
+  // when `multiple` is enabled. `null` was causing a crash inside MUI (`.length
+  // of null`) so we default to an empty list. The API itself still receives
+  // `area_ids: null` when nothing is selected so filtering behaves the same.
   const [customFilters, setCustomFilters] = useState({
-    area_id: null,
-    area: null,
+    area_ids: null,
+    areas: [],
     skills: "",
     skillsArray: [],
   });
@@ -220,7 +234,7 @@ export default function AplicantesPage() {
           columnFilters.reduce((acc, curr) => {
             acc[curr.id] = curr.value;
             return acc;
-          }, {})
+          }, {}),
         ),
         ...customFilters,
       });
@@ -289,7 +303,7 @@ export default function AplicantesPage() {
         setGlobalFilter(value);
         setPagination((prev) => ({ ...prev, pageIndex: 0 })); // Reset to first page
       }, 300),
-    []
+    [],
   );
 
   return (
@@ -310,7 +324,6 @@ export default function AplicantesPage() {
           onFilterChange={fetchData}
           onSearchSkills={searchSkills}
         />
-      
 
         {!isModalOpen && (
           <div

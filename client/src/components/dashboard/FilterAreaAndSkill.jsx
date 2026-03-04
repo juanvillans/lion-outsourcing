@@ -13,28 +13,34 @@ export default function FilterAreaAndSkill({
   return (
     <div className="flex gap-4 mb-3">
       <Autocomplete
-        id="areas-select"
+        id="areas-select-multiple"
         size="small"
         sx={{
           width: "min-content",
           minWidth: "460px",
         }}
         options={areas || []}
+        multiple
         autoHighlight
-        getOptionLabel={(option) => option.name + " - " + option.industry.name}
+        getOptionLabel={(option) =>  option.name + " - " + option.industry.name}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         onChange={(_, value) => {
           setCustomFilters((prev) => ({
             ...prev,
-            area_id: value?.id || null,
-            area: value || null, // Store the full object
+            area_ids: value?.map((area) => area.id) || null,
+            // always keep the full array even if it becomes empty
+            areas: value || [],
           }));
           // Trigger data fetch after state update
           if (onFilterChange) {
             onFilterChange();
           }
         }}
-        value={customFilters.area || null}
+        // The Autocomplete `value` must always be an array when `multiple` is true.
+        // Previously we returned `null` when no areas were selected, which caused
+        // MUI to access `value.length` and throw the uncaught TypeError. Default to
+        // an empty array instead and make sure we store an array in the parent state.
+        value={customFilters.areas || []}
         renderOption={(props, option) => {
           const { key, ...optionProps } = props;
           return (

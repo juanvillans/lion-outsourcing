@@ -47,7 +47,8 @@
       { "value": "beginner", "label": "Básico" },
       { "value": "intermediate", "label": "Intermedio" },
       { "value": "advanced", "label": "Avanzado" }
-    ]
+    ],
+    "maxAreas": "Solo puedes seleccionar hasta 3 áreas de especialización"
   },
   "step3": {
     "title": "Información Adicional y Documentos",

@@ -32,7 +32,9 @@ const defaultFormData = {
   // Paso 2: Perfil Profesional
   industry_id: null,
   area_id: null,
-  area: null,
+  area_secondary_1_id: null,
+  area_secondary_2_id: null,
+  areas: [],
   academic_title: "",
   years_of_experience: "",
   english_level: "",
@@ -54,7 +56,7 @@ export default function ApplyPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const autocompleteContainerRef = useRef(null);
   const autocompleteInstanceRef = useRef(null);
-  const { showSuccess, showError } = useFeedback();
+  const { showSuccess, showError, showInfo } = useFeedback();
 
   // Dynamic steps with translations
   const steps = [
@@ -71,7 +73,7 @@ export default function ApplyPage() {
       // Limpieza preventiva ANTES de instanciar
       while (autocompleteContainerRef.current.firstChild) {
         autocompleteContainerRef.current.removeChild(
-          autocompleteContainerRef.current.firstChild
+          autocompleteContainerRef.current.firstChild,
         );
       }
 
@@ -88,7 +90,7 @@ export default function ApplyPage() {
           placeholder: t("step3.localizationPlaceholder"),
           lang: geoLang,
           limit: 5,
-        }
+        },
       );
 
       // Set the initial value from formData
@@ -120,9 +122,10 @@ export default function ApplyPage() {
     };
   }, [currentStep]);
 
-
   const [industries, setIndustries] = useState([]);
-  const [skills, setSkills] = useState([{name: t("step2.writeAndSearch"), id: "writeAndSearch"}]);
+  const [skills, setSkills] = useState([
+    { name: t("step2.writeAndSearch"), id: "writeAndSearch" },
+  ]);
   const [showForm, setShowForm] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -212,7 +215,7 @@ export default function ApplyPage() {
     <div className=" bg-gray-50 mt-2  ">
       <header className="flex items-center flex-col justify-center relative">
         <Navigation />
-        <h1 className="text-center text-2xl font-bold text-gray-800 my-4 md:mt-20 mb-7">
+        <h1 className="text-center text-2xl font-bold text-gray-800 my-4 mt-20 mb-7">
           {t("pageTitle")}
         </h1>
       </header>
@@ -238,8 +241,8 @@ export default function ApplyPage() {
                     currentStep === step.number
                       ? "bg-caribe border-color4 border-2  text-white"
                       : currentStep > step.number
-                      ? "bg-caribe  text-white"
-                      : "bg-white border-gray-300 text-gray-400"
+                        ? "bg-caribe  text-white"
+                        : "bg-white border-gray-300 text-gray-400"
                   }`}
                 >
                   {currentStep > step.number ? (
@@ -371,9 +374,11 @@ export default function ApplyPage() {
                     {t("step1.photo.requirements")}
                   </span>
                   <span className="text-xs list-disc flex flex-col  mt-2 space-y-1">
-                    {t("step1.photo.reqList", { returnObjects: true }).map((req, i) => (
-                      <span key={i}>{req}</span>
-                    ))}
+                    {t("step1.photo.reqList", { returnObjects: true }).map(
+                      (req, i) => (
+                        <span key={i}>{req}</span>
+                      ),
+                    )}
                   </span>
                 </FormHelperText>
               </div>
@@ -423,17 +428,26 @@ export default function ApplyPage() {
                 size="small"
                 options={formData.industry?.areas || []}
                 autoHighlight
+                required
+                multiple
+                max={3} // Limitar a 3 áreas
                 disabled={!formData.industry_id}
                 getOptionLabel={(option) => option.name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 onChange={(_, value) => {
+                  if (value.length > 3) {
+                    showInfo(t("step2.maxAreas")); // Mostrar mensaje de advertencia
+                    return;
+                  } // Limitar a 3 áreas
                   setFormData((prev) => ({
                     ...prev,
-                    area_id: value?.id || null,
-                    area: value || null,
+                    area_id: value[0]?.id || null,
+                    area_secondary_1_id: value[1]?.id || null,
+                    area_secondary_2_id: value[2]?.id || null,
+                    areas: value || null,
                   }));
                 }}
-                value={formData.area}
+                value={formData.areas}
                 renderOption={(props, option) => {
                   const { key, ...optionProps } = props;
                   return (
@@ -443,11 +457,7 @@ export default function ApplyPage() {
                   );
                 }}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label={t("step2.area")}
-                    required
-                  />
+                  <TextField {...params} label={t("step2.area")} />
                 )}
               />
 
@@ -468,16 +478,15 @@ export default function ApplyPage() {
 
                   const exists = options.some(
                     (option) =>
-                      option.name.toLowerCase() === inputValue.toLowerCase()
+                      option.name.toLowerCase() === inputValue.toLowerCase(),
                   );
-                  
+
                   if (inputValue !== "" && !exists) {
                     filtered.push({
                       id: null,
                       name: inputValue,
                       isNew: true,
                     });
-
                   }
 
                   return filtered;
@@ -495,14 +504,15 @@ export default function ApplyPage() {
                   </li>
                 )}
                 onChange={(_, value) => {
-                  
                   setFormData((prev) => ({
                     ...prev,
-                    skills: value.map((item) => ({
-                      id: item.id ?? null,
-                      name: item.name,
-                    })).filter((skill) => skill.id !== "writeAndSearch"),
-                  }))
+                    skills: value
+                      .map((item) => ({
+                        id: item.id ?? null,
+                        name: item.name,
+                      }))
+                      .filter((skill) => skill.id !== "writeAndSearch"),
+                  }));
                 }}
                 onInputChange={(_, value) => searchSkills(value)}
                 renderInput={(params) => (
@@ -658,7 +668,8 @@ export default function ApplyPage() {
                     {loading ? (
                       <CircularProgress size={20} className="mr-2" />
                     ) : null}
-                    {t("navigation.submit")} <Icon icon="mdi:check" className="ml-2" />
+                    {t("navigation.submit")}{" "}
+                    <Icon icon="mdi:check" className="ml-2" />
                   </div>
                 </FuturisticButton>
               </div>
@@ -668,9 +679,7 @@ export default function ApplyPage() {
       )}
       {!showForm && (
         <div className="text-center mx-auto w-max mt-20">
-          <h1 className="text-2xl font-bold mb-4">
-            {t("success.title")}
-          </h1>
+          <h1 className="text-2xl font-bold mb-4">{t("success.title")}</h1>
           <p>{t("success.thanks")}</p>
           <p>{t("success.message")}</p>
         </div>

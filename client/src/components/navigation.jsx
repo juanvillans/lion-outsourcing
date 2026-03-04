@@ -11,7 +11,7 @@ export default function Navigation() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="glass-card flex w-full justify-between px-2 md:px-5 lg:px-32 py-1.5 items-center fixed  md:top-0  z-50  bg-white/10">
+    <nav className="glass-card flex w-full justify-between px-2 md:px-5 lg:px-32 py-1.5 items-center fixed  top-0  z-50  bg-white/10">
       <Link to="/" className="flex  items-center  gap-2">
         <img src={logo} alt="logo" className="w-12 md:w-16 " />
         <span className="font-bold text-md md:text-xl text-al leading-3 text-center">

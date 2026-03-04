@@ -242,17 +242,24 @@ export default function TrabajadoresPage({
         enableColumnFilter: true,
         enableSorting: true,
       },
-      {
-        accessorKey: "area.name",
+       {
+        accessorKey: "area",
         header: "Especialidad",
         size: 83,
         enableColumnFilter: true,
         enableSorting: true,
-        filterVariant: 'select',
-        filterSelectOptions: areas.map((area) => ({
-          value: area.name,
-          label: area.name,
-        })),
+        Cell: ({ renderedCellValue, row }) => {
+          const { original } = row;
+          const areas = [];
+
+          if (original.area) areas.push(original.area.name);
+          if (original.area_secondary1)
+            areas.push(original.area_secondary1.name);
+          if (original.area_secondary2)
+            areas.push(original.area_secondary2.name);
+
+          return  areas.map((area, i) => <p className="bg-gray-100 mb-1 w-min px-2 block rounded-full" key={i + area}>{area}</p>);
+        },
       },
       //   {
       //     accessorKey: "email",
@@ -368,9 +375,11 @@ export default function TrabajadoresPage({
   const [sorting, setSorting] = useState([{ id: "id", desc: true }]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  // Similar rationale as in AplicantesPage: `area` is passed to a multiple
+  // Autocomplete so default it to an empty array to avoid null-length errors.
   const [customFilters, setCustomFilters] = useState({
     area_id: null,
-    area: null,
+    area: [],
     skills: "",
     skillsArray: [],
   });
