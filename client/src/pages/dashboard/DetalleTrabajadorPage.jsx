@@ -1,4 +1,3 @@
-
 import React, {
   useState,
   useEffect,
@@ -104,7 +103,9 @@ export default function DetalleTrabajadorPage() {
     phone_number: "",
     industry_id: null,
     area_id: null,
-    area: null,
+    area_secondary_1_id: null,
+    area_secondary_2_id: null,
+    areas: [],
     academic_title: "",
     years_of_experience: "",
     english_level: "",
@@ -281,7 +282,7 @@ export default function DetalleTrabajadorPage() {
       // Limpieza preventiva ANTES de instanciar
       while (autocompleteContainerRef.current.firstChild) {
         autocompleteContainerRef.current.removeChild(
-          autocompleteContainerRef.current.firstChild
+          autocompleteContainerRef.current.firstChild,
         );
       }
 
@@ -293,7 +294,7 @@ export default function DetalleTrabajadorPage() {
           placeholder: "Buscar ciudad, estado..",
           lang: "es",
           limit: 5,
-        }
+        },
       );
 
       // Set the initial value from formData
@@ -362,8 +363,26 @@ export default function DetalleTrabajadorPage() {
             {applicant?.industry?.name}
           </p>
           <p>
-            <strong className="text-dark">Especialidad:</strong>{" "}
-            {applicant?.area?.name}
+            <strong className="text-dark">Especialidad:</strong>
+            <span
+              className={`inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 `}
+            >
+              {applicant?.area.name}
+            </span>
+            {applicant?.area_secondary1 ? (
+              <span
+                className={`inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 `}
+              >
+                {applicant?.area_secondary1.name}
+              </span>
+            ) : null}
+            {applicant?.area_secondary2 ? (
+              <span
+                className={`inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 `}
+              >
+                {applicant?.area_secondary2.name}
+              </span>
+            ) : null}
           </p>
 
           <p>
@@ -549,44 +568,42 @@ export default function DetalleTrabajadorPage() {
             />
 
             <Autocomplete
-              id="areas-select-multiple" // Cambiado el ID para mayor claridad
-              size="small"
-              options={formData.industry?.areas || []}
-              autoHighlight
-              disabled={!formData.industry_id}
-              getOptionLabel={(option) => option.name}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              onChange={(_, value) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  area_id: value?.id || null,
-                  area: value || null,
-                }));
-              }}
-              value={formData.area}
-              // Opcional: Para mostrar las selecciones actuales si el componente es controlado
-              // value={
-              //   formData.area_ids // Suponiendo que 'area_ids' es un array de IDs seleccionados
-              //     ? (formData.industry?.areas || []).filter(area => formData.area_ids.includes(area.id))
-              //     : []
-              // }
-
-              renderOption={(props, option) => {
-                const { key, ...optionProps } = props;
-                return (
-                  <Box key={key} component="li" {...optionProps}>
-                    {option.name}
-                  </Box>
-                );
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Área de especialización" // Etiqueta ajustada a plural
-                  required
-                />
-              )}
-            />
+                id="areas-select-multiple"
+                size="small"
+                options={formData.industry?.areas || []}
+                autoHighlight
+                required
+                multiple
+                max={3} // Limitar a 3 áreas
+                disabled={!formData.industry_id}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onChange={(_, value) => {
+                  if (value.length > 3) {
+                    showInfo(t("step2.maxAreas")); // Mostrar mensaje de advertencia
+                    return;
+                  } // Limitar a 3 áreas
+                  setFormData((prev) => ({
+                    ...prev,
+                    area_id: value[0]?.id || null,
+                    area_secondary_1_id: value[1]?.id || null,
+                    area_secondary_2_id: value[2]?.id || null,
+                    areas: value || null,
+                  }));
+                }}
+                value={formData.areas}
+                renderOption={(props, option) => {
+                  const { key, ...optionProps } = props;
+                  return (
+                    <Box key={key} component="li" {...optionProps}>
+                      {option.name}
+                    </Box>
+                  );
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} label={t("step2.area")} />
+                )}
+              />
 
             <Autocomplete
               id="skills-select"
