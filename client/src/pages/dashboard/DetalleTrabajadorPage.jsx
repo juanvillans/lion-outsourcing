@@ -256,7 +256,11 @@ export default function DetalleTrabajadorPage() {
       setApplicant(res.data);
       setFormData(() => ({
         ...res.data,
-        areas: [res.data.area, res.data.area_secondary1 || {}, res.data.area_secondary2 || {}],
+        areas: [
+          res.data.area,
+          res.data.area_secondary1 || {},
+          res.data.area_secondary2 || {},
+        ],
       }));
     } catch (e) {
       console.error("Failed to fetch data", e);
@@ -571,42 +575,46 @@ export default function DetalleTrabajadorPage() {
             />
 
             <Autocomplete
-                id="areas-select-multiple"
-                size="small"
-                options={formData.industry?.areas || []}
-                autoHighlight
-                required
-                multiple
-                max={3} // Limitar a 3 áreas
-                disabled={!formData.industry_id}
-                getOptionLabel={(option) => option.name}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                onChange={(_, value) => {
-                  if (value.length > 3) {
-                    showInfo(t("step2.maxAreas")); // Mostrar mensaje de advertencia
-                    return;
-                  } // Limitar a 3 áreas
-                  setFormData((prev) => ({
-                    ...prev,
-                    area_id: value[0]?.id || null,
-                    area_secondary_1_id: value[1]?.id || null,
-                    area_secondary_2_id: value[2]?.id || null,
-                    areas: value || null,
-                  }));
-                }}
-                value={formData.areas}
-                renderOption={(props, option) => {
-                  const { key, ...optionProps } = props;
-                  return (
-                    <Box key={key} component="li" {...optionProps}>
-                      {option.name}
-                    </Box>
-                  );
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} label={"Especialidad"} />
-                )}
-              />
+              id="areas-select-multiple"
+              size="small"
+              options={
+                industries.find(
+                  (industry) => industry.id === formData.industry_id,
+                )?.areas || []
+              }
+              autoHighlight
+              required
+              multiple
+              max={3} // Limitar a 3 áreas
+              disabled={!formData.industry_id}
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              onChange={(_, value) => {
+                if (value.length > 3) {
+                  showInfo(t("step2.maxAreas")); // Mostrar mensaje de advertencia
+                  return;
+                } // Limitar a 3 áreas
+                setFormData((prev) => ({
+                  ...prev,
+                  area_id: value[0]?.id || null,
+                  area_secondary_1_id: value[1]?.id || null,
+                  area_secondary_2_id: value[2]?.id || null,
+                  areas: value || null,
+                }));
+              }}
+              value={formData.areas}
+              renderOption={(props, option) => {
+                const { key, ...optionProps } = props;
+                return (
+                  <Box key={key} component="li" {...optionProps}>
+                    {option.name}
+                  </Box>
+                );
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label={"Especialidad"} />
+              )}
+            />
 
             <Autocomplete
               id="skills-select"
