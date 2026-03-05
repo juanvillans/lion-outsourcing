@@ -18,7 +18,6 @@ const PdfPreview = ({ employeeId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
   useEffect(() => {
     const fetchPdf = async () => {
       try {
@@ -101,7 +100,6 @@ export default function DetalleAplicantePage() {
     setAceptLoading(false);
   };
   const handleReject = async () => {
-    
     setRejectLoading(true);
     try {
       await applicantsAPI.rejectApplicant(id);
@@ -111,7 +109,7 @@ export default function DetalleAplicantePage() {
       console.error("Failed to reject applicant", e);
       showError("No se pudo rechazar el aplicante");
     }
-    
+
     setRejectLoading(false);
   };
 
@@ -131,21 +129,47 @@ export default function DetalleAplicantePage() {
       </div>
       <div className="grid grid-cols-12">
         <div className="col-span-4 p-4 md:p-6 bg-gray-100 neuphormism rounded-2xl">
-          <img className="w-32 mb-4 mx-auto rounded-md" src={applicant?.photo_url} alt="" />
+          <img
+            className="w-32 mb-4 mx-auto rounded-md"
+            src={applicant?.photo_url}
+            alt=""
+          />
           <p>
             <strong className="text-dark">Nombre:</strong> {applicant?.fullname}
           </p>
           <p>
-            <strong className="text-dark">Correo Electrónico:</strong> {applicant?.email}
+            <strong className="text-dark">Correo Electrónico:</strong>{" "}
+            {applicant?.email}
           </p>
           <p>
-            <strong className="text-dark">Teléfono:</strong> {applicant?.phone_number}
+            <strong className="text-dark">Teléfono:</strong>{" "}
+            {applicant?.phone_number}
           </p>
           <p>
-            <strong className="text-dark">Industria:</strong> {applicant?.industry?.name}
+            <strong className="text-dark">Industria:</strong>{" "}
+            {applicant?.industry?.name}
           </p>
           <p>
-            <strong className="text-dark">Especialidad:</strong> {applicant?.area?.name}
+            <strong className="text-dark">Especialidad:</strong>
+            <span
+              className={`inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 `}
+            >
+              {applicant?.area.name}
+            </span>
+            {applicant?.area_secondary1 ? (
+              <span
+                className={`inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 `}
+              >
+                {applicant?.area_secondary1.name}
+              </span>
+            ) : null}
+            {applicant?.area_secondary2 ? (
+              <span
+                className={`inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 `}
+              >
+                {applicant?.area_secondary2.name}
+              </span>
+            ) : null}
           </p>
 
           <p>
@@ -156,7 +180,7 @@ export default function DetalleAplicantePage() {
                   className={`inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${
                     skill.id == null ? "bg-red-200" : ""
                   }`}
-                  key={skill.id+skill.name+i}
+                  key={skill.id + skill.name + i}
                 >
                   {skill.name}
                 </span>
@@ -164,38 +188,47 @@ export default function DetalleAplicantePage() {
             })}
           </p>
           <p>
-            <strong className="text-dark">Experiencia:</strong> {applicant?.years_of_experience} años
+            <strong className="text-dark">Experiencia:</strong>{" "}
+            {applicant?.years_of_experience} años
           </p>
           <p>
-            <strong className="text-dark">Título/Grado académico:</strong> {applicant?.academic_title}
+            <strong className="text-dark">Título/Grado académico:</strong>{" "}
+            {applicant?.academic_title}
           </p>
           <p>
-            <strong className="text-dark">Ubicación:</strong> {applicant?.localization}
+            <strong className="text-dark">Ubicación:</strong>{" "}
+            {applicant?.localization}
           </p>
           <p>
-            <strong className="text-dark">Idioma:</strong> {englishLevels[applicant?.english_level]}
+            <strong className="text-dark">Idioma:</strong>{" "}
+            {englishLevels[applicant?.english_level]}
           </p>
           <p>
             <strong className="text-dark">Ingreso Mensual Deseado:</strong>{" "}
             {applicant?.desired_monthly_income}$
           </p>
           <p>
-            <strong className="text-dark">LinkedIn:</strong> {applicant?.linkedin_url}
+            <strong className="text-dark">LinkedIn:</strong>{" "}
+            {applicant?.linkedin_url}
           </p>
           <p>
-            <strong className="text-dark">Sitio Web:</strong> {applicant?.website_url}
+            <strong className="text-dark">Sitio Web:</strong>{" "}
+            {applicant?.website_url}
           </p>
         </div>
 
         <div className=" col-span-8 p-3 rounded-md">
-           <PdfPreview employeeId={id} />
+          <PdfPreview employeeId={id} />
         </div>
       </div>
 
-
       <div className="fixed bottom-8 right-28 flex gap-10 shadow-sm ">
-        <button className="bg-red-500 text-white px-4 py-2 rounded-lg"
-        onClick={() => window.confirm("¿Está seguro de eliminar este aplicante?") && handleReject()}
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded-lg"
+          onClick={() =>
+            window.confirm("¿Está seguro de eliminar este aplicante?") &&
+            handleReject()
+          }
         >
           {rejectLoading ? (
             <div className="flex gap-2 items-center">
@@ -206,8 +239,10 @@ export default function DetalleAplicantePage() {
             <span>Rechazar</span>
           )}
         </button>
-        <button className="bg-caribe text-white px-4 py-2 rounded-lg" onClick={handleAccept}>
-          
+        <button
+          className="bg-caribe text-white px-4 py-2 rounded-lg"
+          onClick={handleAccept}
+        >
           {aceptLoading ? (
             <div className="flex gap-2 items-center">
               <div className="w-4 h-4 border-t-2 border-white border-solid rounded-full animate-spin"></div>
@@ -218,7 +253,6 @@ export default function DetalleAplicantePage() {
           )}
         </button>
       </div>
-
     </>
   );
 }
