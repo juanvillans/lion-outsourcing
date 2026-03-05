@@ -601,7 +601,7 @@ export default function DetalleTrabajadorPage() {
                   );
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} label={t("step2.area")} />
+                  <TextField {...params} label={"Especialidad"} />
                 )}
               />
 
