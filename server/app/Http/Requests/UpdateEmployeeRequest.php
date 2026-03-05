@@ -125,6 +125,20 @@ class UpdateEmployeeRequest extends FormRequest
                 'skills' => json_decode($this->skills, true) ?? [],
             ]);
         }
+
+           $data = [];
+
+            if (!$this->has('area_secondary_1_id')) {
+                $data['area_secondary_1_id'] = null;
+            }
+
+            if (!$this->has('area_secondary_2_id')) {
+                $data['area_secondary_2_id'] = null;
+            }
+
+            if (!empty($data)) {
+                $this->merge($data);
+            }
     }
 
     public function withValidator($validator): void

@@ -44,9 +44,9 @@ class EmployeeService
 
         if (!empty($params['area_ids'])) {
 
-            $area_ids = is_array($params['area_id'])
-                ? $params['area_id']
-                : array_filter(explode(',', $params['area_id']));
+            $area_ids = is_array($params['area_ids'])
+                ? $params['area_ids']
+                : array_filter(explode(',', $params['area_ids']));
 
             if (!empty($area_ids)) {
                 $query->where(function ($q) use ($area_ids) {
