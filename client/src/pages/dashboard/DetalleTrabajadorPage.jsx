@@ -254,7 +254,10 @@ export default function DetalleTrabajadorPage() {
     try {
       const res = await employeesAPI.getEmployeeById(id);
       setApplicant(res.data);
-      setFormData(res.data);
+      setFormData(() => ({
+        ...res.data,
+        areas: [res.data.area, res.data.area_secondary1 || {}, res.data.area_secondary2 || {}],
+      }));
     } catch (e) {
       console.error("Failed to fetch data", e);
     }
