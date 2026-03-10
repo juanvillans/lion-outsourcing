@@ -59,7 +59,7 @@ class EmployeeController extends Controller
                 ]
             ]);
         } catch (Exception $e) {
-            Log::error("Error al obtener empleados: ", [
+            Log::info("Error al obtener empleados: ", [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine()
             ]);
