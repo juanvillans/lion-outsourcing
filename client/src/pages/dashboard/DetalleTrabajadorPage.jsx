@@ -261,6 +261,7 @@ export default function DetalleTrabajadorPage() {
           res.data.area_secondary1 || {},
           res.data.area_secondary2 || {},
         ],
+        
       }));
     } catch (e) {
       console.error("Failed to fetch data", e);
@@ -591,7 +592,7 @@ export default function DetalleTrabajadorPage() {
               isOptionEqualToValue={(option, value) => option.id === value.id}
               onChange={(_, value) => {
                 if (value.length > 3) {
-                  showInfo(t("step2.maxAreas")); // Mostrar mensaje de advertencia
+                  showInfo("máximo 3 especialidades"); // Mostrar mensaje de advertencia
                   return;
                 } // Limitar a 3 áreas
                 setFormData((prev) => ({

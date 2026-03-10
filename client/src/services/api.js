@@ -110,7 +110,7 @@ export const employeesAPI = {
     }),
   updateEmployeeSkill: (id, skillData) =>
     api.put(`/admin/employees/${id}/skill`, { skills: skillData }),
-  deleteEmployee: (id) => api.delete(`/admin/employee/${id}`),
+  deleteEmployee: (id) => api.delete(`/admin/employees/${id}`),
   getEmployeeCV: (id) =>
     api.get(`/admin/employee/${id}/cv/view`, { responseType: "blob" }),
 };
