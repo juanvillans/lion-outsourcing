@@ -22,7 +22,6 @@ import "@geoapify/geocoder-autocomplete/styles/round-borders.css";
 
 import FormField from "../components/forms/FormField";
 import FuturisticButton from "../components/FuturisticButton.jsx";
-import logo from "../assets/logo.png";
 
 const defaultFormData = {
   // Paso 1: Datos de Cuenta
@@ -677,8 +676,8 @@ export default function ApplyPage() {
           </div>
         </form>
       )}
-      {!showForm && (
-        <div className="text-center mx-auto w-max mt-20">
+      {showForm && (
+        <div className="text-center mx-auto  md:w-max mt-20">
           <h1 className="text-2xl font-bold mb-4">{t("success.title")}</h1>
           <p>{t("success.thanks")}</p>
           <p>{t("success.message")}</p>

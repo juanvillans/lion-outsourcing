@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { authAPI } from "../services/api";
 import { useFeedback } from "../context/FeedbackContext";
 import { Icon } from "@iconify/react";
-import logo from "../assets/logo.webp";
+import logo from "../assets/logo.png";
 import secretariaLogo from "../assets/secretaria_logo.png";
 
 export default function ActivateAccountPage() {

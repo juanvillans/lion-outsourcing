@@ -6,7 +6,7 @@ import FuturisticButton from "../components/FuturisticButton.jsx";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import HeroSVG from "../components/HeroSVG";
 import energy from "../assets/energy.mp4";
-import trabajadores from "../assets/trabajadores2.png";
+import trabajadores from "../assets/trabajadores2.webp";
 import rueda from "../assets/rueda.svg";
 import Navigation from "../components/navigation";
 import { useFeedback } from "../context/FeedbackContext";

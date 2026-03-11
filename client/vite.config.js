@@ -48,7 +48,7 @@ export default defineConfig({
       manifest: {
         name: "Lion PR Services",
         short_name: "Lion Services",
-        description: "Sistema de gestión de laboratorio médico",
+        description: "Conectamos a empresas exigentes con expertos certificados en Petróleo, Gas y el sector eléctrico de Venezuela",
         theme_color: "#011140",
         background_color: "#ffffff",
         display: "standalone",
@@ -56,18 +56,13 @@ export default defineConfig({
         scope: "/",
         start_url: "/",
         icons: [
-          { src: "/pwa-72x82.webp", sizes: "72x82", type: "image/webp" },
-          { src: "/pwa-96x109.webp", sizes: "96x109", type: "image/webp" },
-          { src: "/pwa-128x145.webp", sizes: "128x145", type: "image/webp" },
-          { src: "/pwa-144x163.webp", sizes: "144x163", type: "image/webp" },
-          { src: "/pwa-152x172.webp", sizes: "152x172", type: "image/webp" },
-          { src: "/pwa-192x218.webp", sizes: "192x218", type: "image/webp" },
-          { src: "/pwa-384x436.webp", sizes: "384x436", type: "image/webp" },
+          { src: "/pwa-192x192.png", sizes: "192x192", type: "image/png" },
+          { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png" },
           {
-            src: "/pwa-469x532.webp",
-            sizes: "469x532",
-            type: "image/webp",
-            purpose: "any maskable",
+            src: "/pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
           },
         ],
         screenshots: [
