@@ -8,7 +8,7 @@ export default function HeroSVG() {
       viewBox="0 0 1421 676"
       preserveAspectRatio="xMidYMid meet"
       fill="none"
-      className="w-full max-w-[1334px] h-auto"
+      className="w-full max-w-[1334px] overflow-y-hidden h-auto"
     >
       <script xmlns="" id="eppiocemhmnlbhjplcgkofciiegomcon" />
       <script xmlns="" />

@@ -11,6 +11,7 @@ import rueda from "../assets/rueda.svg";
 import Navigation from "../components/navigation";
 import { useFeedback } from "../context/FeedbackContext";
 import Modal from "../components/Modal";
+import Footer from "../components/Footer.jsx"
 
 
 export default function Home() {
@@ -57,7 +58,7 @@ export default function Home() {
   }, [location]);
 
   return (
-    <div>
+    <div className="container-page">
       <div className="relative h-[610px] md:h-screen w-full overflow-hidden overflow-x-hidden ">
         <title>Home</title>
         <Navigation />
@@ -263,7 +264,10 @@ export default function Home() {
           </p>
         </div>
       </Modal>
-      <footer></footer>
+
+
+           <Footer />
+     
     </div>
   );
 }

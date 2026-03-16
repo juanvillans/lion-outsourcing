@@ -28,6 +28,10 @@
   font-family: "Outfit", sans-serif !important;
   font-optical-sizing: auto;
 }
+html {
+  height: 100%;
+}
+
 body,
 .MuiDataGrid-root,
 .MuiDataGrid-columnHeader,
@@ -41,7 +45,12 @@ body {
   scrollbar-width: thin;
   border-radius: 20px;
 }
-
+.container-page {
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  margin: 0; /* Removes default browser margin */
+}
 /* Remove shadow from MaterialReactTable paper */
 .MuiPaper-root {
   --paper-shadow: none !important;

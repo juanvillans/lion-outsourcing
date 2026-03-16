@@ -211,7 +211,7 @@ export default function ApplyPage() {
   console.log({ formData });
 
   return (
-    <div className=" bg-gray-50 mt-2  ">
+    <div className=" bg-gray-50 mt-2 container-page">
       <header className="flex items-center flex-col justify-center relative">
         <Navigation />
         <h1 className="text-center text-2xl font-bold text-gray-800 my-4 mt-20 mb-7">
@@ -676,7 +676,7 @@ export default function ApplyPage() {
           </div>
         </form>
       )}
-      {showForm && (
+      {!showForm && (
         <div className="text-center mx-auto  md:w-max mt-20">
           <h1 className="text-2xl font-bold mb-4">{t("success.title")}</h1>
           <p>{t("success.thanks")}</p>
