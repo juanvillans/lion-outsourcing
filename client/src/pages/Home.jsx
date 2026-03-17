@@ -177,11 +177,11 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="relative animateOnScroll ">
+      <div className="relative animateOnScroll md:pb-44 ">
         <img
           src={rueda}
           alt="rueda"
-          className="absolute hidden md:block -left-[500px] top-[290px] w-[1000px] spinAnimation  "
+          className=" mb-10  absolute hidden md:inline -left-[500px] top-[290px] w-[1000px] spinAnimation pointer-events-none"
         />
 
         <img
